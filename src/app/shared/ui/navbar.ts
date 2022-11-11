@@ -3,9 +3,16 @@ import {Component} from '@angular/core'
 @Component({
   selector: 'bz-navbar',
   template: `
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" [routerLink]="['/']">Build Bro</a>
+    <nav class="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-900">
+      <div class="container flex flex-wrap justify-between items-center mx-auto">
+        <a href="/" class="flex items-center">
+          <span class="self-center text-xl font-semibold whitespace-nowrap">Build Bro</span>
+        </a>
+      </div>
     </nav>
+    <!--    <nav class="navbar navbar-expand-lg navbar-light bg-light">-->
+    <!--      <a class="navbar-brand" [routerLink]="['/']">Build Bro</a>-->
+    <!--    </nav>-->
   `
 })
 export class Navbar {
