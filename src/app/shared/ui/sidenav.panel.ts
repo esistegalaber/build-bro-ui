@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {ChangeDetectionStrategy, Component} from "@angular/core";
 
 @Component({
   selector: 'bz-sidenav',
@@ -11,7 +11,8 @@ import {Component} from "@angular/core";
         <a class="nav-item nav-link" href="#">Admin</a>
       </nav>
     </div>
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SidenavPanel {
 

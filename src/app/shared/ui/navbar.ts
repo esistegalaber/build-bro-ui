@@ -1,4 +1,4 @@
-import {Component} from '@angular/core'
+import {ChangeDetectionStrategy, Component} from '@angular/core'
 
 @Component({
   selector: 'bz-navbar',
@@ -6,7 +6,8 @@ import {Component} from '@angular/core'
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <a class="navbar-brand" [routerLink]="['/']">Build Bro</a>
     </nav>
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Navbar {
 }

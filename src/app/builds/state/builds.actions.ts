@@ -10,3 +10,4 @@ export const removeSearchLabel = createAction('[BUILD] REMOVE-SEARCH-LABEL', pro
 export const resetSearchParams = createAction('[BUILD] RESET-SEARCH-PARAMS')
 export const searchBuildsOfProject = createAction('[BUILD] SEARCH-BUILDS-OF-PROJECT', props<{ project: string }>())
 export const buildSearchLoaded = createAction('[BUILD] BUILDS-SEARCH-LOADED', props<{ result: IBuildSearchResult }>())
+export const toSearchPage = createAction('[BUILD] TO-SEARCH-PAGE', props<{ page: number }>())

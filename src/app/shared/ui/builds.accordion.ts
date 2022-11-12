@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core'
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core'
 import {IBuild} from '../../core/'
 
 @Component({
@@ -17,7 +17,8 @@ import {IBuild} from '../../core/'
         </ng-template>
       </ngb-panel>
     </ngb-accordion>
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BuildsAccordion {
   @Input()

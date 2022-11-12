@@ -1,6 +1,5 @@
 export interface Buildz {
   projects: IProjects
-  environments: IEnvironments
   stats: IBuildStats
 }
 
@@ -61,10 +60,10 @@ export interface IBuildLabel {
   value: string
 }
 
-export interface IArtifactBuildLabel {
-  projectName: string
-  key: string
-  value: string
+export interface IPaginationParams {
+  totalElements: number
+  pageSize: number
+  currentPage: number
 }
 
 export interface IBuild {

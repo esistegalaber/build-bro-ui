@@ -10,6 +10,8 @@ import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import {CommonModule} from "@angular/common";
 import {BuildsAccordion} from "./ui/builds.accordion";
+import {PaginationPanel} from "./ui/pagination.panel";
+import {ButtonComponent} from "./ui/button.component";
 
 const reExports = [
   CommonModule,
@@ -25,7 +27,9 @@ const declarations = [
   Navbar,
   SidenavPanel,
   BuildIdentifierPanel,
-  BuildsAccordion
+  BuildsAccordion,
+  ButtonComponent,
+  PaginationPanel
 ]
 
 @NgModule({

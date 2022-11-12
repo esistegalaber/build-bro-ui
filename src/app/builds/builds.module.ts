@@ -4,7 +4,7 @@ import {RouterModule} from "@angular/router";
 import {BuildsPage} from "./builds.page";
 import {BuildSearchForm} from "./ui/build-search.form";
 import {Store, StoreModule} from "@ngrx/store";
-import {buildReducer} from "./state/builds.state";
+import {buildReducer} from "./state/builds.reducer";
 import {EffectsModule} from "@ngrx/effects";
 import {BuildsEffects} from "./state/builds.effects";
 import {Buildz} from "../core";

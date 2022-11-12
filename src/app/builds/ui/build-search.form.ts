@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core'
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core'
 import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "../../core";
 
 @Component({
@@ -9,7 +9,7 @@ import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "
         <div class="row">
           <div class="col">
             <div class="form-group">
-              <select class="form-control form-control-sm" [(ngModel)]="theSearch.project" name="project" (change)="updateSearch.emit(theSearch)">
+              <select class="form-select form-control-sm" [(ngModel)]="theSearch.project" name="project" (change)="updateSearch.emit(theSearch)">
                 <option value="">All Projects</option>
                 <option *ngFor="let name of available.projectNames" [value]="name">{{name}}</option>
               </select>
@@ -17,7 +17,7 @@ import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "
           </div>
           <div class="col">
             <div class="form-group">
-              <select class="form-control form-control-sm" [(ngModel)]="theSearch.branch" name="branch" (ngModelChange)="updateSearch.emit(theSearch)">
+              <select class="form-select form-control-sm" [(ngModel)]="theSearch.branch" name="branch" (ngModelChange)="updateSearch.emit(theSearch)">
                 <option value="">All Branches</option>
                 <option *ngFor="let branch of available.projectBranches[theSearch.project]" [value]="branch">{{branch}}</option>
               </select>
@@ -36,22 +36,18 @@ import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "
                    [(ngModel)]="theSearch.maxBuildNumber">
           </div>
           <div class="col">
-            <button class="btn btn-sm btn-secondary mx-2" (click)="addSearchLabel.emit()">
-              <fa-icon icon="plus"></fa-icon>
-              Add Label
-            </button>
           </div>
           <div class="col">
-            <button class="btn btn-sm btn-secondary mx-2" (click)="resetSearch.emit()">
+            <bz-button (click)="resetSearch.emit()" css="btn-sm btn-secondary">
               <fa-icon icon="undo"></fa-icon>
               Reset
-            </button>
+            </bz-button>
           </div>
           <div class="col">
-            <button class="btn btn-sm btn-secondary mx-2" (click)="updateSearch.emit(theSearch)">
+            <bz-button (click)="updateSearch.emit(theSearch)" css="btn-sm btn-secondary">
               <fa-icon icon="sync"></fa-icon>
               Reload
-            </button>
+            </bz-button>
           </div>
         </div>
 
@@ -70,16 +66,11 @@ import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "
                      [value]="label.value" readonly>
             </div>
           </div>
-
-          <!--          <div class="col-4">-->
-          <!--            <button class="btn btn-sm btn-danger" (click)="removeSearchLabel.emit({key:label.key, value:label.value})">-->
-          <!--              <fa-icon icon="backspace"></fa-icon>-->
-          <!--            </button>-->
-          <!--          </div>-->
         </div>
       </form>
     </div>
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BuildSearchForm {
   @Input()
@@ -96,15 +87,6 @@ export class BuildSearchForm {
   removeSearchLabel = new EventEmitter<IBuildLabel>()
   @Output()
   updateSearch = new EventEmitter<IBuildSearchParams>()
-
-  labelsPresent(): boolean {
-    return (this.theSearch && this.theSearch.labels && (Object.keys(this.theSearch.labels).length > 0))
-  }
-
-  toPage(page: number): void {
-    this.theSearch.page = (page - 1)
-    this.updateSearch.emit(this.theSearch)
-  }
 
   constructor() {
   }
