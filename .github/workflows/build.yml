@@ -17,8 +17,9 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
-      - run: npm ci
-      - run: npm run start-iso &
-      - run: npm run cypress:run
-      - run: npm run start-iso &
-      - run: npm build
+      - name: Cypress run
+        uses: cypress-io/github-action@v4.x.x
+        with:
+          browser: chrome
+          start: npm start-iso
+          build: npm run build
