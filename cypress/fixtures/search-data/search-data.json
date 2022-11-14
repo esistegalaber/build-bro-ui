@@ -1,0 +1,28 @@
+{
+  "projectNames": [
+    "backend",
+    "frontend",
+    "backoffice"
+  ],
+  "projectBranches": {
+    "backend": [
+      "main",
+      "dev",
+      "feature"
+    ],
+    "frontend": [
+      "main",
+      "dev",
+      "feature"
+    ],
+    "backoffice": [
+      "main",
+      "dev",
+      "feature"
+    ]
+  },
+  "labelKeys": [
+    "commit",
+    "sonar-gate"
+  ]
+}

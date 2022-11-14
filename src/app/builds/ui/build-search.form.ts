@@ -9,7 +9,12 @@ import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "
         <div class="row">
           <div class="col">
             <div class="form-group">
-              <select class="form-select form-control-sm" [(ngModel)]="theSearch.project" name="project" (change)="updateSearch.emit(theSearch)">
+              <select data-cy-id="project-select"
+                      [(ngModel)]="theSearch.project"
+                      (change)="updateSearch.emit(theSearch)"
+                      name="project"
+                      class="form-select form-select-sm"
+              >
                 <option value="">All Projects</option>
                 <option *ngFor="let name of available.projectNames" [value]="name">{{name}}</option>
               </select>
@@ -17,7 +22,12 @@ import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "
           </div>
           <div class="col">
             <div class="form-group">
-              <select class="form-select form-control-sm" [(ngModel)]="theSearch.branch" name="branch" (ngModelChange)="updateSearch.emit(theSearch)">
+              <select data-cy-id="branch-select"
+                      [(ngModel)]="theSearch.branch"
+                      (change)="updateSearch.emit(theSearch)"
+                      class="form-select form-select-sm"
+                      name="branch"
+              >
                 <option value="">All Branches</option>
                 <option *ngFor="let branch of available.projectBranches[theSearch.project]" [value]="branch">{{branch}}</option>
               </select>

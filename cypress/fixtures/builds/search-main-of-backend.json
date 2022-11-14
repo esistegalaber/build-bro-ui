@@ -1,0 +1,239 @@
+{
+  "data": [
+    {
+      "id": 10,
+      "project": "backend",
+      "branch": "main",
+      "buildNumber": 10,
+      "labels": [
+        {
+          "id": 28,
+          "key": "jenkins-build",
+          "value": "http://my-jenkins/356da47e-7f72-4cb6-a3ea-e3ef57162b0e"
+        },
+        {
+          "id": 29,
+          "key": "integration-test",
+          "value": "broken"
+        },
+        {
+          "id": 30,
+          "key": "revision",
+          "value": "e6859b79b73630f6250f569a127668910a1e1ef3801c80b30dd9faff5bdde214"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "project": "backend",
+      "branch": "main",
+      "buildNumber": 9,
+      "labels": [
+        {
+          "id": 25,
+          "key": "integration-test",
+          "value": "ok"
+        },
+        {
+          "id": 26,
+          "key": "jenkins-build",
+          "value": "http://my-jenkins/5cb77caf-f7fc-4a80-b149-d4ba3e361a23"
+        },
+        {
+          "id": 27,
+          "key": "revision",
+          "value": "fe903f3e57405dc360ae7f4390692cdeea8617f9be7f9a4b21154d11e16eb9e4"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "project": "backend",
+      "branch": "main",
+      "buildNumber": 8,
+      "labels": [
+        {
+          "id": 22,
+          "key": "jenkins-build",
+          "value": "http://my-jenkins/3ecae83e-c106-4af9-9021-8d3f0ebbd890"
+        },
+        {
+          "id": 23,
+          "key": "integration-test",
+          "value": "broken"
+        },
+        {
+          "id": 24,
+          "key": "revision",
+          "value": "9ebdb32aa5fd934523426ad65cc231048514d387346f8c0aa7a5cd3eaa4273a1"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "project": "backend",
+      "branch": "main",
+      "buildNumber": 7,
+      "labels": [
+        {
+          "id": 19,
+          "key": "integration-test",
+          "value": "ok"
+        },
+        {
+          "id": 20,
+          "key": "revision",
+          "value": "2b5ce56a3c6cf073d8ed9a298ee5953e2163471151c2de8257389588c0b447ae"
+        },
+        {
+          "id": 21,
+          "key": "jenkins-build",
+          "value": "http://my-jenkins/8597411b-13c1-4ee3-8853-416902ec8431"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "project": "backend",
+      "branch": "main",
+      "buildNumber": 6,
+      "labels": [
+        {
+          "id": 17,
+          "key": "revision",
+          "value": "12a42ac063ce04ee979d953ef465e131bfc7468a4fa6af001a704b8b9d9e9714"
+        },
+        {
+          "id": 18,
+          "key": "integration-test",
+          "value": "broken"
+        },
+        {
+          "id": 16,
+          "key": "jenkins-build",
+          "value": "http://my-jenkins/5fd6949c-a285-4138-a1b8-a3cb9b71d9d3"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "project": "backend",
+      "branch": "main",
+      "buildNumber": 5,
+      "labels": [
+        {
+          "id": 14,
+          "key": "jenkins-build",
+          "value": "http://my-jenkins/294fe7e5-3fcb-474f-a495-b6aa4d7afb84"
+        },
+        {
+          "id": 15,
+          "key": "revision",
+          "value": "e6e9b1095b263445eae734ca74c5c9d539a1570f7f5ea1fae14da1fe4827cb3b"
+        },
+        {
+          "id": 13,
+          "key": "integration-test",
+          "value": "ok"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "project": "backend",
+      "branch": "main",
+      "buildNumber": 4,
+      "labels": [
+        {
+          "id": 10,
+          "key": "jenkins-build",
+          "value": "http://my-jenkins/46b56583-85a6-4315-9d11-32bf5d750476"
+        },
+        {
+          "id": 11,
+          "key": "revision",
+          "value": "986d006cbdac48d1f3af89b339fa7215299463634fff84297ca3f67ba9839f79"
+        },
+        {
+          "id": 12,
+          "key": "integration-test",
+          "value": "broken"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "project": "backend",
+      "branch": "main",
+      "buildNumber": 3,
+      "labels": [
+        {
+          "id": 8,
+          "key": "revision",
+          "value": "b6f670f21c57a56a1a4717e3df5f196e25a1a3c4ef3e66877f9bee9f2debf50f"
+        },
+        {
+          "id": 7,
+          "key": "integration-test",
+          "value": "ok"
+        },
+        {
+          "id": 9,
+          "key": "jenkins-build",
+          "value": "http://my-jenkins/7aed032d-98e7-42fc-a22c-46c329639a84"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "project": "backend",
+      "branch": "main",
+      "buildNumber": 2,
+      "labels": [
+        {
+          "id": 4,
+          "key": "revision",
+          "value": "9d64f5039738fb9e90d3afb989f0f9f9f2cd1d37251a2cec8e9e306aeb0ae8d1"
+        },
+        {
+          "id": 6,
+          "key": "jenkins-build",
+          "value": "http://my-jenkins/bd9a7cec-3f88-4c4f-b35d-2dea49bb2c64"
+        },
+        {
+          "id": 5,
+          "key": "integration-test",
+          "value": "broken"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "project": "backend",
+      "branch": "main",
+      "buildNumber": 1,
+      "labels": [
+        {
+          "id": 2,
+          "key": "jenkins-build",
+          "value": "http://my-jenkins/5b13db47-0fd7-4d86-b305-b44267b2502d"
+        },
+        {
+          "id": 3,
+          "key": "revision",
+          "value": "8760f3516abcfa33f62a7e2c26c077d87725b27e9958de75478fbfe8078d8a8e"
+        },
+        {
+          "id": 1,
+          "key": "integration-test",
+          "value": "ok"
+        }
+      ]
+    }
+  ],
+  "page": 0,
+  "totalElements": 10,
+  "totalPages": 1,
+  "hasNext": false,
+  "hasPrevious": false
+}
