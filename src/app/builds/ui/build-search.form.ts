@@ -97,7 +97,4 @@ export class BuildSearchForm {
   removeSearchLabel = new EventEmitter<IBuildLabel>()
   @Output()
   updateSearch = new EventEmitter<IBuildSearchParams>()
-
-  constructor() {
-  }
 }

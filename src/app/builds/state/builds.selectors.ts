@@ -1,7 +1,5 @@
 import {createFeatureSelector, createSelector} from "@ngrx/store";
 import * as Model from "../../core/";
-import {IPaginationParams} from "../../core/";
-import {state} from "@angular/animations";
 
 export const buildsState = createFeatureSelector<Model.IBuildsState>('builds')
 export const theBuildSearchParams = createSelector(
