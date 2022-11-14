@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {select, Store} from "@ngrx/store";
-import {Buildz, IBuildSearchParams} from "../core/state/model";
-import {availableSearchData, theBuilds, theBuildSearchPaginationParams, theBuildSearchParams, theBuildSearchResult} from "./state/builds.selectors";
+import {Buildz, IBuildSearchParams} from "../core";
+import {availableSearchData, theBuilds, theBuildSearchPaginationParams, theBuildSearchParams} from "./state/builds.selectors";
 import {resetSearchParams, toSearchPage, updateSearchParams} from "./state/builds.actions";
 
 @Component({
