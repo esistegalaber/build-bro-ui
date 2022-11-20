@@ -8,20 +8,27 @@ import {loadBuildSetOf} from "./state/build-sets.actions";
   template: `
     <div class="row">
       <div class="col-3">
-        <bz-build-set-template-list
-          [templateNames]="(names$ | async)!"
-          (templateSelected)="onBuildSetTemplateSelected($event)"
-          (newBuildSetTemplate)="newBuildSetTemplate()"
-        >
-        </bz-build-set-template-list>
+        <bb-card title="Defined Templates">
+          <bb-list
+            [data]="(names$ | async)!"
+            (selected)="onBuildSetTemplateSelected($event)"
+          >
+          </bb-list>
+        </bb-card>
+<!--        <bz-build-set-template-list-->
+<!--          [templateNames]="(names$ | async)!"-->
+<!--          (templateSelected)="onBuildSetTemplateSelected($event)"-->
+<!--          (newBuildSetTemplate)="newBuildSetTemplate()"-->
+<!--        >-->
+<!--        </bz-build-set-template-list>-->
       </div>
       <div class="col-9">
-        <bz-card [title]="'Builds of ' + (buildSetName$ | async)!">
+        <bb-card [title]="'Builds of ' + (buildSetName$ | async)!">
           <bz-builds-accordion
             [builds]="(buildOf$ | async)!"
           >
           </bz-builds-accordion>
-        </bz-card>
+        </bb-card>
       </div>
     </div>
   `,

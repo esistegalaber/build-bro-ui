@@ -45,8 +45,8 @@ export interface ISearchData {
 export interface IBuildSearchParams extends IBaseSearchParams {
   project: string
   branch: string
-  minBuildNumber: number | null
-  maxBuildNumber: number | null
+  minBuildNumber: string | null
+  maxBuildNumber: string | null
   labels: any
 }
 

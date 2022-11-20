@@ -1,14 +1,17 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core'
 import {IBuild} from "../../core";
+import {CommonModule} from "@angular/common";
 
 @Component({
-  selector: 'bz-build-id',
+  selector: 'bb-build-id',
   template: `
-    <span ngbTooltip="BuildBuddy-ID={{build.id}}" placement="right">{{build.project}}&nbsp;::&nbsp;{{build.branch}}&nbsp;::&nbsp;{{build.buildNumber}}</span>
+    <span>{{build.project}}::{{build.branch}}::{{build.buildNumber}}</span>
   `,
+  standalone: true,
+  imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BuildIdentifierPanel {
+export class BuildId {
   @Input()
   build!: IBuild
 }

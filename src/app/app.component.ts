@@ -8,13 +8,13 @@ import {loadBuildStats} from "./core/state/stats/stats.state";
 @Component({
   selector: 'bz-root',
   template: `
-    <bz-navbar></bz-navbar>
+    <bb-toolbar></bb-toolbar>
     <div class="row">
       <bz-alert-panel (clearAlert)="clearAlert()" [alert]="(alert | async)!"></bz-alert-panel>
       <div class="col-sm col-sm-auto">
         <bz-sidenav></bz-sidenav>
       </div>
-      <div class="col flex-grow-1">
+      <div class="col">
         <div class="row">
           <div class="col p-2">
             <router-outlet></router-outlet>

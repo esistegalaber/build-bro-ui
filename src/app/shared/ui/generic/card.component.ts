@@ -1,15 +1,21 @@
 import {ChangeDetectionStrategy, Component, Input} from "@angular/core";
+import {CommonModule} from "@angular/common";
+import {MatCardModule} from "@angular/material/card";
 
 @Component({
-  selector: 'bz-card',
+  selector: 'bb-card',
   template: `
-    <div class="card">
-      <div class="card-body">
-        <h6 class="card-title">{{title}}</h6>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>{{title}}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
         <ng-content></ng-content>
-      </div>
-    </div>
+      </mat-card-content>
+    </mat-card>
   `,
+  standalone: true,
+  imports: [CommonModule, MatCardModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CardComponent {

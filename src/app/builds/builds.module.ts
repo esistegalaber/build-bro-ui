@@ -9,15 +9,25 @@ import {EffectsModule} from "@ngrx/effects";
 import {BuildsEffects} from "./state/builds.effects";
 import {Buildz} from "../core";
 import {loadAvailableBuildSearchData} from "./state/builds.actions";
+import {Paginator} from "../shared/ui/paginator";
+import {MatSelectModule} from "@angular/material/select";
+import {MatInputModule} from "@angular/material/input";
+import {MatIconModule} from "@angular/material/icon";
+import {MatButtonModule} from "@angular/material/button";
 
 @NgModule({
   imports: [
     SharedModule,
+    Paginator,
     StoreModule.forFeature('builds', buildReducer),
     EffectsModule.forFeature([BuildsEffects]),
     RouterModule.forChild([
       {path: '', component: BuildsPage}
-    ])
+    ]),
+    MatSelectModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule
   ],
   declarations: [
     BuildsPage,

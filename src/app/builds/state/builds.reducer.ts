@@ -40,7 +40,7 @@ export const buildReducer = createReducer(
     return {...state, search: newSearch}
   }),
   on(toSearchPage, (state: IBuildsState, {page}) => {
-    const newSearch = {...state.search, page: page - 1}
+    const newSearch = {...state.search, page: page}
     return {
       ...state,
       search: newSearch

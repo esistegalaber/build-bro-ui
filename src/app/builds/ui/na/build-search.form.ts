@@ -7,71 +7,55 @@ import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "
     <div class="container-fluid">
       <form novalidate (submit)="updateSearch.emit(theSearch)">
         <div class="row">
-          <div class="col">
-            <div class="form-group">
-              <select data-cy-id="project-select"
-                      [(ngModel)]="theSearch.project"
-                      (change)="updateSearch.emit(theSearch)"
-                      name="project"
-                      class="form-select form-select-sm"
-              >
-                <option value="">All Projects</option>
-                <option *ngFor="let name of available.projectNames" [value]="name">{{name}}</option>
-              </select>
-            </div>
-          </div>
-          <div class="col">
-            <div class="form-group">
-              <select data-cy-id="branch-select"
-                      [(ngModel)]="theSearch.branch"
-                      (change)="updateSearch.emit(theSearch)"
-                      class="form-select form-select-sm"
-                      name="branch"
-              >
-                <option value="">All Branches</option>
-                <option *ngFor="let branch of available.projectBranches[theSearch.project]" [value]="branch">{{branch}}</option>
-              </select>
-            </div>
-          </div>
-          <div class="col">
-            <div class="form-group">
-              <select data-cy-id="pagesize-select"
-                      [(ngModel)]="theSearch.pageSize"
-                      (change)="updateSearch.emit(theSearch)"
-                      name="pageSize"
-                      class="form-select form-select-sm"
-              >
-                <option value="10">10 / Page</option>
-                <option value="25">25 / Page</option>
-                <option value="50">50 / Page</option>
-              </select>
-            </div>
-          </div>
+          <mat-form-field class=" col-4">
+            <mat-label>Projects</mat-label>
+            <mat-select [(value)]="theSearch.project" data-cy-id="project-select" (selectionChange)="updateSearch.emit(theSearch)">
+              <mat-option [value]="">All</mat-option>
+              <mat-option *ngFor="let project of available.projectNames" [value]="project">{{project}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="col-4">
+            <mat-label>Branches</mat-label>
+            <mat-select [(value)]="theSearch.branch" data-cy-id="branch-select" (selectionChange)="updateSearch.emit(theSearch)">
+              <mat-option [value]="">All</mat-option>
+              <mat-option *ngFor="let branch of available.projectBranches[theSearch.project]" [value]="branch">{{branch}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="col-2">
+            <mat-label>PageSize</mat-label>
+            <mat-select [(value)]="theSearch.pageSize" data-cy-id="pagesize-select" (selectionChange)="updateSearch.emit(theSearch)">
+              <mat-option [value]="10">10 / Page</mat-option>
+              <mat-option [value]="25">25 / Page</mat-option>
+              <mat-option [value]="50">50 / Page</mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
         <div class="row mt-1">
+          <mat-form-field class="col">
+            <mat-label>Min BuildNumber</mat-label>
+            <input matInput type="number" placeholder="Min BuildNumber"
+                   name="minBuildNumber"
+                   [(ngModel)]="theSearch.minBuildNumber"
+                   (keyup)="updateSearch.emit(theSearch)">
+          </mat-form-field>
+          <mat-form-field class="col">
+            <mat-label>Max BuildNumber</mat-label>
+            <input matInput type="number" placeholder="Min BuildNumber"
+                   name="maxBuildNumber"
+                   [(ngModel)]="theSearch.maxBuildNumber"
+                   (keyup)="updateSearch.emit(theSearch)">
+          </mat-form-field>
           <div class="col">
-            <input type="text" class="form-control form-control-sm" id="minBuildNumber" aria-describedby="minBuildNumberHelp" name="minBuildNumber" placeholder="Min BuildNumber"
-                   (keyup)="updateSearch.emit(theSearch)"
-                   [(ngModel)]="theSearch.minBuildNumber">
           </div>
           <div class="col">
-            <input type="text" class="form-control form-control-sm" id="maxBuildNumber" name="maxBuildNumber" placeholder="Max BuildNumber"
-                   (keyup)="updateSearch.emit(theSearch)"
-                   [(ngModel)]="theSearch.maxBuildNumber">
+            <button mat-raised-button color="accent" (click)="resetSearch.emit()">
+              <mat-icon>restart_alt</mat-icon> Reset
+            </button>
           </div>
           <div class="col">
-          </div>
-          <div class="col">
-            <bz-button (click)="resetSearch.emit()" css="btn-sm btn-secondary">
-              <fa-icon icon="undo"></fa-icon>
-              Reset
-            </bz-button>
-          </div>
-          <div class="col">
-            <bz-button (click)="updateSearch.emit(theSearch)" css="btn-sm btn-secondary">
-              <fa-icon icon="sync"></fa-icon>
-              Reload
-            </bz-button>
+            <button mat-raised-button color="primary" (click)="updateSearch.emit(theSearch)" css="btn-sm btn-secondary">
+              <mat-icon>search</mat-icon> (Re-)Load
+            </button>
           </div>
         </div>
 

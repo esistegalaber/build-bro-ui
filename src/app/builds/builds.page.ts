@@ -9,26 +9,26 @@ import {resetSearchParams, toSearchPage, updateSearchParams} from "./state/build
     <div class="container-fluid">
       <div class="row">
         <div class="col">
-          <bz-build-search-form
-            [available]="(availableSearchData$|async)!"
-            [theSearch]="(theSearch$|async|deepClone)!"
-            (updateSearch)="updateSearch($event)"
-            (resetSearch)="resetSearch()"
-          >
-            <!--            (updateSearchParams)="updateSearchParams($event)"-->
-            <!--            (resetSearch)="resetSearch()"-->
-            <!--            (addSearchLabel)="openAddLabelDialog()"-->
-            <!--            (removeSearchLabel)="removeSearchLabel($event)"-->
-          </bz-build-search-form>
+          <bb-card title="Search">
+            <bz-build-search-form
+              [available]="(availableSearchData$|async)!"
+              [theSearch]="(theSearch$|async|deepClone)!"
+              (updateSearch)="updateSearch($event)"
+              (resetSearch)="resetSearch()"
+            >
+              <!--            (updateSearchParams)="updateSearchParams($event)"-->
+              <!--            (resetSearch)="resetSearch()"-->
+              <!--            (addSearchLabel)="openAddLabelDialog()"-->
+              <!--            (removeSearchLabel)="removeSearchLabel($event)"-->
+            </bz-build-search-form>
+          </bb-card>
         </div>
       </div>
       <div class="row mt-4">
-        <div class="col">
-          <bz-paginator
-            [maxSize]="10" [paginationParams]="(thePaginationParams$|async)!"
-            (toPage)="toPage($event)"
-          ></bz-paginator>
-        </div>
+        <bz-paginator class="col"
+                      [maxSize]="10" [paginationParams]="(thePaginationParams$|async)!"
+                      (toPage)="toPage($event)"
+        ></bz-paginator>
       </div>
       <div class="row mt-2">
         <div class="col">
@@ -46,6 +46,7 @@ export class BuildsPage {
   thePaginationParams$ = this.store.pipe(select(theBuildSearchPaginationParams))
 
   updateSearch(search: IBuildSearchParams): void {
+    console.log(search)
     this.store.dispatch(updateSearchParams({search}))
   }
 

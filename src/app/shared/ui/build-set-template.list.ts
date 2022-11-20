@@ -17,7 +17,7 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@
       </div>
       <div class="card-body">
         <button class="btn btn-primary" (click)="newBuildSetTemplate.emit()">
-          <fa-icon icon="plus"></fa-icon>
+<!--          <fa-icon icon="plus"></fa-icon>-->
           New Template
         </button>
       </div>
