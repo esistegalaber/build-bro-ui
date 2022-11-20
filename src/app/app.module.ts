@@ -8,7 +8,7 @@ import {StoreDevtoolsModule} from "@ngrx/store-devtools";
 import {environment} from "../environments/environment";
 import {Store, StoreModule} from "@ngrx/store";
 import {Buildz} from "./core";
-import {faBackspace, faCheck, faCogs, faEye, faEyeSlash, faHammer, faLock, faPlus, faSave, faSync, faToggleOff, faToggleOn, faUndo} from "@fortawesome/free-solid-svg-icons";
+import {faBackspace, faBars, faCheck, faCogs, faEye, faEyeSlash, faHammer, faLock, faPlus, faSave, faScrewdriverWrench, faSync, faToggleOff, faToggleOn, faUndo, faUnsorted} from "@fortawesome/free-solid-svg-icons";
 import {EffectsModule} from "@ngrx/effects";
 import {StatsEffects} from "./core/state/stats/stats.effects";
 import * as BuildSearchActions from "./builds/state/builds.actions";
@@ -58,7 +58,10 @@ export class AppModule {
       faEye,
       faEyeSlash,
       faLock,
-      faHammer
+      faHammer,
+      faScrewdriverWrench,
+      faBars,
+      faUnsorted
     )
   }
 }

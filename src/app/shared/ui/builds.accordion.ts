@@ -8,8 +8,11 @@ import {IBuild} from '../../core/'
       <ngb-panel *ngFor="let build of builds" title="{{build.project}} :: {{build.branch}} :: {{build.buildNumber}}">
         <ng-template ngbPanelContent>
           <table class="table table-striped table-sm">
+            <tr>
+              <td>BB-Id:</td>
+              <td>{{build.id}}</td>
+            </tr>
             <tr *ngFor="let label of build.labels">
-              <td>{{label.id}}</td>
               <td>{{label.key}}</td>
               <td>{{label.value}}</td>
             </tr>

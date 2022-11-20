@@ -3,7 +3,7 @@ import {Component, EventEmitter, Input, Output} from "@angular/core";
 @Component({
   selector: 'bz-button',
   template: `
-    <button class="btn rounded-3" [ngClass]="css" (click)="click.emit()">
+    <button class="btn rounded-2" [ngClass]="css" (click)="click.emit()">
       <ng-content></ng-content>
     </button>
   `

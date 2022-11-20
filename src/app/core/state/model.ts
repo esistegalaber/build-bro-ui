@@ -123,30 +123,28 @@ export interface IBuildStats {
   numberOfBranches: number
 }
 
-export interface IEnvironments {
-  knownEnvironments: IEnvironment[]
-  currentEnvironmentName: string
-  currentEnvironment: IEnvironment
-  environmentBuilds: IEnvironmentBuilds
+export interface IBuildSetState {
+  names: string[]
+  currentBuildSetName: string
+  currentTemplate: IBuildSetTemplate
+  buildSet: IBuildSet
 }
 
-export interface IEnvironment {
+export interface IBuildSetTemplate {
   id?: number
   name: string
-  internal?: boolean
-  artifacts: IArtifact[]
+  buildTemplates: IBuildTemplate[]
 }
 
-export interface IArtifact {
+export interface IBuildTemplate {
   id?: number,
   project: string,
   branch: string,
   labels: { [key: string]: string }
 }
 
-export interface IEnvironmentBuilds {
-  environment: string
-  internal: boolean
+export interface IBuildSet {
+  name: string
   builds: { [key: string]: IBuild }
 }
 

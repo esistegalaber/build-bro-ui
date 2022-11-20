@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core'
-import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "../../core";
+import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "../../../core";
 
 @Component({
   selector: 'bz-build-search-form',
@@ -30,6 +30,20 @@ import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "
               >
                 <option value="">All Branches</option>
                 <option *ngFor="let branch of available.projectBranches[theSearch.project]" [value]="branch">{{branch}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <select data-cy-id="pagesize-select"
+                      [(ngModel)]="theSearch.pageSize"
+                      (change)="updateSearch.emit(theSearch)"
+                      name="pageSize"
+                      class="form-select form-select-sm"
+              >
+                <option value="10">10 / Page</option>
+                <option value="25">25 / Page</option>
+                <option value="50">50 / Page</option>
               </select>
             </div>
           </div>

@@ -2,7 +2,7 @@ import {NgModule} from "@angular/core";
 import {SharedModule} from "../shared/shared.module";
 import {RouterModule} from "@angular/router";
 import {BuildsPage} from "./builds.page";
-import {BuildSearchForm} from "./ui/build-search.form";
+import {BuildSearchForm} from "./ui/na/build-search.form";
 import {Store, StoreModule} from "@ngrx/store";
 import {buildReducer} from "./state/builds.reducer";
 import {EffectsModule} from "@ngrx/effects";
