@@ -4,15 +4,18 @@ import {MatToolbarModule} from "@angular/material/toolbar";
 import {RouterModule} from "@angular/router";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
+import {Store} from "@ngrx/store";
+import {Buildz} from "../../../core";
+import {toggleSideNavState} from "../../../core/state/nav/nav.actions";
 
 @Component({
   selector: 'bb-toolbar',
   template: `
     <mat-toolbar color="primary">
-      <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+      <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon" (click)="toggleSideNavState()">
         <mat-icon>menu</mat-icon>
       </button>
-      <span>Build Bruh</span>
+      <a routerLink="/">Build Bruh</a>
     </mat-toolbar>
   `,
   standalone: true,
@@ -20,4 +23,10 @@ import {MatIconModule} from "@angular/material/icon";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BuildBroToolbar {
+  toggleSideNavState(): void {
+    this.store.dispatch(toggleSideNavState())
+  }
+
+  constructor(private store: Store<Buildz>) {
+  }
 }

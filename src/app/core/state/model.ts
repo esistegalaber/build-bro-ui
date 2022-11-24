@@ -1,6 +1,7 @@
 export interface Buildz {
   projects: IProjects
   stats: IBuildStats
+  nav: INavState
 }
 
 // Base interfaces
@@ -233,4 +234,13 @@ export interface IDeploySearch extends IBaseSearchParams {
  */
 export interface IDeploySearchResult extends IBaseSearchResult {
   deploys: IDeploy[]
+}
+
+export interface INavState {
+  sidenav: ISideNav
+}
+
+export interface ISideNav {
+  visible: boolean
+  text: boolean
 }

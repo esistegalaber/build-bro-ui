@@ -6,29 +6,23 @@ import {loadBuildSetOf} from "./state/build-sets.actions";
 
 @Component({
   template: `
-    <div class="row">
-      <div class="col-3">
-        <bb-card title="Defined Templates">
-          <bb-list
-            [data]="(names$ | async)!"
-            (selected)="onBuildSetTemplateSelected($event)"
-          >
-          </bb-list>
-        </bb-card>
-<!--        <bz-build-set-template-list-->
-<!--          [templateNames]="(names$ | async)!"-->
-<!--          (templateSelected)="onBuildSetTemplateSelected($event)"-->
-<!--          (newBuildSetTemplate)="newBuildSetTemplate()"-->
-<!--        >-->
-<!--        </bz-build-set-template-list>-->
+    <h2>Build Sets</h2>
+    <div class="flex flex-row gap-2">
+      <div class="basis-1/4 overflow-hidden">
+        <bb-list
+          [data]="(names$ | async)!"
+          (selected)="onBuildSetTemplateSelected($event)"
+        >
+        </bb-list>
       </div>
-      <div class="col-9">
-        <bb-card [title]="'Builds of ' + (buildSetName$ | async)!">
-          <bz-builds-accordion
-            [builds]="(buildOf$ | async)!"
-          >
-          </bz-builds-accordion>
-        </bb-card>
+
+      <div class="basis-2/3">
+        <div class="flex flex-row-reverse mb-4">
+          <button mat-fab [routerLink]="['new']">
+            <mat-icon>add_circle</mat-icon>
+          </button>
+        </div>
+        <bb-builds-accordion [builds]="(buildOf$|async)!"></bb-builds-accordion>
       </div>
     </div>
   `,

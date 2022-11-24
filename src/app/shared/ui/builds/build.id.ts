@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core'
-import {IBuild} from "../../core";
+import {IBuild} from "../../../core";
 import {CommonModule} from "@angular/common";
 
 @Component({

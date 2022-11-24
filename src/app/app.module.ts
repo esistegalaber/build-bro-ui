@@ -14,6 +14,7 @@ import {SharedModule} from "./shared/shared.module";
 import {alertReducer} from "./core/state/alerts/alert.state";
 import {statsReducer} from "./core/state/stats/stats.state";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {navReducer} from "./core/state/nav/nav.reducer";
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     AppRoutingModule,
     StoreModule.forRoot({
       'alert': alertReducer,
-      'stats': statsReducer
+      'stats': statsReducer,
+      'nav': navReducer
     }),
     // StoreModule.forFeature(alertFeature),
     // StoreModule.forFeature(statsFeature),

@@ -6,7 +6,9 @@ import {MatListModule} from "@angular/material/list";
   selector: 'bb-list',
   template: `
     <mat-action-list>
-      <button mat-list-item *ngFor="let datum of data" (click)="selected.emit(datum)">{{datum}}</button>
+      <button mat-list-item *ngFor="let datum of data" (click)="selected.emit(datum)">
+        {{datum}}
+      </button>
     </mat-action-list>
   `,
   standalone: true,

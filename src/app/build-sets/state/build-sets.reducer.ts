@@ -1,6 +1,6 @@
 import {createReducer, on} from '@ngrx/store'
 import * as BuildSetActions from './build-sets.actions'
-import {IBuildSetState} from "../../core";
+import {IBuildSet, IBuildSetState} from "../../core";
 
 export const INITIAL_ENVIRONMENT_BUILDS: IBuildSetState = {
   names: [],
@@ -23,6 +23,14 @@ export const buildSetReducer = createReducer(
   }),
   on(BuildSetActions.buildSetLoaded, (state: IBuildSetState, {buildSet}) => {
     return {...state, buildSet}
+  }),
+  on(BuildSetActions.newBuildSet, (state: IBuildSetState) => {
+    return {
+      ...state, buildSet: {
+        name: '',
+        builds: {}
+      }
+    }
   })
   // ,
   // on(EnvironmentActions.environmentSelected, (state, {environmentName}) => {

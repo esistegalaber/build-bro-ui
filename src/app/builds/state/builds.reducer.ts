@@ -8,7 +8,7 @@ export const INITIAL_BUILD_SEARCH: IBuildsState = {
     project: '',
     branch: '',
     page: 0,
-    pageSize: 10,
+    pageSize: 50,
     labels: {},
     sortAttribute: 'buildNumber',
     sortDirection: 'DESC',
@@ -34,7 +34,7 @@ export const buildReducer = createReducer(
   }),
   on(updateSearchParams, (state: IBuildsState, {search}) => {
     let newSearch = {...search}
-    if (state.search.project !== search.project || state.search.branch !== search.branch) {
+    if (state.search.project !== search.project || state.search.branch !== search.branch || state.search.pageSize !== search.pageSize) {
       newSearch.page = 0;
     }
     return {...state, search: newSearch}
