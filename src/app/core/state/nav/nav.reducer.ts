@@ -6,7 +6,7 @@ import {toggleSideNavState} from "./nav.actions";
 export const INITIAL_NAV_STATE: INavState = {
   sidenav: {
     visible: true,
-    text: true
+    text: false
   }
 }
 // The Reducer
@@ -20,15 +20,15 @@ export const navReducer = createReducer(
       if (!state.sidenav.text) {
         return {
           sidenav: {
-            visible: false,
-            text: false
+            visible: true,
+            text: true
           }
         }
       }
       return {
         sidenav: {
-          visible: true,
-          text: false
+          visible: false,
+          text: true
         }
       }
     }

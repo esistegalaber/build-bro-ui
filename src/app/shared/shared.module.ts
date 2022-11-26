@@ -20,6 +20,9 @@ import {MatStepperModule} from "@angular/material/stepper";
 import {MatSelectModule} from "@angular/material/select";
 import {MatInputModule} from "@angular/material/input";
 import {BuildSetTemplateForm} from "./ui/build-sets/build-set-template.form";
+import {BuildDataTree} from "./ui/builds/build-data.tree";
+import {ProjectSelector} from "./ui/build-sets/project.selector";
+import {BuildTemplateForm} from "./ui/build-sets/build-template.form";
 
 const reExports = [
   CommonModule,
@@ -39,10 +42,13 @@ const reExports = [
   SidenavPanel,
   BuildId,
   BuildsAccordion,
+  BuildDataTree,
   ButtonComponent,
   CardComponent,
   ListComponent,
-  BuildSetTemplateForm
+  BuildSetTemplateForm,
+  ProjectSelector,
+  BuildTemplateForm
 ]
 
 const declarations = [

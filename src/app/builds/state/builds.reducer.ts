@@ -8,7 +8,7 @@ export const INITIAL_BUILD_SEARCH: IBuildsState = {
     project: '',
     branch: '',
     page: 0,
-    pageSize: 50,
+    pageSize: 3,
     labels: {},
     sortAttribute: 'buildNumber',
     sortDirection: 'DESC',

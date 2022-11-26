@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, Component, Input} from "@angular/core";
+import {ChangeDetectionStrategy, Component, EventEmitter, Input} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {MatStepperModule} from "@angular/material/stepper";
-import {IProject, IProjects} from "../../../core";
+import {IBuildTemplate, IProject} from "../../../core";
 
 @Component({
   selector: 'bb-build-set-template-form',
@@ -34,8 +34,8 @@ import {IProject, IProjects} from "../../../core";
   imports: [CommonModule, FormsModule, MatStepperModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
+
 export class BuildSetTemplateForm {
   @Input()
   projects!: IProject[]
-
 }

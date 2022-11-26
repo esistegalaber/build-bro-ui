@@ -27,6 +27,7 @@ import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "
           <mat-form-field>
             <mat-label>PageSize</mat-label>
             <mat-select [(value)]="theSearch.pageSize" data-cy-id="pagesize-select" (selectionChange)="updateSearch.emit(theSearch)">
+              <mat-option [value]="3">3 / Page</mat-option>
               <mat-option [value]="10">10 / Page</mat-option>
               <mat-option [value]="25">25 / Page</mat-option>
               <mat-option [value]="50">50 / Page</mat-option>

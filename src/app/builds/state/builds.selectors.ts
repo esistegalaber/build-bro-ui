@@ -1,5 +1,8 @@
 import {createFeatureSelector, createSelector} from "@ngrx/store";
 import * as Model from "../../core/";
+import {IBuild, IBuildDataTreeNode} from "../../core/";
+import {toBuildNode} from "./utils";
+
 
 export const buildsState = createFeatureSelector<Model.IBuildsState>('builds')
 export const theBuildSearchParams = createSelector(
@@ -24,3 +27,17 @@ export const theBuildSearchPaginationParams = createSelector(buildsState,
     }
   }
 )
+
+export const theBuildsAsTreeData = createSelector(
+  theBuilds, (state: Model.IBuild[]): IBuildDataTreeNode[] => state?.map(toBuildNode)
+)
+
+export const firstBuild = createSelector(
+  theBuilds, (state: Model.IBuild[]): IBuild => state[0]
+)
+
+export const theBuildLabelGroups = createSelector(
+  theBuildsAsTreeData, (state: IBuildDataTreeNode[]): string[] => state.filter(node => node.name.indexOf(".") > 0).map(node => node.name.substring(0.))
+)
+
+

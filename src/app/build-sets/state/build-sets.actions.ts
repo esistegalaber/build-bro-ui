@@ -1,5 +1,5 @@
 import {createAction, props} from '@ngrx/store'
-import {IBuildSet, IBuildSetTemplate} from "../../core";
+import {IBuildSet, IBuildSetTemplate, IBuildTemplate, IProject} from "../../core";
 
 export const loadBuildSetNames = createAction('[BuildSet] LOAD-TEMPLATE-NAMES')
 export const buildSetNamesLoaded = createAction('[BuildSet] TEMPLATE-NAMES-LOADED', props<{ names: string[] }>())
@@ -9,6 +9,8 @@ export const newBuildSet = createAction('[BuildSet] NEW')
 export const loadSingleBuildSetTemplate = createAction('LOAD-SINGLE-ENVIRONMENT', props<{ environmentName: string }>())
 export const singleBuildSetTemplateLoaded = createAction('SINGLE-ENVIRONMENT-LOADED', props<{ environment: IBuildSetTemplate }>())
 export const environmentSelected = createAction('ENVIRONMENT-SELECTED', props<{ environmentName: string }>())
+export const changeProjectSelection = createAction('[BuildSet] CHANGE-PROJECTS-SELECTION', props<{ project: IProject, selected: boolean }>())
+export const buildTemplateUpdated = createAction('[BuildSet] BUILD-TEMPLATE-UPDATED', props<{ buildTemplate:IBuildTemplate}>())
 // export const updateCurrentEnvironment = createAction('UPDATE-ENVIRONMENT', props<{ environment: IEnvironment }>())
 // export const saveEnvironment = createAction('SAVE-ENVIRONMENT', props<{ environment: IEnvironment }>())
 // export const deleteEnvironment = createAction('DELETE-ENVIRONMENT')

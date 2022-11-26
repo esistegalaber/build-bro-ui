@@ -1,12 +1,15 @@
 import {createReducer, on} from '@ngrx/store'
 import * as BuildSetActions from './build-sets.actions'
-import {IBuildSet, IBuildSetState} from "../../core";
+import {IBuildSet, IBuildSetState, IBuildSetTemplate, IProject} from "../../core";
+import {getMultipleValuesInSingleSelectionError} from "@angular/cdk/collections";
+import {deepClone} from "../../core/util/deep-clone";
 
 export const INITIAL_ENVIRONMENT_BUILDS: IBuildSetState = {
   names: [],
   currentBuildSetName: '',
   currentTemplate: {
     name: '',
+    projects: [],
     buildTemplates: []
   },
   buildSet: {
@@ -31,6 +34,28 @@ export const buildSetReducer = createReducer(
         builds: {}
       }
     }
+  }),
+  on(BuildSetActions.changeProjectSelection, (state: IBuildSetState, {project, selected}) => {
+    const currentTemplate: IBuildSetTemplate = deepClone(state.currentTemplate)
+    if (selected) {
+      currentTemplate.projects.push(project)
+      currentTemplate.buildTemplates.push({
+        project: project,
+        branch: null,
+        labels: {}
+      })
+
+    } else {
+      currentTemplate.projects = currentTemplate.projects.filter((p) => p.id !== project.id)
+      currentTemplate.buildTemplates = currentTemplate.buildTemplates.filter((b) => b.project.id !== project.id)
+    }
+    return {...state, currentTemplate};
+  }),
+  on(BuildSetActions.buildTemplateUpdated, (state: IBuildSetState, {buildTemplate}) => {
+    const currentTemplate: IBuildSetTemplate = deepClone(state.currentTemplate)
+    currentTemplate.buildTemplates = currentTemplate.buildTemplates.filter((template) => template.project.id !== buildTemplate.project.id)
+    currentTemplate.buildTemplates.push(buildTemplate)
+    return {...state, currentTemplate};
   })
   // ,
   // on(EnvironmentActions.environmentSelected, (state, {environmentName}) => {

@@ -1,5 +1,5 @@
 export interface Buildz {
-  projects: IProjects
+  projects: ProjectsState
   stats: IBuildStats
   nav: INavState
 }
@@ -75,21 +75,27 @@ export interface IBuild {
   labels: IBuildLabel[]
 }
 
-export interface IProjects {
+export interface IBuildDataTreeNode {
+  build?: IBuild
+  label?: IBuildLabel
+  children: IBuildDataTreeNode[]
+  name: string
+}
+
+export interface ProjectsState {
+  includeInactiveProjects: boolean
   projects: IProject[]
-  projectBranches: { [key: string]: IBranch[] }
-  labelKeys: string[]
-  inactiveIncluded: boolean
-  currentProject: IProject
-  currentBranch: IBranch
 }
 
 export interface IProject {
+  id: number
   name: string
   active: boolean
+  branches: IBranch[]
 }
 
 export interface IBranch {
+  id: number
   name: string
   active: boolean
 }
@@ -134,13 +140,14 @@ export interface IBuildSetState {
 export interface IBuildSetTemplate {
   id?: number
   name: string
+  projects: IProject[]
   buildTemplates: IBuildTemplate[]
 }
 
 export interface IBuildTemplate {
   id?: number,
-  project: string,
-  branch: string,
+  project: IProject
+  branch: IBranch | null,
   labels: { [key: string]: string }
 }
 

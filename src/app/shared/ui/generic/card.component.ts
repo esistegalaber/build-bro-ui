@@ -5,7 +5,7 @@ import {MatCardModule} from "@angular/material/card";
 @Component({
   selector: 'bb-card',
   template: `
-    <mat-card>
+    <mat-card class="m-1">
       <mat-card-header>
         <mat-card-title>{{title}}</mat-card-title>
       </mat-card-header>

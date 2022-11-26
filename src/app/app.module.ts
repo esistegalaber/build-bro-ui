@@ -9,12 +9,14 @@ import {Store, StoreModule} from "@ngrx/store";
 import {Buildz} from "./core";
 import {EffectsModule} from "@ngrx/effects";
 import {StatsEffects} from "./core/state/stats/stats.effects";
-import * as BuildSearchActions from "./builds/state/builds.actions";
+import * as ProjectActions from "./core/state/projects/project.actions";
 import {SharedModule} from "./shared/shared.module";
 import {alertReducer} from "./core/state/alerts/alert.state";
 import {statsReducer} from "./core/state/stats/stats.state";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {navReducer} from "./core/state/nav/nav.reducer";
+import {ProjectEffects} from "./core/state/projects/project.effects";
+import {projectsReducer} from "./core/state/projects/project.reducer";
 
 @NgModule({
   declarations: [
@@ -28,13 +30,15 @@ import {navReducer} from "./core/state/nav/nav.reducer";
     StoreModule.forRoot({
       'alert': alertReducer,
       'stats': statsReducer,
-      'nav': navReducer
+      'nav': navReducer,
+      'projects': projectsReducer
     }),
     // StoreModule.forFeature(alertFeature),
     // StoreModule.forFeature(statsFeature),
     // StoreModule.forFeature(buildsFeature),
     EffectsModule.forRoot([
-      StatsEffects
+      StatsEffects,
+      ProjectEffects
     ]),
     StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production})
   ],
@@ -43,7 +47,7 @@ import {navReducer} from "./core/state/nav/nav.reducer";
 })
 export class AppModule {
   constructor(store: Store<Buildz>) {
-    store.dispatch(BuildSearchActions.loadAvailableBuildSearchData())
+    store.dispatch(ProjectActions.loadProjects())
     // store.dispatch(loadBuildStats())
     // store.dispatch(loadKnownEnvironments())
     // store.dispatch(LOAD_KNOWN_SERVERS())

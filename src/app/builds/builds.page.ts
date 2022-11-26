@@ -1,8 +1,9 @@
 import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {select, Store} from "@ngrx/store";
 import {Buildz, IBuildSearchParams} from "../core";
-import {availableSearchData, theBuilds, theBuildSearchPaginationParams, theBuildSearchParams} from "./state/builds.selectors";
+import {availableSearchData, theBuilds, theBuildsAsTreeData, theBuildSearchPaginationParams, theBuildSearchParams} from "./state/builds.selectors";
 import {resetSearchParams, toSearchPage, updateSearchParams} from "./state/builds.actions";
+import {pipe} from "rxjs";
 
 @Component({
   template: `
@@ -25,7 +26,13 @@ import {resetSearchParams, toSearchPage, updateSearchParams} from "./state/build
         [maxSize]="10" [paginationParams]="(thePaginationParams$|async)!"
         (toPage)="toPage($event)"
       ></bz-paginator>
-      <bb-builds-accordion [builds]="(theBuilds$ | async)!"></bb-builds-accordion>
+      <!--      <bb-builds-accordion [builds]="(theBuilds$ | async)!"></bb-builds-accordion>-->
+      <!--      <bb-build-label-tree *ngFor="let build of theBuilds$ | async" [data]="build"></bb-build-label-tree>-->
+      <bb-card title="Search Results">
+        <bb-build-data-tree
+          [data]="(theBuildsTree$)!"
+        ></bb-build-data-tree>
+      </bb-card>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -35,9 +42,9 @@ export class BuildsPage {
   theSearch$ = this.store.pipe(select(theBuildSearchParams))
   theBuilds$ = this.store.pipe(select(theBuilds))
   thePaginationParams$ = this.store.pipe(select(theBuildSearchPaginationParams))
+  theBuildsTree$ = this.store.select(pipe(theBuildsAsTreeData))
 
   updateSearch(search: IBuildSearchParams): void {
-    console.log(search)
     this.store.dispatch(updateSearchParams({search}))
   }
 
