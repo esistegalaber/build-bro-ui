@@ -1,7 +1,8 @@
 import {createFeatureSelector, createSelector} from "@ngrx/store";
 import * as Model from "../../core/";
-import {IBuild, IBuildDataTreeNode} from "../../core/";
+import {IBuild, IBuildDataTreeNode, ISearchData} from "../../core/";
 import {toBuildNode} from "./utils";
+import {theProjectsState} from "../../core/state/selectors";
 
 
 export const buildsState = createFeatureSelector<Model.IBuildsState>('builds')
@@ -40,4 +41,16 @@ export const theBuildLabelGroups = createSelector(
   theBuildsAsTreeData, (state: IBuildDataTreeNode[]): string[] => state.filter(node => node.name.indexOf(".") > 0).map(node => node.name.substring(0.))
 )
 
+export const searchData = createSelector(
+  theProjectsState, (state: Model.ProjectsState): ISearchData => {
+    const projectBranches: { [key: string]: string[] } = {}
+    const theProjects = state.projects.filter(p => p.active)
+    theProjects.forEach(project => {
+      projectBranches[project.name] = project.branches.filter(b => b.active).map(b => b.name)
+    })
+    const projectNames = theProjects.map(p => p.name)
+    const labelKeys: string[] = []
+    return {projectNames, projectBranches, labelKeys}
+  }
+)
 

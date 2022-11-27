@@ -1,5 +1,12 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core'
 import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "../../../core";
+import {CommonModule} from "@angular/common";
+import {FormsModule} from "@angular/forms";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatIconModule} from "@angular/material/icon";
+import {MatButtonModule} from "@angular/material/button";
+import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
 
 @Component({
   selector: 'bz-build-search-form',
@@ -17,7 +24,7 @@ import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>Branches</mat-label>
+            <mat-label>Branches <span *ngIf="!!theSearch.project">({{available.projectBranches[theSearch.project].length}})</span></mat-label>
             <mat-select [(value)]="theSearch.branch" data-cy-id="branch-select" (selectionChange)="updateSearch.emit(theSearch)">
               <mat-option [value]="">All</mat-option>
               <mat-option *ngFor="let branch of available.projectBranches[theSearch.project]" [value]="branch">{{branch}}</mat-option>
@@ -82,7 +89,11 @@ import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "
       </form>
     </div>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule, FormsModule, MatFormFieldModule, MatIconModule, MatButtonModule, MatInputModule, MatSelectModule
+  ]
 })
 export class BuildSearchForm {
   @Input()

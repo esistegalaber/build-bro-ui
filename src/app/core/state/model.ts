@@ -149,6 +149,7 @@ export interface IBuildTemplate {
   project: IProject
   branch: IBranch | null,
   labels: { [key: string]: string }
+  buildNumber: number | null
 }
 
 export interface IBuildSet {

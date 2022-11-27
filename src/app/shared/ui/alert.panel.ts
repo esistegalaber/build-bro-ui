@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core'
-import {IAlert} from '../../core/state/model'
+import {IAlert} from '../../core'
+import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'bz-alert-panel',
@@ -14,7 +15,11 @@ import {IAlert} from '../../core/state/model'
       </div>
     </div>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule
+  ]
 })
 export class AlertPanel {
   @Input()

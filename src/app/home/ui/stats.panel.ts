@@ -11,7 +11,9 @@ import {IBuildStats} from '../../core'
       <b>{{stats.numberOfLabels}}</b> Labels.
       <b>{{stats.numberOfDeploys}}</b> Deploys.
     </h4>
-  `
+  `,
+  standalone: true,
+  imports: []
 })
 export class StatsPanel {
   @Input()

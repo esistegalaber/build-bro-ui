@@ -3,9 +3,10 @@ import {RouterModule, Routes} from '@angular/router';
 
 const routes: Routes = [
   {path: '', redirectTo: 'home', pathMatch: 'full'},
-  {path: 'home', loadChildren: () => import('./home/home.module').then((m) => m.HomeModule)},
-  {path: 'builds', loadChildren: () => import('./builds/builds.module').then((m) => m.BuildsModule)},
-  {path: 'build-sets', loadChildren: () => import('./build-sets/build-sets.module').then((m) => m.BuildSetsModule)}
+  {path: 'home', loadChildren: () => import('./home/home.routes').then((m) => m.routes)},
+  {path: 'builds', loadChildren: () => import('./builds/builds.routes').then(r => r.routes)},
+  {path: 'build-sets', loadChildren: () => import('./build-sets/build-sets.routes').then((r) => r.routes)},
+  {path: 'new-build-set', loadChildren: () => import('./build-set-edit/edit-build-set.routes').then((m) => m.routes)}
 ];
 
 @NgModule({

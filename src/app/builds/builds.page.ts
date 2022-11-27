@@ -1,9 +1,14 @@
 import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {select, Store} from "@ngrx/store";
 import {Buildz, IBuildSearchParams} from "../core";
-import {availableSearchData, theBuilds, theBuildsAsTreeData, theBuildSearchPaginationParams, theBuildSearchParams} from "./state/builds.selectors";
 import {resetSearchParams, toSearchPage, updateSearchParams} from "./state/builds.actions";
 import {pipe} from "rxjs";
+import {searchData, theBuilds, theBuildSearchPaginationParams, theBuildSearchParams} from "./state/builds.selectors";
+import {CommonModule} from "@angular/common";
+import {BuildSearchForm} from "../shared/ui/builds/build-search.form";
+import {BuildsAccordion} from "../shared/ui/builds/builds.accordion";
+import {Paginator} from "../shared/ui/paginator";
+import {CoreModule} from "../core/core.module";
 
 @Component({
   template: `
@@ -16,33 +21,32 @@ import {pipe} from "rxjs";
           (updateSearch)="updateSearch($event)"
           (resetSearch)="resetSearch()"
         >
-          <!--            (updateSearchParams)="updateSearchParams($event)"-->
-          <!--            (resetSearch)="resetSearch()"-->
-          <!--            (addSearchLabel)="openAddLabelDialog()"-->
-          <!--            (removeSearchLabel)="removeSearchLabel($event)"-->
         </bz-build-search-form>
       </div>
       <bz-paginator
         [maxSize]="10" [paginationParams]="(thePaginationParams$|async)!"
         (toPage)="toPage($event)"
       ></bz-paginator>
-      <!--      <bb-builds-accordion [builds]="(theBuilds$ | async)!"></bb-builds-accordion>-->
-      <!--      <bb-build-label-tree *ngFor="let build of theBuilds$ | async" [data]="build"></bb-build-label-tree>-->
-      <bb-card title="Search Results">
-        <bb-build-data-tree
-          [data]="(theBuildsTree$)!"
-        ></bb-build-data-tree>
-      </bb-card>
+      <bb-builds-accordion
+        [builds]="(theBuilds$ | async)!"
+      ></bb-builds-accordion>
     </div>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule,
+    CoreModule,
+    BuildSearchForm,
+    BuildsAccordion,
+    Paginator
+  ]
 })
 export class BuildsPage {
-  availableSearchData$ = this.store.pipe(select(availableSearchData))
+  availableSearchData$ = this.store.pipe(select(searchData))
   theSearch$ = this.store.pipe(select(theBuildSearchParams))
   theBuilds$ = this.store.pipe(select(theBuilds))
   thePaginationParams$ = this.store.pipe(select(theBuildSearchPaginationParams))
-  theBuildsTree$ = this.store.select(pipe(theBuildsAsTreeData))
 
   updateSearch(search: IBuildSearchParams): void {
     this.store.dispatch(updateSearchParams({search}))

@@ -10,13 +10,16 @@ import {Buildz} from "./core";
 import {EffectsModule} from "@ngrx/effects";
 import {StatsEffects} from "./core/state/stats/stats.effects";
 import * as ProjectActions from "./core/state/projects/project.actions";
-import {SharedModule} from "./shared/shared.module";
 import {alertReducer} from "./core/state/alerts/alert.state";
 import {statsReducer} from "./core/state/stats/stats.state";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {navReducer} from "./core/state/nav/nav.reducer";
 import {ProjectEffects} from "./core/state/projects/project.effects";
 import {projectsReducer} from "./core/state/projects/project.reducer";
+import {BuildBroToolbar} from "./shared/ui/nav/build-bro.toolbar";
+import {SidenavPanel} from "./shared/ui/nav/sidenav.panel";
+import {AlertPanel} from "./shared/ui/alert.panel";
+import {HttpClient, HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -25,8 +28,11 @@ import {projectsReducer} from "./core/state/projects/project.reducer";
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    SharedModule,
     AppRoutingModule,
+    BuildBroToolbar,
+    SidenavPanel,
+    AlertPanel,
+    HttpClientModule,
     StoreModule.forRoot({
       'alert': alertReducer,
       'stats': statsReducer,

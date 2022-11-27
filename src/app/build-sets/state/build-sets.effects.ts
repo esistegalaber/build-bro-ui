@@ -1,8 +1,8 @@
 import {Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import * as BuildSetActions from './build-sets.actions'
+import * as CoreActions from '../../core/actions'
 import {catchError, exhaustMap, map, switchMap} from "rxjs/operators";
-import {backendErrorOccurred} from "../../core/state/alerts/alert.actions";
 import {of} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {Store} from "@ngrx/store";
@@ -15,7 +15,7 @@ export class BuildSetsEffects {
     ofType(BuildSetActions.loadBuildSetNames),
     exhaustMap(() => this.http.get<string[]>(`/api/v1/build-sets/names`).pipe(
       map((names: string[]) => BuildSetActions.buildSetNamesLoaded({names})),
-      catchError((errorResponse) => of(backendErrorOccurred({errorResponse})))
+      catchError((errorResponse) => of(CoreActions.backendErrorOccurred({errorResponse})))
     ))
   ))
 
@@ -26,9 +26,10 @@ export class BuildSetsEffects {
       map((buildSet: IBuildSet) =>
         BuildSetActions.buildSetLoaded({buildSet})
       ),
-      catchError(errorResponse => of(backendErrorOccurred({errorResponse})))
+      catchError(errorResponse => of(CoreActions.backendErrorOccurred({errorResponse})))
     ))
   ))
+
 
   constructor(private actions$: Actions, private http: HttpClient, private store: Store<Buildz>, private router: Router) {
   }
