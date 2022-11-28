@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input} from "@angular/
 import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {MatStepperModule} from "@angular/material/stepper";
-import {IBuildTemplate, IProject} from "../../../core";
+import {IBuildTemplate, IProject} from "../../core";
 
 @Component({
   selector: 'bb-build-set-template-form',

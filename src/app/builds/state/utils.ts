@@ -10,9 +10,6 @@ export function toBuildNode(build: IBuild): IBuildDataTreeNode {
 }
 
 function toBuildLabelNode(label: IBuildLabel): IBuildDataTreeNode {
-  if (label.key.indexOf(".") > 0) {
-
-  }
   return {
     label: label,
     name: `${label.key}::${label.value}`,

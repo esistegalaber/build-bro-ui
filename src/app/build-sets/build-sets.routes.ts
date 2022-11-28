@@ -9,7 +9,7 @@ import {BuildSetsEffects} from "./state/build-sets.effects";
 import {Buildz} from "../core";
 import * as BuildSetActions from "./state/build-sets.actions";
 
-export const routes: Route[] = [
+export const buildSetRoutes: Route[] = [
   {
     path: '',
     component: BuildSetsPage,

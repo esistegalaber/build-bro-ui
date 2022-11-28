@@ -5,14 +5,14 @@ import {RouterModule} from "@angular/router";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {Store} from "@ngrx/store";
-import {Buildz} from "../../../core";
-import {toggleSideNavState} from "../../../core/state/nav/nav.actions";
+import {Buildz} from "../../core";
+import {toggleSideNavState} from "../../core/state/nav/nav.actions";
 
 @Component({
   selector: 'bb-toolbar',
   template: `
     <mat-toolbar color="primary">
-      <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon" (click)="toggleSideNavState()">
+      <button mat-icon-button aria-label="Example icon-button with menu icon" (click)="toggleSideNavState()">
         <mat-icon>menu</mat-icon>
       </button>
       <a routerLink="/">Build Bruh</a>

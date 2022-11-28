@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
-import {IPaginationParams} from "../../core";
+import {IPaginationParams} from "../core";
 import {CommonModule} from "@angular/common";
 import {MatPaginatorModule} from "@angular/material/paginator";
 

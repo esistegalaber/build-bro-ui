@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core'
-import {IBuildDataTreeNode} from '../../../core'
+import {IBuildDataTreeNode} from '../../core'
 import {CommonModule} from "@angular/common";
 import {BuildId} from "./build.id";
 import {MatExpansionModule} from "@angular/material/expansion";

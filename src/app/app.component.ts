@@ -1,9 +1,15 @@
-import {Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {select, Store} from "@ngrx/store";
 import {alertState, theSideNavState} from "./core/state/selectors";
 import {Buildz} from "./core";
 import {clearAlert} from "./core/state/alerts/alert.actions";
 import {loadBuildStats} from "./core/state/stats/stats.state";
+import {CommonModule} from "@angular/common";
+import {BuildBroToolbar} from "./ui/nav/build-bro.toolbar";
+import {SidenavPanel} from "./ui/nav/sidenav.panel";
+import {AlertPanel} from "./ui/alert.panel";
+import {RouterModule} from "@angular/router";
+import * as CoreActions from "./core/actions";
 
 @Component({
   selector: 'bz-root',
@@ -18,9 +24,14 @@ import {loadBuildStats} from "./core/state/stats/stats.state";
         <router-outlet></router-outlet>
       </main>
     </div>
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    CommonModule, BuildBroToolbar, SidenavPanel, AlertPanel, RouterModule
+  ]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'build-bro-ui';
   alert = this.store.pipe(select(alertState))
   sideNavState = this.store.pipe(select(theSideNavState))
@@ -31,5 +42,9 @@ export class AppComponent {
 
   constructor(private store: Store<Buildz>) {
     this.store.dispatch(loadBuildStats())
+  }
+
+  ngOnInit(): void {
+    this.store.dispatch(CoreActions.loadProjects())
   }
 }

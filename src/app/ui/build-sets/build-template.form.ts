@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
-import {IBranch, IBuildTemplate} from "../../../core";
+import {EditableBuildTemplate, IBranch, IBuildTemplate} from "../../core";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
 import {MatCardModule} from "@angular/material/card";
@@ -39,9 +39,9 @@ import {MatInputModule} from "@angular/material/input";
 
 export class BuildTemplateForm {
   @Input()
-  template!: IBuildTemplate
+  template!: EditableBuildTemplate
   @Output()
-  templateUpdated = new EventEmitter<IBuildTemplate>()
+  templateUpdated = new EventEmitter<EditableBuildTemplate>()
 
   selectedBranch(selected: IBranch, selectable: IBranch): boolean {
     return selected?.id === selectable?.id

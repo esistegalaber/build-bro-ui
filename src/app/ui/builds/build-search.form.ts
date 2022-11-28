@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core'
-import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "../../../core";
+import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "../../core";
 import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";

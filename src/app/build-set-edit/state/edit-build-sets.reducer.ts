@@ -1,13 +1,24 @@
 import {createReducer, on} from '@ngrx/store'
 import * as EditBuildSetActions from './edit-build-sets.actions'
-import {IBuildSetTemplate} from "../../core";
+import {IBuildSet, IBuildSetTemplate} from "../../core";
 import {deepClone} from "../../core/util/deep-clone";
-import {EditBuildSetState} from "./edit-build-sets.model";
 
+export const FEATURE_EDIT_BUILD_SET = 'edit-build-set'
+
+/**
+ * Defines the state for this 'Edit a BuildSetTemplate' Feature.
+ */
+export interface EditBuildSetState {
+  theTemplate: IBuildSetTemplate
+  buildSet: IBuildSet
+}
+
+/**
+ * The actual initial state.
+ */
 export const INITIAL_STATE: EditBuildSetState = {
   theTemplate: {
     name: '',
-    projects: [],
     buildTemplates: []
   },
   buildSet: {
@@ -17,33 +28,53 @@ export const INITIAL_STATE: EditBuildSetState = {
 }
 export const editBuildSetReducer = createReducer(
   INITIAL_STATE,
+  on(EditBuildSetActions.buildSetTemplateLoaded, (state: EditBuildSetState, {theTemplate}) => {
+    return {...state, theTemplate}
+  }),
   on(EditBuildSetActions.buildSetLoaded, (state: EditBuildSetState, {buildSet}) => {
     return {...state, buildSet}
   }),
   on(EditBuildSetActions.newBuildSet, (state: EditBuildSetState) => {
     return INITIAL_STATE
   }),
-  on(EditBuildSetActions.changeProjectSelection, (state: EditBuildSetState, {project, selected}) => {
+  // on(EditBuildSetActions.changeProjectSelection, (state: EditBuildSetState, {selectedProjectNames}) => {
+  //   const theTemplate: IBuildSetTemplate = deepClone(state.theTemplate)
+  //   if (selected) {
+  //     theTemplate.buildTemplates.push({
+  //       project: project.name,
+  //       branch: null,
+  //       labels: {},
+  //       buildNumber: null
+  //     })
+  //   } else {
+  //     theTemplate.buildTemplates = theTemplate.buildTemplates.filter((b) => b.project !== project.name)
+  //   }
+  //   return {...state, theTemplate};
+  //   return state;
+  // }),
+  on(EditBuildSetActions.projectAdded, (state: EditBuildSetState, {project}) => {
     const theTemplate: IBuildSetTemplate = deepClone(state.theTemplate)
-    if (selected) {
-      theTemplate.projects.push(project)
-      theTemplate.buildTemplates.push({
-        project: project,
-        branch: null,
-        labels: {},
-        buildNumber: null
-      })
-
-    } else {
-      theTemplate.projects = theTemplate.projects.filter((p) => p.id !== project.id)
-      theTemplate.buildTemplates = theTemplate.buildTemplates.filter((b) => b.project.id !== project.id)
-    }
+    theTemplate.buildTemplates.push({
+      project: project.name,
+      branch: null,
+      labels: {},
+      buildNumber: null
+    })
+    return {...state, theTemplate};
+  }),
+  on(EditBuildSetActions.projectRemoved, (state: EditBuildSetState, {project}) => {
+    const theTemplate: IBuildSetTemplate = deepClone(state.theTemplate)
+    theTemplate.buildTemplates = theTemplate.buildTemplates.filter((b) => b.project !== project.name)
     return {...state, theTemplate};
   }),
   on(EditBuildSetActions.buildTemplateUpdated, (state: EditBuildSetState, {buildTemplate}) => {
     const theTemplate: IBuildSetTemplate = deepClone(state.theTemplate)
-    theTemplate.buildTemplates = theTemplate.buildTemplates.filter((template) => template.project.id !== buildTemplate.project.id)
-    theTemplate.buildTemplates.push(buildTemplate)
+    const theBuildTemplate = theTemplate.buildTemplates
+      .find((template) => template.project === buildTemplate.project.name)
+    if (!!theBuildTemplate) {
+      theBuildTemplate.branch = buildTemplate.branch?.name || null
+      theBuildTemplate.buildNumber = buildTemplate.buildNumber
+    }
     return {...state, theTemplate};
   })
 )

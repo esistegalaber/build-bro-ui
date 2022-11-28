@@ -1,13 +1,13 @@
 import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {select, Store} from "@ngrx/store";
-import {allActiveProjects, Buildz, IBuildTemplate, IProject} from "../core";
+import {allActiveProjects, Buildz, EditableBuildTemplate, IBuildTemplate, IProject} from "../core";
 import {CommonModule} from "@angular/common";
 import {CoreModule} from "../core/core.module";
-import {BuildsAccordion} from "../shared/ui/builds/builds.accordion";
-import {BuildTemplateForm} from "../shared/ui/build-sets/build-template.form";
+import {BuildsAccordion} from "../ui/builds/builds.accordion";
+import {BuildTemplateForm} from "../ui/build-sets/build-template.form";
 import {MatStepperModule} from "@angular/material/stepper";
-import {ProjectSelector} from "../shared/ui/build-sets/project.selector";
-import {theBuilds, theBuildTemplates, theTemplate} from "./state/edit-build-sets.selectors";
+import {ProjectSelector} from "../ui/build-sets/project.selector";
+import {theBuilds, theEditableBuildTemplates, theEditableTemplate} from "./state/edit-build-sets.selectors";
 import * as EditBuildSetActions from "./state/edit-build-sets.actions";
 
 @Component({
@@ -17,7 +17,9 @@ import * as EditBuildSetActions from "./state/edit-build-sets.actions";
       <mat-step label="Select Projects for the BuildSet">
         <bb-project-selector
           [projects]="(projects$ | async)!"
-          (projectSelectedChange)="projectSelected($event.project, $event.selected)"
+          [editableBuildSetTemplate]="(currentBuildSetTemplate$ | async)!"
+          (projectAdded)="projectAdded($event)"
+          (projectRemoved)="projectRemoved($event)"
         ></bb-project-selector>
       </mat-step>
       <mat-step label="Builds">
@@ -33,6 +35,8 @@ import * as EditBuildSetActions from "./state/edit-build-sets.actions";
         <bb-builds-accordion [builds]="(theBuilds$|async)!"></bb-builds-accordion>
       </mat-step>
     </mat-vertical-stepper>
+
+    {{currentBuildSetTemplate$|async|json}}
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
@@ -41,16 +45,20 @@ import * as EditBuildSetActions from "./state/edit-build-sets.actions";
   ]
 })
 export class EditBuildSetPage {
-  currentBuildSetTemplate$ = this.store.pipe(select(theTemplate))
-  currentBuildTemplates$ = this.store.pipe(select(theBuildTemplates))
+  currentBuildSetTemplate$ = this.store.pipe(select(theEditableTemplate))
+  currentBuildTemplates$ = this.store.pipe(select(theEditableBuildTemplates))
   projects$ = this.store.pipe(select(allActiveProjects))
   theBuilds$ = this.store.pipe(select(theBuilds))
 
-  projectSelected(project: IProject, selected: boolean): void {
-    this.store.dispatch(EditBuildSetActions.changeProjectSelection({project, selected}))
+  projectAdded(project: IProject): void {
+    this.store.dispatch(EditBuildSetActions.projectAdded({project}))
   }
 
-  buildTemplateUpdated(buildTemplate: IBuildTemplate): void {
+  projectRemoved(project: IProject): void {
+    this.store.dispatch(EditBuildSetActions.projectRemoved({project}))
+  }
+
+  buildTemplateUpdated(buildTemplate: EditableBuildTemplate): void {
     this.store.dispatch(EditBuildSetActions.buildTemplateUpdated({buildTemplate}))
   }
 

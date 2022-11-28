@@ -5,9 +5,9 @@ import {resetSearchParams, toSearchPage, updateSearchParams} from "./state/build
 import {pipe} from "rxjs";
 import {searchData, theBuilds, theBuildSearchPaginationParams, theBuildSearchParams} from "./state/builds.selectors";
 import {CommonModule} from "@angular/common";
-import {BuildSearchForm} from "../shared/ui/builds/build-search.form";
-import {BuildsAccordion} from "../shared/ui/builds/builds.accordion";
-import {Paginator} from "../shared/ui/paginator";
+import {BuildSearchForm} from "../ui/builds/build-search.form";
+import {BuildsAccordion} from "../ui/builds/builds.accordion";
+import {Paginator} from "../ui/paginator";
 import {CoreModule} from "../core/core.module";
 
 @Component({

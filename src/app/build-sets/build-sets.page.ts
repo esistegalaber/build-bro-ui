@@ -5,12 +5,12 @@ import {theBuildSet, theBuildSetTemplateNames} from "./state/build-sets.selector
 import {loadBuildSetOf} from "./state/build-sets.actions";
 import {CommonModule} from "@angular/common";
 import {CoreModule} from "../core/core.module";
-import {ListComponent} from "../shared/ui/generic/list.component";
+import {ListComponent} from "../ui/generic/list.component";
 import {RouterModule} from "@angular/router";
 import {MatIconModule} from "@angular/material/icon";
-import {BuildsAccordion} from "../shared/ui/builds/builds.accordion";
+import {BuildsAccordion} from "../ui/builds/builds.accordion";
 import {MatButtonModule} from "@angular/material/button";
-import {BuildSetAccordion} from "../shared/ui/build-sets/build-set.accordion";
+import {BuildSetAccordion} from "../ui/build-sets/build-set.accordion";
 
 @Component({
   template: `
@@ -26,7 +26,7 @@ import {BuildSetAccordion} from "../shared/ui/build-sets/build-set.accordion";
 
       <div class="basis-2/3">
         <div class="flex flex-row-reverse mb-4">
-          <button mat-fab [routerLink]="['/new-build-set']">
+          <button mat-fab [routerLink]="['/','edit-build-set']">
             <mat-icon>add_circle</mat-icon>
           </button>
         </div>

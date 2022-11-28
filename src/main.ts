@@ -1,12 +1,39 @@
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
-import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
+import {enableProdMode, importProvidersFrom} from '@angular/core';
+import {environment} from './environments/environment';
+import {AppComponent} from "./app/app.component";
+import {StoreModule} from "@ngrx/store";
+import {alertReducer} from "./app/core/state/alerts/alert.state";
+import {statsReducer} from "./app/core/state/stats/stats.state";
+import {navReducer} from "./app/core/state/nav/nav.reducer";
+import {projectsReducer} from "./app/core/state/projects/project.reducer";
+import {bootstrapApplication, BrowserModule} from "@angular/platform-browser";
+import {provideRouter} from "@angular/router";
+import {appRoutes} from "./app/app.routes";
+import {EffectsModule} from "@ngrx/effects";
+import {StatsEffects} from "./app/core/state/stats/stats.effects";
+import {ProjectEffects} from "./app/core/state/projects/project.effects";
+import {provideHttpClient} from "@angular/common/http";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {StoreDevtoolsModule} from "@ngrx/store-devtools";
 
 if (environment.production) {
   enableProdMode();
 }
-
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+bootstrapApplication(AppComponent, {
+  providers: [
+    importProvidersFrom([
+      BrowserModule,
+      BrowserAnimationsModule,
+      StoreModule.forRoot({
+        'alert': alertReducer,
+        'stats': statsReducer,
+        'nav': navReducer,
+        'projects': projectsReducer
+      }),
+      EffectsModule.forRoot([StatsEffects, ProjectEffects]),
+      StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production})
+    ]),
+    provideRouter(appRoutes),
+    provideHttpClient()
+  ]
+}).catch(err => console.error(err));

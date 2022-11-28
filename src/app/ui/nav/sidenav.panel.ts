@@ -4,7 +4,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatListModule} from "@angular/material/list";
 import {RouterModule} from "@angular/router";
-import {INavState, ISideNav} from "../../../core";
+import {INavState, ISideNav} from "../../core";
 
 @Component({
   selector: 'bz-sidenav',

@@ -140,14 +140,13 @@ export interface IBuildSetState {
 export interface IBuildSetTemplate {
   id?: number
   name: string
-  projects: IProject[]
   buildTemplates: IBuildTemplate[]
 }
 
 export interface IBuildTemplate {
   id?: number,
-  project: IProject
-  branch: IBranch | null,
+  project: string
+  branch: string | null,
   labels: { [key: string]: string }
   buildNumber: number | null
 }
@@ -251,4 +250,26 @@ export interface INavState {
 export interface ISideNav {
   visible: boolean
   text: boolean
+}
+
+
+/**
+ * Defines the data needed to edit a BuildSetTemplate.
+ */
+export interface EditableBuildSetTemplate {
+  id?: number
+  name: string
+  projects: IProject[]
+  // buildTemplates: IBuildTemplate[]
+}
+
+/**
+ * Defines the data needed to edit a BuildTemplate.
+ */
+export interface EditableBuildTemplate {
+  id?: number,
+  project: IProject
+  branch: IBranch | null,
+  labels: { [key: string]: string }
+  buildNumber: number | null
 }

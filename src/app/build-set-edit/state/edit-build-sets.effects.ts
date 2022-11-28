@@ -9,14 +9,14 @@ import {select, Store} from "@ngrx/store";
 import {Buildz, IBuildSet} from "../../core";
 import * as CoreActions from "../../core/actions";
 import {Router} from "@angular/router";
-import {theCurrentBuildTemplatesForVerification} from "./edit-build-sets.selectors";
+import {theBuildTemplates, theCurrentBuildTemplatesForVerification} from "./edit-build-sets.selectors";
 
 @Injectable()
 export class EditBuildSetsEffects {
   verifyBuildsOfEnv$ = createEffect(() => this.actions$.pipe(
     ofType(EditBuildSetActions.buildTemplateUpdated),
-    withLatestFrom(this.store.pipe(select(theCurrentBuildTemplatesForVerification))),
-    switchMap(([action, artifacts]) => this.http.post<IBuildSet>(`/api/v1/build-sets/verify`, artifacts).pipe(
+    withLatestFrom(this.store.pipe(select(theBuildTemplates))),
+    switchMap(([action, theBuildTemplates]) => this.http.post<IBuildSet>(`/api/v1/build-sets/verify`, theBuildTemplates).pipe(
       map((buildSet: IBuildSet) => EditBuildSetActions.buildSetLoaded({buildSet})),
       catchError(errorResponse => of(CoreActions.backendErrorOccurred({errorResponse})))
     ))
