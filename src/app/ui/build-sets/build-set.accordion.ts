@@ -1,12 +1,7 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core'
 import {IBuild, IBuildSet} from '../../core'
 import {CommonModule} from "@angular/common";
-import {MatExpansionModule} from "@angular/material/expansion";
-import {MatListModule} from "@angular/material/list";
 import {BuildId} from "../builds/build.id";
-import {MatCardModule} from "@angular/material/card";
-import {MatButtonModule} from "@angular/material/button";
-import {MatIconModule} from "@angular/material/icon";
 import {RouterLink} from "@angular/router";
 import {BuildsAccordion} from "../builds/builds.accordion";
 
@@ -88,11 +83,6 @@ import {BuildsAccordion} from "../builds/builds.accordion";
   imports: [
     CommonModule,
     BuildId,
-    MatExpansionModule,
-    MatListModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
     RouterLink,
     BuildsAccordion
   ]

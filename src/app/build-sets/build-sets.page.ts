@@ -5,11 +5,8 @@ import {theBuildSet, theBuildSetTemplateNames, theSelectedBuildSetName} from "./
 import {loadBuildSetOf} from "./state/build-sets.actions";
 import {CommonModule} from "@angular/common";
 import {CoreModule} from "../core/core.module";
-import {ListComponent} from "../ui/generic/list.component";
 import {RouterModule} from "@angular/router";
-import {MatIconModule} from "@angular/material/icon";
 import {BuildsAccordion} from "../ui/builds/builds.accordion";
-import {MatButtonModule} from "@angular/material/button";
 import {BuildSetAccordion} from "../ui/build-sets/build-set.accordion";
 import {BuildSetNamesMenu} from "../ui/build-sets/build-set-names.menu";
 
@@ -37,7 +34,12 @@ import {BuildSetNamesMenu} from "../ui/build-sets/build-set-names.menu";
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    CommonModule, CoreModule, ListComponent, RouterModule, MatIconModule, BuildsAccordion, MatButtonModule, BuildSetAccordion, BuildSetNamesMenu
+    CommonModule,
+    CoreModule,
+    RouterModule,
+    BuildsAccordion,
+    BuildSetAccordion,
+    BuildSetNamesMenu
   ]
 })
 export class BuildSetsPage {

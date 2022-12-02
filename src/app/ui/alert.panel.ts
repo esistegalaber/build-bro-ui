@@ -1,10 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core'
 import {IAlert} from '../core'
 import {CommonModule} from "@angular/common";
-import {MatSnackBarModule} from "@angular/material/snack-bar";
-import {MatCardModule} from "@angular/material/card";
-import {MatButtonModule} from "@angular/material/button";
-import {MatIconModule} from "@angular/material/icon";
 
 @Component({
   selector: 'bz-alert-panel',
