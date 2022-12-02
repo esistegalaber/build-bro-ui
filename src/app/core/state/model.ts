@@ -63,8 +63,11 @@ export interface IBuildLabel {
 
 export interface IPaginationParams {
   totalElements: number
+  totalPages: number
   pageSize: number
   currentPage: number
+  hasNext: boolean
+  hasPrevious: boolean
 }
 
 export interface IBuild {
@@ -269,7 +272,8 @@ export interface EditableBuildSetTemplate {
 export interface EditableBuildTemplate {
   id?: number,
   project: IProject
-  branch: IBranch | null,
+  projectSelected: boolean
+  branch: IBranch | null
   labels: { [key: string]: string }
   buildNumber: number | null
 }

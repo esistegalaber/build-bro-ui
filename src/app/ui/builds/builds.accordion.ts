@@ -2,44 +2,49 @@ import {ChangeDetectionStrategy, Component, Input} from '@angular/core'
 import {IBuild} from '../../core'
 import {CommonModule} from "@angular/common";
 import {BuildId} from "./build.id";
-import {MatExpansionModule} from "@angular/material/expansion";
-import {MatListModule} from "@angular/material/list";
 
 @Component({
   selector: 'bb-builds-accordion',
   template: `
-    <mat-accordion>
-      <mat-expansion-panel *ngFor="let build of builds">
-        <mat-expansion-panel-header>
-          <bb-build-id [build]="build"></bb-build-id>
-        </mat-expansion-panel-header>
-        <mat-list>
-          <mat-list-item>
-            <div class="grid grid-cols-2">
-              <div>
-                <strong>Build Bro ID</strong>
-              </div>
-              <div>
-                {{build.id}}
-              </div>
-            </div>
-          </mat-list-item>
-          <mat-list-item *ngFor="let label of build.labels">
-            <div class="grid grid-cols-2">
-              <div>
-                <strong>{{label.key}}</strong>
-              </div>
-              <div>
-                {{label.value}}
-              </div>
-            </div>
-          </mat-list-item>
-        </mat-list>
-      </mat-expansion-panel>
-    </mat-accordion>
+      <div class="collapse collapse-arrow border rounded-box" *ngFor="let build of builds">
+          <input type="checkbox" class="peer"/>
+          <div class="collapse-title">
+              <bb-build-id [build]="build"></bb-build-id>
+          </div>
+          <div class="collapse-content">
+              <table class="table ">
+                  <tr>
+                      <td>Build Bro ID:</td>
+                      <td>{{build.id}}</td>
+                  </tr>
+                  <tr *ngFor="let label of build.labels">
+                      <td>{{label.key}}</td>
+                      <td>{{label.value}}</td>
+                  </tr>
+              </table>
+          </div>
+      </div>
+
+      <!--    <div tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box" *ngFor="let build of builds">-->
+      <!--      <div class="collapse-title text-xl font-medium">-->
+      <!--        <bb-build-id [build]="build"></bb-build-id>-->
+      <!--      </div>-->
+      <!--      <div class="collapse-content">-->
+      <!--        <table class="table ">-->
+      <!--          <tr>-->
+      <!--            <td>Build Bro ID:</td>-->
+      <!--            <td>{{build.id}}</td>-->
+      <!--          </tr>-->
+      <!--          <tr *ngFor="let label of build.labels">-->
+      <!--            <td>{{label.key}}</td>-->
+      <!--            <td>{{label.value}}</td>-->
+      <!--          </tr>-->
+      <!--        </table>-->
+      <!--      </div>-->
+      <!--    </div>-->
   `,
   standalone: true,
-  imports: [CommonModule, BuildId, MatExpansionModule, MatListModule],
+  imports: [CommonModule, BuildId],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BuildsAccordion {

@@ -10,22 +10,17 @@ import {MatIconModule} from "@angular/material/icon";
   selector: 'bz-alert-panel',
   template: `
     <ng-container *ngIf="alert.message.length>0">
-      <div class="grid grid-cols-3">
-        <div></div>
-        <mat-card>
-          <mat-card-header>
-            {{alert.heading}}
-          </mat-card-header>
-          <mat-card-content>
-            {{alert.message}}
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-raised-button color="primary" (click)="clearAlert.emit()">
-              <mat-icon>close</mat-icon>
-            </button>
-          </mat-card-actions>
-        </mat-card>
-        <div></div>
+      <div class="alert shadow-lg m-2" [ngClass]="alert.type">
+        <div>
+          <span class="material-icons">close</span>
+          <div>
+            <h3 class="font-bold">{{alert.heading}}</h3>
+            <div class="text-xs">{{alert.message}}</div>
+          </div>
+        </div>
+        <div class="flex-none">
+          <button class="btn btn-sm" (click)="clearAlert.emit()">OK</button>
+        </div>
       </div>
     </ng-container>
     <!--      <div [class]="'alert alert-dismissible alert-'+ alert.type" role="alert">-->
@@ -38,9 +33,7 @@ import {MatIconModule} from "@angular/material/icon";
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [
-    CommonModule, MatSnackBarModule, MatCardModule, MatButtonModule, MatIconModule
-  ]
+  imports: [CommonModule]
 })
 export class AlertPanel {
   @Input()

@@ -19,8 +19,12 @@ export const theBuildSearchPaginationParams = createSelector(buildsState,
   buildsState, (state: BuildsState): Model.IPaginationParams => {
     return {
       totalElements: state.result.totalElements,
+      totalPages: state.result.totalPages,
       pageSize: state.search.pageSize,
-      currentPage: state.search.page + 1
+      currentPage: state.search.page,
+      hasNext: state.result.hasNext,
+      hasPrevious: state.result.hasPrevious
+
     }
   }
 )

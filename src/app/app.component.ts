@@ -14,15 +14,17 @@ import * as CoreActions from "./core/actions";
 @Component({
   selector: 'bz-root',
   template: `
-    <bb-toolbar></bb-toolbar>
-    <div class="min-h-screen flex">
-      <nav class="shrink">
+    <div class="container">
+      <div>
+        <bb-toolbar></bb-toolbar>
+      </div>
+      <div class="min-h-screen flex flex-row">
         <bz-sidenav [sideNav]="(sideNavState|async)!"></bz-sidenav>
-      </nav>
-      <main class="flex-grow min-w-0 overflow-auto p-2">
-        <bz-alert-panel (clearAlert)="clearAlert()" [alert]="(alert | async)!"></bz-alert-panel>
-        <router-outlet></router-outlet>
-      </main>
+        <main class="flex-grow min-w-0 overflow-auto p-1">
+          <bz-alert-panel (clearAlert)="clearAlert()" [alert]="(alert | async)!"></bz-alert-panel>
+          <router-outlet></router-outlet>
+        </main>
+      </div>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

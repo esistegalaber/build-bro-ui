@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {select, Store} from "@ngrx/store";
 import {Buildz} from "../core";
-import {theBuildSet, theBuildSetTemplateNames} from "./state/build-sets.selectors";
+import {theBuildSet, theBuildSetTemplateNames, theSelectedBuildSetName} from "./state/build-sets.selectors";
 import {loadBuildSetOf} from "./state/build-sets.actions";
 import {CommonModule} from "@angular/common";
 import {CoreModule} from "../core/core.module";
@@ -11,24 +11,24 @@ import {MatIconModule} from "@angular/material/icon";
 import {BuildsAccordion} from "../ui/builds/builds.accordion";
 import {MatButtonModule} from "@angular/material/button";
 import {BuildSetAccordion} from "../ui/build-sets/build-set.accordion";
+import {BuildSetNamesMenu} from "../ui/build-sets/build-set-names.menu";
 
 @Component({
   template: `
-    <h2>Build Sets</h2>
     <div class="flex flex-row gap-2">
       <div class="basis-1/4 overflow-hidden">
-        <bb-list
-          [data]="(names$ | async)!"
-          (selected)="onBuildSetTemplateSelected($event)"
-        >
-        </bb-list>
+        <bb-build-set-names-menu
+          [names]="(names$ | async)!"
+          [selectedName]="(theSelectedBuildSetName$|async)!"
+          (buildSetSelected)="onBuildSetTemplateSelected($event)"
+        ></bb-build-set-names-menu>
       </div>
 
-      <div class="basis-2/3">
-        <div class="flex flex-row-reverse mb-4">
-          <button mat-fab [routerLink]="['/','edit-build-set']">
-            <mat-icon>add_circle</mat-icon>
-          </button>
+      <div class="basis-3/4">
+        <div class="flex justify-end">
+          <a class="btn btn-circle" routerLink="/edit-build-set">
+            <span class="material-icons">add</span>
+          </a>
         </div>
         <bb-build-set-accordion [buildSet]="(theBuildSet$|async)!"></bb-build-set-accordion>
       </div>
@@ -37,12 +37,13 @@ import {BuildSetAccordion} from "../ui/build-sets/build-set.accordion";
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    CommonModule, CoreModule, ListComponent, RouterModule, MatIconModule, BuildsAccordion, MatButtonModule, BuildSetAccordion
+    CommonModule, CoreModule, ListComponent, RouterModule, MatIconModule, BuildsAccordion, MatButtonModule, BuildSetAccordion, BuildSetNamesMenu
   ]
 })
 export class BuildSetsPage {
   names$ = this.store.pipe(select(theBuildSetTemplateNames))
   theBuildSet$ = this.store.pipe(select(theBuildSet))
+  theSelectedBuildSetName$ = this.store.pipe(select(theSelectedBuildSetName))
 
   onBuildSetTemplateSelected(templateName: string): void {
     this.store.dispatch(loadBuildSetOf({templateName}))

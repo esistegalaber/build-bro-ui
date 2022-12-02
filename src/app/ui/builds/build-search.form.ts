@@ -15,55 +15,51 @@ import {MatSelectModule} from "@angular/material/select";
       <form novalidate (submit)="updateSearch.emit(theSearch)">
         <div class="grid grid-cols-3 gap-4">
 
-          <mat-form-field>
-            <mat-label>Projects</mat-label>
-            <mat-select [(value)]="theSearch.project" data-cy-id="project-select" (selectionChange)="updateSearch.emit(theSearch)">
-              <mat-option [value]="">All</mat-option>
-              <mat-option *ngFor="let project of available.projectNames" [value]="project">{{project}}</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <select class="select select-bordered select-sm w-full max-w-xs"
+                  name="project"
+                  [(ngModel)]="theSearch.project"
+                  (ngModelChange)="updateSearch.emit(theSearch)"
+          >
+            <option value="">All</option>
+            <option *ngFor="let project of available.projectNames" [value]="project">{{project}}</option>
+          </select>
 
-          <mat-form-field>
-            <mat-label>Branches <span *ngIf="!!theSearch.project">({{available.projectBranches[theSearch.project].length}})</span></mat-label>
-            <mat-select [(value)]="theSearch.branch" data-cy-id="branch-select" (selectionChange)="updateSearch.emit(theSearch)">
-              <mat-option [value]="">All</mat-option>
-              <mat-option *ngFor="let branch of available.projectBranches[theSearch.project]" [value]="branch">{{branch}}</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <select class="select select-bordered select-sm w-full max-w-xs"
+                  name="branch"
+                  [(ngModel)]="theSearch.branch"
+                  (ngModelChange)="updateSearch.emit(theSearch)"
+          >
+            <option value="">All</option>
+            <option *ngFor="let branch of available.projectBranches[theSearch.project]" [value]="branch">{{branch}}</option>
+          </select>
 
-          <mat-form-field>
-            <mat-label>PageSize</mat-label>
-            <mat-select [(value)]="theSearch.pageSize" data-cy-id="pagesize-select" (selectionChange)="updateSearch.emit(theSearch)">
-              <mat-option [value]="3">3 / Page</mat-option>
-              <mat-option [value]="10">10 / Page</mat-option>
-              <mat-option [value]="25">25 / Page</mat-option>
-              <mat-option [value]="50">50 / Page</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <select class="select select-bordered select-sm w-full max-w-xs"
+                  name="pageSize"
+                  [(ngModel)]="theSearch.pageSize"
+                  (ngModelChange)="updateSearch.emit(theSearch)"
+          >
+            <option [value]="10">10 / Page</option>
+            <option [value]="25">25 / Page</option>
+            <option [value]="50">50 / Page</option>
+          </select>
 
-          <mat-form-field class="col">
-            <mat-label>Min BuildNumber</mat-label>
-            <input matInput type="number" placeholder="Min BuildNumber"
-                   name="minBuildNumber"
-                   [(ngModel)]="theSearch.minBuildNumber"
-                   (keyup)="updateSearch.emit(theSearch)">
-          </mat-form-field>
+          <input type="text" placeholder="Min BuildNumber" class="input input-bordered input-sm w-full max-w-xs"
+                 name="minBuildNumber"
+                 [(ngModel)]="theSearch.minBuildNumber"
+                 (keyup)="updateSearch.emit(theSearch)"/>
 
-          <mat-form-field class="col">
-            <mat-label>Max BuildNumber</mat-label>
-            <input matInput type="number" placeholder="Min BuildNumber"
-                   name="maxBuildNumber"
-                   [(ngModel)]="theSearch.maxBuildNumber"
-                   (keyup)="updateSearch.emit(theSearch)">
-          </mat-form-field>
+          <input type="text" placeholder="Max BuildNumber" class="input input-bordered input-sm w-full max-w-xs"
+                 name="maxBuildNumber"
+                 [(ngModel)]="theSearch.maxBuildNumber"
+                 (keyup)="updateSearch.emit(theSearch)"/>
 
           <div class="grid grid-cols-2 gap-4">
-            <button mat-raised-button color="accent" (click)="resetSearch.emit()">
-              <mat-icon>restart_alt</mat-icon>
+            <button class="btn btn-sm btn-accent" (click)="resetSearch.emit()">
+              <span class="material-icons">restart_alt</span>
               Reset
             </button>
-            <button mat-raised-button color="primary" (click)="updateSearch.emit(theSearch)" css="btn-sm btn-secondary">
-              <mat-icon>search</mat-icon>
+            <button class="btn btn-sm btn-primary" (click)="updateSearch.emit(theSearch)" css="btn-sm btn-secondary">
+              <span class="material-icons">search</span>
               (Re-)Load
             </button>
           </div>
@@ -92,7 +88,7 @@ import {MatSelectModule} from "@angular/material/select";
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    CommonModule, FormsModule, MatFormFieldModule, MatIconModule, MatButtonModule, MatInputModule, MatSelectModule
+    CommonModule, FormsModule
   ]
 })
 export class BuildSearchForm {

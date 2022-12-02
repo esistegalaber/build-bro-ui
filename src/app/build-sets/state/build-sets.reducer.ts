@@ -5,6 +5,7 @@ import {BuildSetsState} from "./build-sets.model";
 
 export const INITIAL_ENVIRONMENT_BUILDS: BuildSetsState = {
   names: [],
+  selected: null,
   buildSet: {
     name: '',
     builds: {}
@@ -15,6 +16,11 @@ export const buildSetReducer = createReducer(
   on(BuildSetActions.buildSetNamesLoaded, (state: BuildSetsState, {names}) => {
     return {
       ...state, names
+    }
+  }),
+  on(BuildSetActions.loadBuildSetOf, (state: BuildSetsState, {templateName}) => {
+    return {
+      ...state, selected: templateName
     }
   }),
   on(BuildSetActions.buildSetLoaded, (state: BuildSetsState, {buildSet}) => {

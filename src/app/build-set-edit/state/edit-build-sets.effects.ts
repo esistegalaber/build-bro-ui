@@ -1,15 +1,14 @@
 import {Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import * as EditBuildSetActions from './edit-build-sets.actions'
-import {catchError, map, switchMap, withLatestFrom} from "rxjs/operators";
-import {backendErrorOccurred} from "../../core/state/alerts/alert.actions";
+import {catchError, map, switchMap, tap, withLatestFrom} from "rxjs/operators";
 import {of} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {select, Store} from "@ngrx/store";
-import {Buildz, IBuildSet} from "../../core";
+import {Buildz, IBuildSet, IBuildSetTemplate} from "../../core";
 import * as CoreActions from "../../core/actions";
 import {Router} from "@angular/router";
-import {theBuildTemplates, theCurrentBuildTemplatesForVerification} from "./edit-build-sets.selectors";
+import {theBuildTemplates, theTemplate} from "./edit-build-sets.selectors";
 
 @Injectable()
 export class EditBuildSetsEffects {
@@ -18,6 +17,23 @@ export class EditBuildSetsEffects {
     withLatestFrom(this.store.pipe(select(theBuildTemplates))),
     switchMap(([action, theBuildTemplates]) => this.http.post<IBuildSet>(`/api/v1/build-sets/verify`, theBuildTemplates).pipe(
       map((buildSet: IBuildSet) => EditBuildSetActions.buildSetLoaded({buildSet})),
+      catchError(errorResponse => of(CoreActions.backendErrorOccurred({errorResponse})))
+    ))
+  ))
+
+  save$ = createEffect(() => this.actions$.pipe(
+    ofType(EditBuildSetActions.saveWith),
+    withLatestFrom(this.store.pipe(select(theTemplate))),
+    switchMap(([action, theTemplate]) => this.http.post<IBuildSetTemplate>(`/api/v1/build-sets`, theTemplate).pipe(
+      map((theTemplate: IBuildSetTemplate) => {
+        this.store.dispatch(CoreActions.frontendInfo(
+          {
+            alertMessage:
+              {heading: 'Saved', message: `Successfully saved BuildSet Template with id = ${theTemplate.id}`}
+          })
+        )
+        return EditBuildSetActions.buildSetTemplateLoaded({theTemplate})
+      }),
       catchError(errorResponse => of(CoreActions.backendErrorOccurred({errorResponse})))
     ))
   ))

@@ -1,18 +1,33 @@
 import {createReducer, on} from '@ngrx/store'
 import * as EditBuildSetActions from './edit-build-sets.actions'
+import {navigateTo} from './edit-build-sets.actions'
 import {IBuildSet, IBuildSetTemplate} from "../../core";
 import {deepClone} from "../../core/util/deep-clone";
 
 export const FEATURE_EDIT_BUILD_SET = 'edit-build-set'
-
+export const NAV_PROJECTS: string = 'projects'
+export const NAV_BRANCHES: string = 'branches'
+export const NAV_LABELS: string = 'labels'
+export const NAV_VERIFICATION: string = 'verification'
 /**
  * Defines the state for this 'Edit a BuildSetTemplate' Feature.
  */
 export interface EditBuildSetState {
   theTemplate: IBuildSetTemplate
-  buildSet: IBuildSet
+  buildSet: IBuildSet,
+  nav: InnerNavState
 }
 
+export interface InnerNavState {
+  [index: string]: boolean
+}
+
+const INITIAL_NAV = {
+  projects: false,
+  branches: false,
+  labels: false,
+  verification: false
+}
 /**
  * The actual initial state.
  */
@@ -24,7 +39,8 @@ export const INITIAL_STATE: EditBuildSetState = {
   buildSet: {
     name: '',
     builds: {}
-  }
+  },
+  nav: INITIAL_NAV
 }
 export const editBuildSetReducer = createReducer(
   INITIAL_STATE,
@@ -37,21 +53,6 @@ export const editBuildSetReducer = createReducer(
   on(EditBuildSetActions.newBuildSet, (state: EditBuildSetState) => {
     return INITIAL_STATE
   }),
-  // on(EditBuildSetActions.changeProjectSelection, (state: EditBuildSetState, {selectedProjectNames}) => {
-  //   const theTemplate: IBuildSetTemplate = deepClone(state.theTemplate)
-  //   if (selected) {
-  //     theTemplate.buildTemplates.push({
-  //       project: project.name,
-  //       branch: null,
-  //       labels: {},
-  //       buildNumber: null
-  //     })
-  //   } else {
-  //     theTemplate.buildTemplates = theTemplate.buildTemplates.filter((b) => b.project !== project.name)
-  //   }
-  //   return {...state, theTemplate};
-  //   return state;
-  // }),
   on(EditBuildSetActions.projectAdded, (state: EditBuildSetState, {project}) => {
     const theTemplate: IBuildSetTemplate = deepClone(state.theTemplate)
     theTemplate.buildTemplates.push({
@@ -76,5 +77,14 @@ export const editBuildSetReducer = createReducer(
       theBuildTemplate.buildNumber = buildTemplate.buildNumber
     }
     return {...state, theTemplate};
+  }),
+  on(EditBuildSetActions.saveWith, (state: EditBuildSetState, {name}) => {
+    const theTemplate = {...state.theTemplate}
+    theTemplate.name = name
+    return {...state, theTemplate};
+  }), on(navigateTo, (state: EditBuildSetState, {navState}) => {
+    const nav: InnerNavState = {...INITIAL_NAV}
+    nav[navState] = true
+    return {...state, nav}
   })
 )

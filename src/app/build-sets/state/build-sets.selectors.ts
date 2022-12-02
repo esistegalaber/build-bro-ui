@@ -11,3 +11,7 @@ export const theBuildSet = createSelector(
   buildSetState,
   (state: BuildSetsState): IBuildSet => state.buildSet
 )
+export const theSelectedBuildSetName = createSelector(
+  buildSetState,
+  (state: BuildSetsState): string | null => state.selected
+)

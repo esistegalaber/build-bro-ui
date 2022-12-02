@@ -2,7 +2,6 @@ import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {select, Store} from "@ngrx/store";
 import {Buildz, IBuildSearchParams} from "../core";
 import {resetSearchParams, toSearchPage, updateSearchParams} from "./state/builds.actions";
-import {pipe} from "rxjs";
 import {searchData, theBuilds, theBuildSearchPaginationParams, theBuildSearchParams} from "./state/builds.selectors";
 import {CommonModule} from "@angular/common";
 import {BuildSearchForm} from "../ui/builds/build-search.form";
@@ -23,10 +22,12 @@ import {CoreModule} from "../core/core.module";
         >
         </bz-build-search-form>
       </div>
-      <bz-paginator
-        [maxSize]="10" [paginationParams]="(thePaginationParams$|async)!"
-        (toPage)="toPage($event)"
-      ></bz-paginator>
+      <div class="mx-auto">
+        <bb-paginator
+          [maxSize]="10" [paginationParams]="(thePaginationParams$|async)!"
+          (toPage)="toPage($event)"
+        ></bb-paginator>
+      </div>
       <bb-builds-accordion
         [builds]="(theBuilds$ | async)!"
       ></bb-builds-accordion>

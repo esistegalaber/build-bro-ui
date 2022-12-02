@@ -9,7 +9,7 @@ export const INITIAL_BUILD_SEARCH: BuildsState = {
     project: '',
     branch: '',
     page: 0,
-    pageSize: 3,
+    pageSize: 10,
     labels: {},
     sortAttribute: 'buildNumber',
     sortDirection: 'DESC',

@@ -15,13 +15,13 @@ export const alertReducer = createReducer(
     console.log(errorResponse)
     if (!!errorResponse?.error?.message) {
       return {
-        type: 'danger',
+        type: 'alert-error',
         heading: errorResponse.error.description,
         message: errorResponse.error.message
       }
     } else {
       return {
-        type: 'danger',
+        type: 'alert-error',
         heading: `Unexpected Error: ${errorResponse?.status}`,
         message: `An unexpected error occurred. ${errorResponse?.status}`
       }
@@ -29,14 +29,14 @@ export const alertReducer = createReducer(
   }),
   on(AlertActions.frontendInfo, (state: IAlert, {alertMessage}) => {
     return {
-      type: 'info',
+      type: 'alert-info',
       heading: alertMessage.heading,
       message: alertMessage.message
     }
   }),
   on(AlertActions.frontendError, (state: IAlert, {alertMessage}) => {
     return {
-      type: 'danger',
+      type: 'alert-error',
       heading: alertMessage.heading,
       message: alertMessage.message
     }

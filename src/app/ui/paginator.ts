@@ -1,37 +1,31 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
 import {IPaginationParams} from "../core";
 import {CommonModule} from "@angular/common";
-import {MatPaginatorModule} from "@angular/material/paginator";
 
 @Component({
-  selector: 'bz-paginator',
+  selector: 'bb-paginator',
   template: `
-    <mat-paginator
-      [pageSize]="paginationParams.pageSize"
-      [length]="paginationParams.totalElements"
-      (page)="toPage.emit($event.pageIndex)"
-      showFirstLastButtons="true"
-      hidePageSize="true"
-    ></mat-paginator>
-    <!--    <div class="row" *ngIf="paginationParams.totalElements > 0">-->
-    <!--      <div class="col d-flex justify-content-center">-->
-    <!--        &lt;!&ndash;        <ngb-pagination [collectionSize]="paginationParams.totalElements"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                        [pageSize]="paginationParams.pageSize"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                        [maxSize]="maxSize"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                        [(page)]="paginationParams.currentPage"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                        size="sm"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                        (pageChange)="toPage.emit($event)"&ndash;&gt;-->
-    <!--        &lt;!&ndash;                        data-cy-id="paginator"&ndash;&gt;-->
-    <!--        &lt;!&ndash;        >&ndash;&gt;-->
-    <!--        &lt;!&ndash;        </ngb-pagination>&ndash;&gt;-->
-    <!--      </div>-->
-    <!--    </div>-->
-    <!--    <div class="d-flex justify-content-center">-->
-    <!--    </div>-->
+    <ng-container *ngIf="paginationParams.totalElements>0">
+      <div class="btn-group">
+        <button class="btn btn-sm" [ngClass]="{'btn-disabled':!paginationParams.hasPrevious}" (click)="toPage.emit(0)">
+          <span class="material-icons">fast_rewind</span>
+        </button>
+        <button class="btn btn-sm" [class.btn-disabled]="!paginationParams.hasPrevious" (click)="toPage.emit(paginationParams.currentPage-1)">
+          <span class="material-icons">arrow_back_ios</span>
+        </button>
+        <button class="btn btn-sm btn-active">{{paginationParams.currentPage + 1}} / {{paginationParams.totalPages}}</button>
+        <button class="btn btn-sm" [class.btn-disabled]="!paginationParams.hasNext" (click)="toPage.emit(paginationParams.currentPage+1)">
+          <span class="material-icons">arrow_forward_ios</span>
+        </button>
+        <button class="btn btn-sm" [class.btn-disabled]="!paginationParams.hasNext" (click)="toPage.emit(paginationParams.totalPages-1)">
+          <span class="material-icons">fast_forward</span>
+        </button>
+      </div>
+    </ng-container>
   `,
   standalone: true,
   imports: [
-    CommonModule, MatPaginatorModule
+    CommonModule
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

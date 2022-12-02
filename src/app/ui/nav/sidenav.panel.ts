@@ -1,27 +1,31 @@
 import {ChangeDetectionStrategy, Component, Input} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {MatButtonModule} from "@angular/material/button";
-import {MatIconModule} from "@angular/material/icon";
-import {MatListModule} from "@angular/material/list";
 import {RouterModule} from "@angular/router";
-import {INavState, ISideNav} from "../../core";
+import {ISideNav} from "../../core";
 
 @Component({
   selector: 'bz-sidenav',
   template: `
-    <mat-nav-list *ngIf="sideNav.visible" [ngClass]="{'w-48': sideNav.text}">
-      <a mat-list-item [routerLink]="['builds']">
-        <mat-icon>build</mat-icon>
-        <span *ngIf="sideNav.text">&nbsp;Builds</span>
-      </a>
-      <a mat-list-item [routerLink]="['build-sets']">
-        <mat-icon>construction</mat-icon>
-        <span *ngIf="sideNav.text">&nbsp;Build Sets</span>
-      </a>
-    </mat-nav-list>
+    <nav class="shrink">
+      <ul class="menu bg-base-100 p-2 rounded-box" [ngClass]="{'w-48': sideNav.text}">
+        <li>
+          <a [routerLink]="['builds']">
+            <span class="material-icons">build</span>
+            <span *ngIf="sideNav.text">&nbsp;Builds</span>
+          </a>
+        </li>
+        <li>
+          <a [routerLink]="['build-sets']">
+            <span class="material-icons">construction</span>
+            <span *ngIf="sideNav.text">&nbsp;Build Sets</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
   `,
   standalone: true,
-  imports: [CommonModule, MatListModule, MatButtonModule, MatIconModule, RouterModule],
+  imports: [CommonModule, RouterModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SidenavPanel {
