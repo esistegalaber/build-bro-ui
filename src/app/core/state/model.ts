@@ -48,7 +48,8 @@ export interface IBuildSearchParams extends IBaseSearchParams {
   branch: string
   minBuildNumber: string | null
   maxBuildNumber: string | null
-  labels: any
+  labels: { [key: string]: string }
+
 }
 
 export interface IBuildSearchResult extends IBaseSearchResult {

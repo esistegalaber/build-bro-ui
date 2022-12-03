@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {select, Store} from "@ngrx/store";
 import {Buildz, IBuildSearchParams} from "../core";
-import {resetSearchParams, toSearchPage, updateSearchParams} from "./state/builds.actions";
+import * as SearchActions from "./state/builds.actions";
 import {searchData, theBuilds, theBuildSearchPaginationParams, theBuildSearchParams} from "./state/builds.selectors";
 import {CommonModule} from "@angular/common";
 import {BuildSearchForm} from "../ui/builds/build-search.form";
@@ -50,17 +50,18 @@ export class BuildsPage {
   thePaginationParams$ = this.store.pipe(select(theBuildSearchPaginationParams))
 
   updateSearch(search: IBuildSearchParams): void {
-    this.store.dispatch(updateSearchParams({search}))
+    this.store.dispatch(SearchActions.updateSearchParams({search}))
   }
 
   resetSearch(): void {
-    this.store.dispatch(resetSearchParams())
+    this.store.dispatch(SearchActions.resetSearchParams())
   }
 
   toPage(page: number): void {
-    this.store.dispatch(toSearchPage({page}))
+    this.store.dispatch(SearchActions.toSearchPage({page}))
   }
 
   constructor(private store: Store<Buildz>) {
+    this.store.dispatch(SearchActions.doBuildSearch())
   }
 }
