@@ -9,7 +9,7 @@ import {EditableBuildTemplate, IBranch, IProject} from "../../core";
     <div class="card shadow-sm">
       <div class="card-body">
         <div class="card-title">{{template.project.name}}</div>
-        <form #templateForm="ngForm" (ngSubmit)="updateTemplate()">
+        <form #templateForm="ngForm" (ngSubmit)="templateUpdated.emit(template)">
           <div class="flex flex-grow flex-row gap-2">
             <div class="basis-1/12">
               <div class="form-control">
@@ -46,27 +46,6 @@ import {EditableBuildTemplate, IBranch, IProject} from "../../core";
         </form>
       </div>
     </div>
-    <!--    <div class="container p-1">-->
-    <!--      <mat-card>-->
-    <!--        <mat-card-header>-->
-    <!--          <mat-card-title>Build for Project "{{template.project.name}}"</mat-card-title>-->
-    <!--        </mat-card-header>-->
-    <!--        <mat-card-content>-->
-    <!--          <div class="grid grid-rows-1 gap-4">-->
-    <!--            <mat-form-field>-->
-    <!--              <mat-label>Branches ({{template.project.branches.length}})</mat-label>-->
-    <!--              <mat-select [(ngModel)]="template.branch" (selectionChange)="templateUpdated.emit(template)" [compareWith]="selectedBranch">-->
-    <!--                <mat-option *ngFor="let branch of template.project.branches" [value]="branch">{{branch.name}}</mat-option>-->
-    <!--              </mat-select>-->
-    <!--            </mat-form-field>-->
-    <!--            <mat-form-field>-->
-    <!--              <mat-label>Specific BuildNumber</mat-label>-->
-    <!--              <input matInput type="number" [(ngModel)]="template.buildNumber" (change)="templateUpdated.emit(template)">-->
-    <!--            </mat-form-field>-->
-    <!--          </div>-->
-    <!--        </mat-card-content>-->
-    <!--      </mat-card>-->
-    <!--    </div>-->
   `,
   standalone: true,
   imports: [CommonModule, FormsModule],

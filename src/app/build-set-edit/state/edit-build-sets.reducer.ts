@@ -9,25 +9,15 @@ export const NAV_PROJECTS: string = 'projects'
 export const NAV_BRANCHES: string = 'branches'
 export const NAV_LABELS: string = 'labels'
 export const NAV_VERIFICATION: string = 'verification'
+
 /**
  * Defines the state for this 'Edit a BuildSetTemplate' Feature.
  */
 export interface EditBuildSetState {
   theTemplate: IBuildSetTemplate
   buildSet: IBuildSet,
-  nav: InnerNavState
 }
 
-export interface InnerNavState {
-  [index: string]: boolean
-}
-
-const INITIAL_NAV = {
-  projects: false,
-  branches: false,
-  labels: false,
-  verification: false
-}
 /**
  * The actual initial state.
  */
@@ -39,8 +29,7 @@ export const INITIAL_STATE: EditBuildSetState = {
   buildSet: {
     name: '',
     builds: {}
-  },
-  nav: INITIAL_NAV
+  }
 }
 export const editBuildSetReducer = createReducer(
   INITIAL_STATE,
@@ -82,9 +71,5 @@ export const editBuildSetReducer = createReducer(
     const theTemplate = {...state.theTemplate}
     theTemplate.name = name
     return {...state, theTemplate};
-  }), on(navigateTo, (state: EditBuildSetState, {navState}) => {
-    const nav: InnerNavState = {...INITIAL_NAV}
-    nav[navState] = true
-    return {...state, nav}
   })
 )

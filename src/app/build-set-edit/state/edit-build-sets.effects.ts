@@ -9,11 +9,12 @@ import {Buildz, IBuildSet, IBuildSetTemplate} from "../../core";
 import * as CoreActions from "../../core/actions";
 import {Router} from "@angular/router";
 import {theBuildTemplates, theTemplate} from "./edit-build-sets.selectors";
+import {buildSetTemplateLoaded} from "./edit-build-sets.actions";
 
 @Injectable()
 export class EditBuildSetsEffects {
   verifyBuildsOfEnv$ = createEffect(() => this.actions$.pipe(
-    ofType(EditBuildSetActions.buildTemplateUpdated),
+    ofType(EditBuildSetActions.buildTemplateUpdated, EditBuildSetActions.buildSetTemplateLoaded),
     withLatestFrom(this.store.pipe(select(theBuildTemplates))),
     switchMap(([action, theBuildTemplates]) => this.http.post<IBuildSet>(`/api/v1/build-sets/verify`, theBuildTemplates).pipe(
       map((buildSet: IBuildSet) => EditBuildSetActions.buildSetLoaded({buildSet})),

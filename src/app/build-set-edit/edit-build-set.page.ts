@@ -5,15 +5,18 @@ import {CommonModule} from "@angular/common";
 import {CoreModule} from "../core/core.module";
 import {BuildsAccordion} from "../ui/builds/builds.accordion";
 import {BuildTemplateForm} from "./ui/build-template.form";
-import {theBuilds, theEditableBuildTemplates, theEditableTemplate, theInnerNavState} from "./state/edit-build-sets.selectors";
+import {theBuilds, theEditableBuildTemplates, theEditableTemplate} from "./state/edit-build-sets.selectors";
 import * as EditBuildSetActions from "./state/edit-build-sets.actions";
 import {navigateTo} from "./state/edit-build-sets.actions";
-import {BuildSetNameForm} from "../ui/build-sets/build-set-name.form";
-import {EditBuildSetTabs} from "./ui/edit-build-set.tabs";
+import {BuildSetNameForm} from "./ui/build-set-name.form";
 import {BuildSetAccordion} from "../ui/build-sets/build-set.accordion";
 
 @Component({
   template: `
+    <bb-build-set-name-form
+      [editableTemplate]="(currentBuildSetTemplate$ | async)!"
+      (save)="saveTemplate($event)"
+    ></bb-build-set-name-form>
     <bb-build-template-form
       *ngFor="let buildTemplate of (EditableBuildTemplates$ | async | deepClone)!"
       [template]="buildTemplate"
@@ -25,26 +28,6 @@ import {BuildSetAccordion} from "../ui/build-sets/build-set.accordion";
     <bb-builds-accordion
       [builds]="(theBuilds$|async)!">
     </bb-builds-accordion>
-    <!--    <bb-build-set-name-->
-    <!--      [editableTemplate]="(currentBuildSetTemplate$ | async | deepClone)!"-->
-    <!--      (save)="saveTemplate($event)"-->
-    <!--    ></bb-build-set-name>-->
-
-    <!--    <ng-container *ngIf="navState$|async as theNavState">-->
-    <!--      <bb-edit-build-set-tabs-->
-    <!--        [nav]="theNavState"-->
-    <!--        (toNavState)="toNavState($event)"-->
-    <!--      ></bb-edit-build-set-tabs>-->
-
-    <!--      <ng-container *ngIf="theNavState['branches']">-->
-    <!--      </ng-container>-->
-    <!--      <ng-container *ngIf="theNavState['verification']">-->
-    <!--        <bb-build-set-name-->
-    <!--          [editableTemplate]="(currentBuildSetTemplate$ | async | deepClone)!"-->
-    <!--          (save)="saveTemplate($event)"-->
-    <!--        ></bb-build-set-name>-->
-    <!--      </ng-container>-->
-    <!--    </ng-container>-->
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
@@ -54,12 +37,10 @@ import {BuildSetAccordion} from "../ui/build-sets/build-set.accordion";
     BuildsAccordion,
     BuildTemplateForm,
     BuildSetNameForm,
-    EditBuildSetTabs,
     BuildSetAccordion
   ]
 })
 export class EditBuildSetPage {
-  navState$ = this.store.pipe(select(theInnerNavState))
   currentBuildSetTemplate$ = this.store.pipe(select(theEditableTemplate))
   EditableBuildTemplates$ = this.store.pipe(select(theEditableBuildTemplates))
   projects$ = this.store.pipe(select(allActiveProjects))

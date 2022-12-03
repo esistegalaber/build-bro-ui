@@ -1,6 +1,6 @@
 import {createFeatureSelector, createSelector} from "@ngrx/store";
 import {allActiveProjects, EditableBuildSetTemplate, EditableBuildTemplate, IBuild, IBuildSetTemplate, IBuildTemplate, IProject} from "../../core/";
-import {EditBuildSetState, FEATURE_EDIT_BUILD_SET, InnerNavState} from "./edit-build-sets.reducer";
+import {EditBuildSetState, FEATURE_EDIT_BUILD_SET} from "./edit-build-sets.reducer";
 import {mapToEditableBuildTemplate} from "./utils";
 
 export const myState = createFeatureSelector<EditBuildSetState>(FEATURE_EDIT_BUILD_SET)
@@ -23,9 +23,6 @@ export const theEditableBuildTemplates = createSelector(
   theTemplate, allActiveProjects, (buildSetTemplate: IBuildSetTemplate, projects: IProject[]): EditableBuildTemplate[] => {
     return projects.map((project) => mapToEditableBuildTemplate(project, buildSetTemplate))
   }
-)
-export const theInnerNavState = createSelector(
-  myState, (state: EditBuildSetState): InnerNavState => state.nav
 )
 export const theBuilds = createSelector(
   myState, (state: EditBuildSetState): IBuild[] => Object.values(state.buildSet.builds)
