@@ -4,7 +4,6 @@ import {Buildz} from "../core";
 import {theBuildSet, theBuildSetTemplateNames, theSelectedBuildSetName} from "./state/build-sets.selectors";
 import {loadBuildSetOf} from "./state/build-sets.actions";
 import {CommonModule} from "@angular/common";
-import {CoreModule} from "../core/core.module";
 import {RouterModule} from "@angular/router";
 import {BuildsAccordion} from "../ui/builds/builds.accordion";
 import {BuildSetAccordion} from "../ui/build-sets/build-set.accordion";
@@ -35,7 +34,6 @@ import {BuildSetNamesMenu} from "../ui/build-sets/build-set-names.menu";
   standalone: true,
   imports: [
     CommonModule,
-    CoreModule,
     RouterModule,
     BuildsAccordion,
     BuildSetAccordion,
@@ -49,10 +47,6 @@ export class BuildSetsPage {
 
   onBuildSetTemplateSelected(templateName: string): void {
     this.store.dispatch(loadBuildSetOf({templateName}))
-  }
-
-  newBuildSetTemplate(): void {
-    console.log("New BuildSets")
   }
 
   constructor(private store: Store<Buildz>) {

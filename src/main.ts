@@ -15,6 +15,8 @@ import {ProjectEffects} from "./app/core/state/projects/project.effects";
 import {provideHttpClient} from "@angular/common/http";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
+import {serversReducer} from "./app/core/state/servers/server.reducer";
+import {ServerEffects} from "./app/core/state/servers/server.effects";
 
 if (environment.production) {
   enableProdMode();
@@ -28,9 +30,10 @@ bootstrapApplication(AppComponent, {
         'alert': alertReducer,
         'stats': statsReducer,
         'nav': navReducer,
-        'projects': projectsReducer
+        'projects': projectsReducer,
+        'servers': serversReducer
       }),
-      EffectsModule.forRoot([StatsEffects, ProjectEffects]),
+      EffectsModule.forRoot([StatsEffects, ProjectEffects, ServerEffects]),
       StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production})
     ]),
     provideRouter(appRoutes),

@@ -14,18 +14,18 @@ import * as CoreActions from "./core/actions";
 @Component({
   selector: 'bz-root',
   template: `
-    <div class="container">
-      <div>
-        <bb-toolbar></bb-toolbar>
+      <div class="container">
+          <div>
+              <bb-toolbar></bb-toolbar>
+          </div>
+          <div class="min-h-screen flex flex-row">
+              <bz-sidenav [sideNav]="(sideNavState|async)!"></bz-sidenav>
+              <main class="flex-grow min-w-0 overflow-auto p-1">
+                  <bz-alert-panel (clearAlert)="clearAlert()" [alert]="(alert | async)!"></bz-alert-panel>
+                  <router-outlet></router-outlet>
+              </main>
+          </div>
       </div>
-      <div class="min-h-screen flex flex-row">
-        <bz-sidenav [sideNav]="(sideNavState|async)!"></bz-sidenav>
-        <main class="flex-grow min-w-0 overflow-auto p-1">
-          <bz-alert-panel (clearAlert)="clearAlert()" [alert]="(alert | async)!"></bz-alert-panel>
-          <router-outlet></router-outlet>
-        </main>
-      </div>
-    </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
@@ -34,7 +34,7 @@ import * as CoreActions from "./core/actions";
   ]
 })
 export class AppComponent implements OnInit {
-  title = 'build-bro-ui';
+  theme = 'dark';
   alert = this.store.pipe(select(alertState))
   sideNavState = this.store.pipe(select(theSideNavState))
 
@@ -48,5 +48,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.dispatch(CoreActions.loadProjects())
+    this.store.dispatch(CoreActions.loadServers())
   }
 }

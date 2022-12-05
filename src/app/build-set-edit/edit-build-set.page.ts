@@ -1,8 +1,7 @@
 import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {select, Store} from "@ngrx/store";
-import {allActiveProjects, Buildz, EditableBuildSetTemplate, EditableBuildTemplate, IProject} from "../core";
+import {allActiveProjects, Buildz, CloningPipe, EditableBuildSetTemplate, EditableBuildTemplate, IProject} from "../core";
 import {CommonModule} from "@angular/common";
-import {CoreModule} from "../core/core.module";
 import {BuildsAccordion} from "../ui/builds/builds.accordion";
 import {BuildTemplateForm} from "./ui/build-template.form";
 import {theBuilds, theEditableBuildTemplates, theEditableTemplate} from "./state/edit-build-sets.selectors";
@@ -13,31 +12,31 @@ import {BuildSetAccordion} from "../ui/build-sets/build-set.accordion";
 
 @Component({
   template: `
-    <bb-build-set-name-form
-      [editableTemplate]="(currentBuildSetTemplate$ | async)!"
-      (save)="saveTemplate($event)"
-    ></bb-build-set-name-form>
-    <bb-build-template-form
-      *ngFor="let buildTemplate of (EditableBuildTemplates$ | async | deepClone)!"
-      [template]="buildTemplate"
-      (projectAdded)="projectAdded($event)"
-      (projectRemoved)="projectRemoved($event)"
-      (templateUpdated)="buildTemplateUpdated($event)"
-    >
-    </bb-build-template-form>
-    <bb-builds-accordion
-      [builds]="(theBuilds$|async)!">
-    </bb-builds-accordion>
+      <bb-build-set-name-form
+              [editableTemplate]="(currentBuildSetTemplate$ | async)!"
+              (save)="saveTemplate($event)"
+      ></bb-build-set-name-form>
+      <bb-build-template-form
+              *ngFor="let buildTemplate of (EditableBuildTemplates$ | async | deepClone)!"
+              [template]="buildTemplate"
+              (projectAdded)="projectAdded($event)"
+              (projectRemoved)="projectRemoved($event)"
+              (templateUpdated)="buildTemplateUpdated($event)"
+      >
+      </bb-build-template-form>
+      <bb-builds-accordion
+              [builds]="(theBuilds$|async)!">
+      </bb-builds-accordion>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     CommonModule,
-    CoreModule,
     BuildsAccordion,
     BuildTemplateForm,
     BuildSetNameForm,
-    BuildSetAccordion
+    BuildSetAccordion,
+    CloningPipe
   ]
 })
 export class EditBuildSetPage {

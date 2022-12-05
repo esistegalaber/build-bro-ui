@@ -1,5 +1,6 @@
 export interface Buildz {
   projects: ProjectsState
+  servers: ServersState
   stats: IBuildStats
   nav: INavState
 }
@@ -102,6 +103,7 @@ export interface IBranch {
   id: number
   name: string
   active: boolean
+  projectId: number
 }
 
 export interface IProjectBranch {
@@ -175,11 +177,8 @@ export interface IAlertMessage {
 /**
  * A State interface that represents all Server related State data
  */
-export interface IServersState {
-  knownServers: IServer[]
-  currentServer?: IServer
-  deploysSearch?: IDeploySearch
-  deploysResult?: IDeploySearchResult
+export interface ServersState {
+  servers: IServer[]
 }
 
 /**

@@ -1,46 +1,45 @@
 import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {select, Store} from "@ngrx/store";
-import {Buildz, IBuildSearchParams} from "../core";
+import {Buildz, CloningPipe, IBuildSearchParams} from "../core";
 import * as SearchActions from "./state/builds.actions";
 import {searchData, theBuilds, theBuildSearchPaginationParams, theBuildSearchParams} from "./state/builds.selectors";
 import {CommonModule} from "@angular/common";
 import {BuildSearchForm} from "../ui/builds/build-search.form";
 import {BuildsAccordion} from "../ui/builds/builds.accordion";
 import {Paginator} from "../ui/paginator";
-import {CoreModule} from "../core/core.module";
 
 @Component({
   template: `
-    <h2>Builds</h2>
-    <div class="grid grid-cols-1 gap-4">
-      <div class="px-5">
-        <bz-build-search-form
-          [available]="(availableSearchData$|async)!"
-          [theSearch]="(theSearch$|async|deepClone)!"
-          (updateSearch)="updateSearch($event)"
-          (resetSearch)="resetSearch()"
-        >
-        </bz-build-search-form>
+      <h2>Builds</h2>
+      <div class="grid grid-cols-1 gap-4">
+          <div class="px-5">
+              <bz-build-search-form
+                      [available]="(availableSearchData$ | async)!"
+                      [theSearch]="(theSearch$ | async | deepClone)!"
+                      (updateSearch)="updateSearch($event)"
+                      (resetSearch)="resetSearch()"
+              >
+              </bz-build-search-form>
+          </div>
+          <div class="mx-auto">
+              <bb-paginator
+                      [maxSize]="10" [paginationParams]="(thePaginationParams$|async)!"
+                      (toPage)="toPage($event)"
+              ></bb-paginator>
+          </div>
+          <bb-builds-accordion
+                  [builds]="(theBuilds$ | async)!"
+          ></bb-builds-accordion>
       </div>
-      <div class="mx-auto">
-        <bb-paginator
-          [maxSize]="10" [paginationParams]="(thePaginationParams$|async)!"
-          (toPage)="toPage($event)"
-        ></bb-paginator>
-      </div>
-      <bb-builds-accordion
-        [builds]="(theBuilds$ | async)!"
-      ></bb-builds-accordion>
-    </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     CommonModule,
-    CoreModule,
     BuildSearchForm,
     BuildsAccordion,
-    Paginator
+    Paginator,
+    CloningPipe
   ]
 })
 export class BuildsPage {
