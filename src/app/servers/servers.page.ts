@@ -11,7 +11,7 @@ import * as CoreActions from "../core/actions";
 @Component({
   template: `
       <div class="grid grid-cols-2 gap-2">
-          <table class="table table-compact table-zebra w-full">
+          <table class="table table-zebra w-full">
               <thead>
               <tr>
                   <td>ID</td>

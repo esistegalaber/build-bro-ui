@@ -251,7 +251,6 @@ export interface INavState {
 }
 
 export interface ISideNav {
-  visible: boolean
   text: boolean
 }
 

@@ -34,7 +34,6 @@ import * as CoreActions from "./core/actions";
   ]
 })
 export class AppComponent implements OnInit {
-  theme = 'dark';
   alert = this.store.pipe(select(alertState))
   sideNavState = this.store.pipe(select(theSideNavState))
 
