@@ -1,6 +1,8 @@
 export interface Buildz {
-  projects: IProjects
+  projects: ProjectsState
+  servers: ServersState
   stats: IBuildStats
+  nav: INavState
 }
 
 // Base interfaces
@@ -45,9 +47,10 @@ export interface ISearchData {
 export interface IBuildSearchParams extends IBaseSearchParams {
   project: string
   branch: string
-  minBuildNumber: number | null
-  maxBuildNumber: number | null
-  labels: any
+  minBuildNumber: string | null
+  maxBuildNumber: string | null
+  labels: { [key: string]: string }
+
 }
 
 export interface IBuildSearchResult extends IBaseSearchResult {
@@ -62,8 +65,11 @@ export interface IBuildLabel {
 
 export interface IPaginationParams {
   totalElements: number
+  totalPages: number
   pageSize: number
   currentPage: number
+  hasNext: boolean
+  hasPrevious: boolean
 }
 
 export interface IBuild {
@@ -74,23 +80,30 @@ export interface IBuild {
   labels: IBuildLabel[]
 }
 
-export interface IProjects {
+export interface IBuildDataTreeNode {
+  build?: IBuild
+  label?: IBuildLabel
+  children: IBuildDataTreeNode[]
+  name: string
+}
+
+export interface ProjectsState {
+  includeInactiveProjects: boolean
   projects: IProject[]
-  projectBranches: { [key: string]: IBranch[] }
-  labelKeys: string[]
-  inactiveIncluded: boolean
-  currentProject: IProject
-  currentBranch: IBranch
 }
 
 export interface IProject {
+  id: number
   name: string
   active: boolean
+  branches: IBranch[]
 }
 
 export interface IBranch {
+  id: number
   name: string
   active: boolean
+  projectId: number
 }
 
 export interface IProjectBranch {
@@ -123,30 +136,29 @@ export interface IBuildStats {
   numberOfBranches: number
 }
 
-export interface IEnvironments {
-  knownEnvironments: IEnvironment[]
-  currentEnvironmentName: string
-  currentEnvironment: IEnvironment
-  environmentBuilds: IEnvironmentBuilds
+export interface IBuildSetState {
+  names: string[]
+  currentBuildSetName: string
+  currentTemplate: IBuildSetTemplate
+  buildSet: IBuildSet
 }
 
-export interface IEnvironment {
+export interface IBuildSetTemplate {
   id?: number
   name: string
-  internal?: boolean
-  artifacts: IArtifact[]
+  buildTemplates: IBuildTemplate[]
 }
 
-export interface IArtifact {
+export interface IBuildTemplate {
   id?: number,
-  project: string,
-  branch: string,
+  project: string
+  branch: string | null,
   labels: { [key: string]: string }
+  buildNumber: number | null
 }
 
-export interface IEnvironmentBuilds {
-  environment: string
-  internal: boolean
+export interface IBuildSet {
+  name: string
   builds: { [key: string]: IBuild }
 }
 
@@ -165,11 +177,8 @@ export interface IAlertMessage {
 /**
  * A State interface that represents all Server related State data
  */
-export interface IServersState {
-  knownServers: IServer[]
-  currentServer?: IServer
-  deploysSearch?: IDeploySearch
-  deploysResult?: IDeploySearchResult
+export interface ServersState {
+  servers: IServer[]
 }
 
 /**
@@ -208,11 +217,17 @@ export interface ICreateReservationEvent {
 /**
  * A view interface that represents a specific Deploy
  */
-export interface IDeploy {
+export interface IDeployment {
   id: number
-  deployedAt: Date
-  build: IDeployBuild
-  labels: any
+  deployedAt: string
+  builds: IBuild[]
+  labels: IDeploymentLabel[]
+}
+
+export interface IDeploymentLabel {
+  id: number
+  key: string
+  value: string
 }
 
 /**
@@ -225,7 +240,7 @@ export interface IDeployBuild {
   buildNumber: number
 }
 
-export interface IDeploySearch extends IBaseSearchParams {
+export interface IDeploymentSearch extends IBaseSearchParams {
   serverName: string
 }
 
@@ -233,6 +248,37 @@ export interface IDeploySearch extends IBaseSearchParams {
  * A Search Result interface that encapsulates all info related
  * to the results of a Deploy search
  */
-export interface IDeploySearchResult extends IBaseSearchResult {
-  deploys: IDeploy[]
+export interface IDeploymentSearchResult extends IBaseSearchResult {
+  data: IDeployment[]
+}
+
+export interface INavState {
+  sidenav: ISideNav
+}
+
+export interface ISideNav {
+  text: boolean
+}
+
+
+/**
+ * Defines the data needed to edit a BuildSetTemplate.
+ */
+export interface EditableBuildSetTemplate {
+  id?: number
+  name: string
+  projects: IProject[]
+  // buildTemplates: IBuildTemplate[]
+}
+
+/**
+ * Defines the data needed to edit a BuildTemplate.
+ */
+export interface EditableBuildTemplate {
+  id?: number,
+  project: IProject
+  projectSelected: boolean
+  branch: IBranch | null
+  labels: { [key: string]: string }
+  buildNumber: number | null
 }

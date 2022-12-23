@@ -16,14 +16,10 @@ export class BuildsEffects {
   doBuildSearch$ = createEffect(() => this.actions$.pipe(
     ofType(doBuildSearch, updateSearchParams, toSearchPage),
     withLatestFrom(this.store.pipe(select(theBuildSearchParams))),
-    map(([action, backendSearchParams]) => backendSearchParams),
-    exhaustMap((backendSearchParams) => this.http.post<IBuildSearchResult>(`/api/v1/builds/search`, backendSearchParams).pipe(
-        tap((result: IBuildSearchResult) => console.log(result)),
+    map(([action, buildSearchParams]) => buildSearchParams),
+    exhaustMap((buildSearchParams) => this.http.post<IBuildSearchResult>(`/api/v1/builds/search`, buildSearchParams).pipe(
         map((result: IBuildSearchResult) => buildSearchLoaded({result})),
-        catchError(errorResponse => {
-          console.log(errorResponse);
-          return of(AlertActions.backendErrorOccurred({errorResponse}))
-        })
+        catchError(errorResponse => of(AlertActions.backendErrorOccurred({errorResponse})))
       )
     )
   ))
@@ -33,7 +29,6 @@ export class BuildsEffects {
     exhaustMap(() => this.http.get<ISearchData>(`/api/v1/search-data`).pipe(
         map((available: ISearchData) => availableBuildSearchDataLoaded({available})),
         catchError(errorResponse => {
-          console.log(errorResponse);
           return of(AlertActions.backendErrorOccurred({errorResponse}))
         })
       )
