@@ -5,7 +5,7 @@ import {CommonModule} from "@angular/common";
 @Component({
   selector: 'bb-build-id',
   template: `
-    <span>{{build.project}}::{{build.branch}}::{{build.buildNumber}}</span>
+      <strong class="m-2">{{build.project}} :: {{build.branch}} :: {{build.buildNumber}}</strong>
   `,
   standalone: true,
   imports: [CommonModule],

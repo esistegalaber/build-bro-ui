@@ -29,9 +29,9 @@
     "@ngrx/store-devtools": "15.0.0",
     "cypress": "^11.0.1",
     "daisyui": "^2.42.1",
+    "date-fns": "^2.29.3",
     "material-icons": "^1.12.2",
-    "moment": "^2.29.4",
-    "ngx-moment": "^6.0.2",
+    "ngx-date-fns": "^10.0.1",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

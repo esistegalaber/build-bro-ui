@@ -8,5 +8,5 @@ export const appRoutes: Routes = [
   {path: 'edit-build-set', loadChildren: () => import('./build-set-edit/edit-build-set.routes').then((routes) => routes.editBuildSetRoutes)},
   {path: 'projects', loadChildren: () => import('./projects/projects.routes').then((routes) => routes.projectsRoutes)},
   {path: 'servers', loadChildren: () => import('./servers/servers.routes').then((routes) => routes.serversRoutes)},
-  {path: 'deployments', loadChildren: () => import('./deployments/deployment.routes').then((routes) => routes.deploymentRoutes)}
+  {path: 'deployments', loadChildren: () => import('./deployments/deployments.routes').then((routes) => routes.deploymentsRoutes)}
 ];

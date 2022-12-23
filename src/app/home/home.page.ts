@@ -3,7 +3,7 @@ import {select, Store} from "@ngrx/store";
 import {Buildz} from "../core/state/model";
 import {theBuildStats} from "../core/state/selectors";
 import {CommonModule} from "@angular/common";
-import {StatsPanel} from "./ui/stats.panel";
+import {StatsHero} from "./ui/stats.hero";
 
 @Component({
   template: `
@@ -13,7 +13,7 @@ import {StatsPanel} from "./ui/stats.panel";
   standalone: true,
   imports: [
     CommonModule,
-    StatsPanel
+    StatsHero
   ]
 })
 export class HomePage {

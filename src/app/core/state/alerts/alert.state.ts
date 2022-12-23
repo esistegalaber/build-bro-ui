@@ -12,7 +12,6 @@ export const INITIAL_ALERT: IAlert = {
 export const alertReducer = createReducer(
   INITIAL_ALERT,
   on(AlertActions.backendErrorOccurred, (state: IAlert, {errorResponse}) => {
-    console.log(errorResponse)
     if (!!errorResponse?.error?.message) {
       return {
         type: 'alert-error',

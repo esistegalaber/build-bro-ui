@@ -31,7 +31,6 @@ export const projectsReducer = createReducer(
     return state;
   }),
   on(ProjectActions.activateBranch, (state, {branchId}) => {
-    console.log(branchId)
     return state;
   }),
   on(ProjectActions.toggleInactiveData, (state) => {

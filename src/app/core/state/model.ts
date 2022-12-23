@@ -217,11 +217,17 @@ export interface ICreateReservationEvent {
 /**
  * A view interface that represents a specific Deploy
  */
-export interface IDeploy {
+export interface IDeployment {
   id: number
-  deployedAt: Date
-  build: IDeployBuild
-  labels: any
+  deployedAt: string
+  builds: IBuild[]
+  labels: IDeploymentLabel[]
+}
+
+export interface IDeploymentLabel {
+  id: number
+  key: string
+  value: string
 }
 
 /**
@@ -234,7 +240,7 @@ export interface IDeployBuild {
   buildNumber: number
 }
 
-export interface IDeploySearch extends IBaseSearchParams {
+export interface IDeploymentSearch extends IBaseSearchParams {
   serverName: string
 }
 
@@ -242,8 +248,8 @@ export interface IDeploySearch extends IBaseSearchParams {
  * A Search Result interface that encapsulates all info related
  * to the results of a Deploy search
  */
-export interface IDeploySearchResult extends IBaseSearchResult {
-  deploys: IDeploy[]
+export interface IDeploymentSearchResult extends IBaseSearchResult {
+  data: IDeployment[]
 }
 
 export interface INavState {

@@ -1,8 +1,14 @@
 import {createReducer, on} from '@ngrx/store'
-import {IBuildSearchResult} from '../../core'
+import {IBuildSearchParams, IBuildSearchResult} from '../../core'
 import {deepClone} from '../../core/util/deep-clone'
 import {addSearchLabel, availableBuildSearchDataLoaded, buildSearchLoaded, removeSearchLabel, resetSearchParams, searchBuildsOfProject, toSearchPage, updateSearchParams} from "./builds.actions";
-import {BuildsState} from "./builds.model";
+
+export const FEATURE_BUILDS = 'builds'
+
+export interface BuildsState {
+  search: IBuildSearchParams
+  result: IBuildSearchResult
+}
 
 export const INITIAL_BUILD_SEARCH: BuildsState = {
   search: {

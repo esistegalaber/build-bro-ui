@@ -1,11 +1,11 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core'
-import {IBuildLabel, IBuildSearchParams, IBuildSearchResult, ISearchData} from "../../core";
+import {IBuildSearchParams, IBuildSearchResult, ISearchData} from "../../core";
 import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
-import {BuildLabelInput} from "./build-label.input";
+import {BuildLabelInput} from "../../ui/builds/build-label.input";
 
 @Component({
-  selector: 'bz-build-search-form',
+  selector: 'bb-build-search-form',
   template: `
       <div class="container p-1">
           <form novalidate (submit)="updateSearch.emit(theSearch)" #searchForm="ngForm">
@@ -15,7 +15,7 @@ import {BuildLabelInput} from "./build-label.input";
                           [(ngModel)]="theSearch.project"
                           (ngModelChange)="updateSearch.emit(theSearch)"
                   >
-                      <option value="">All</option>
+                      <option value="" i18n="@@project_select_nonw">All</option>
                       <option *ngFor="let project of available.projectNames" [value]="project">{{project}}</option>
                   </select>
 

@@ -6,26 +6,26 @@ import {FormsModule} from "@angular/forms";
 @Component({
   selector: 'bb-build-label-input',
   template: `
-    <form #buildLabelForm="ngForm">
-      <div class="grid grid-cols-12">
-        <div class="col-span-4">
-          <input class="input input-bordered input-sm" type="text" placeholder="Key" name="theKey"
-                 required
-                 [(ngModel)]="key"
-          >
-        </div>
-        <div class="col-span-4">
-          <input class="input input-bordered input-sm" type="text" placeholder="Value" name="theValue"
-                 required
-                 [(ngModel)]="value">
-        </div>
-        <div class="col-span-4">
-          <button [disabled]="buildLabelForm.invalid" class="btn btn-sm" (click)="add.emit({key, value})">
-            <span class="material-icons">add</span>
-          </button>
-        </div>
-      </div>
-    </form>
+      <form #buildLabelForm="ngForm">
+          <div class="grid grid-cols-12">
+              <div class="col-span-4">
+                  <input class="input input-bordered input-sm" type="text" placeholder="Key" name="theKey"
+                         required
+                         [(ngModel)]="key"
+                  >
+              </div>
+              <div class="col-span-4">
+                  <input class="input input-bordered input-sm" type="text" placeholder="Value" name="theValue"
+                         required
+                         [(ngModel)]="value">
+              </div>
+              <div class="col-span-4">
+                  <button [disabled]="buildLabelForm.invalid" class="btn btn-sm" (click)="add.emit({key, value})">
+                      <span class="material-icons">add</span>
+                  </button>
+              </div>
+          </div>
+      </form>
   `,
   standalone: true,
   imports: [

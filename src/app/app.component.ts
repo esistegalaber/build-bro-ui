@@ -6,7 +6,7 @@ import {clearAlert} from "./core/state/alerts/alert.actions";
 import {loadBuildStats} from "./core/state/stats/stats.state";
 import {CommonModule} from "@angular/common";
 import {BuildBroToolbar} from "./ui/nav/build-bro.toolbar";
-import {SidenavPanel} from "./ui/nav/sidenav.panel";
+import {SideNav} from "./ui/nav/side.nav";
 import {AlertPanel} from "./ui/alert.panel";
 import {RouterModule} from "@angular/router";
 import * as CoreActions from "./core/actions";
@@ -30,7 +30,7 @@ import * as CoreActions from "./core/actions";
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    CommonModule, BuildBroToolbar, SidenavPanel, AlertPanel, RouterModule
+    CommonModule, BuildBroToolbar, SideNav, AlertPanel, RouterModule
   ]
 })
 export class AppComponent implements OnInit {

@@ -2,7 +2,7 @@ import {createFeatureSelector, createSelector} from "@ngrx/store";
 import * as Model from "../../core/";
 import {ISearchData} from "../../core/";
 import {theProjectsState} from "../../core";
-import {BuildsState, FEATURE_BUILDS} from "./builds.model";
+import {BuildsState, FEATURE_BUILDS} from "./builds.reducer";
 
 
 export const buildsState = createFeatureSelector<BuildsState>(FEATURE_BUILDS)
