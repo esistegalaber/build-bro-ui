@@ -4,7 +4,7 @@ import {IBuildStats} from '../../core'
 @Component({
   selector: 'bz-stats',
   template: `
-      <div class="hero min-h-screen bg-base-200 m-6">
+      <div class="hero min-h-screen bg-base-200 m-6" data-cy-id="stats-hero">
           <div class="hero-content text-center">
               <div class="max-w-md">
                   <h1 class="text-5xl font-bold">Build Bruh</h1>

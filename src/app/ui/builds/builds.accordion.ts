@@ -7,7 +7,7 @@ import {BuildId} from "./build.id";
   selector: 'bb-builds-accordion',
   template: `
       <div class="collapse collapse-arrow border rounded-box" *ngFor="let build of builds">
-          <input type="checkbox" class="peer"/>
+          <input type="checkbox" class="peer" attr.data-cy-id="build-{{build.id}}"/>
           <div class="collapse-title">
               <bb-build-id [build]="build"></bb-build-id>
           </div>
