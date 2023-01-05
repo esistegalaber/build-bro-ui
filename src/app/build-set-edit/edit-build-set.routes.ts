@@ -1,13 +1,13 @@
 import {Route} from "@angular/router";
-import {importProvidersFrom, inject} from "@angular/core";
-import {Store, StoreModule} from "@ngrx/store";
+import {importProvidersFrom} from "@angular/core";
+import {StoreModule} from "@ngrx/store";
 import {editBuildSetReducer, FEATURE_EDIT_BUILD_SET} from "./state/edit-build-sets.reducer";
 import {EffectsModule} from "@ngrx/effects";
 import {EditBuildSetsEffects} from "./state/edit-build-sets.effects";
 import {EditBuildSetPage} from "./edit-build-set.page";
-import {Buildz} from "../core";
-import * as EditBuildSetActions from "./state/edit-build-sets.actions";
-import {EditBuildSetGuard} from "./edit-build-set.guard";
+import {EditBuildSetGuard} from "./guards/edit-build-set.guard";
+import {NewBuildSetGuard} from "./guards/new-build-set.guard";
+import {CloneBuildSetGuard} from "./guards/clone-build-set.guard";
 
 export const editBuildSetRoutes: Route[] = [
   {
@@ -17,18 +17,15 @@ export const editBuildSetRoutes: Route[] = [
         StoreModule.forFeature(FEATURE_EDIT_BUILD_SET, editBuildSetReducer),
         EffectsModule.forFeature(EditBuildSetsEffects)
       ]),
-      EditBuildSetGuard
+      NewBuildSetGuard,
+      EditBuildSetGuard,
+      CloneBuildSetGuard
     ],
-    component: EditBuildSetPage,
-    canActivate: [() => dispatchNewBuildSet()],
     children: [
-      {path: ':build-set-name', component: EditBuildSetPage, canActivate: [EditBuildSetGuard]}
+      {path: 'new', component: EditBuildSetPage, canActivate: [NewBuildSetGuard]},
+      {path: ':build-set-name', component: EditBuildSetPage, canActivate: [EditBuildSetGuard]},
+      {path: 'clone/:build-set-name', component: EditBuildSetPage, canActivate: [CloneBuildSetGuard]},
+      {path: '**', redirectTo: 'new'}
     ]
   }
 ]
-
-
-function dispatchNewBuildSet() {
-  inject(Store<Buildz>).dispatch(EditBuildSetActions.newBuildSet())
-  return true;
-}

@@ -66,19 +66,11 @@ export class BuildTemplateForm {
     return some?.name === other?.name
   }
 
-  selectedBranch(selected: IBranch, selectable: IBranch): boolean {
-    return selected?.id === selectable?.id
-  }
-
   projectSelection() {
     if (this.template.projectSelected) {
       this.projectRemoved.emit(this.template.project)
     } else {
       this.projectAdded.emit(this.template.project)
     }
-  }
-
-  updateTemplate(){
-
   }
 }

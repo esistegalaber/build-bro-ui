@@ -3,15 +3,15 @@ import {allActiveProjects, EditableBuildSetTemplate, EditableBuildTemplate, IBui
 import {EditBuildSetState, FEATURE_EDIT_BUILD_SET} from "./edit-build-sets.reducer";
 import {mapToEditableBuildTemplate} from "./utils";
 
-export const myState = createFeatureSelector<EditBuildSetState>(FEATURE_EDIT_BUILD_SET)
+export const editBuildSetState = createFeatureSelector<EditBuildSetState>(FEATURE_EDIT_BUILD_SET)
 export const theTemplate = createSelector(
-  myState, (state: EditBuildSetState): IBuildSetTemplate => state.theTemplate
+  editBuildSetState, (state: EditBuildSetState): IBuildSetTemplate => state.theTemplate
 )
 export const theBuildTemplates = createSelector(
   theTemplate, (template: IBuildSetTemplate): IBuildTemplate[] => template.buildTemplates
 )
 export const theEditableTemplate = createSelector(
-  myState, allActiveProjects, (state: EditBuildSetState, allProjects: IProject[]): EditableBuildSetTemplate => {
+  editBuildSetState, allActiveProjects, (state: EditBuildSetState, allProjects: IProject[]): EditableBuildSetTemplate => {
     const theTemplate: EditableBuildSetTemplate = {
       name: state.theTemplate.name,
       projects: allProjects.filter(p => state.theTemplate.buildTemplates.map(bt => bt.project).indexOf(p.name) > -1)
@@ -25,10 +25,10 @@ export const theEditableBuildTemplates = createSelector(
   }
 )
 export const theBuilds = createSelector(
-  myState, (state: EditBuildSetState): IBuild[] => Object.values(state.buildSet.builds)
+  editBuildSetState, (state: EditBuildSetState): IBuild[] => Object.values(state.buildSet.builds)
 )
 export const theCurrentBuildTemplatesForVerification = createSelector(
-  myState, (state: EditBuildSetState) => state.theTemplate.buildTemplates.map(bt => {
+  editBuildSetState, (state: EditBuildSetState) => state.theTemplate.buildTemplates.map(bt => {
     return {
       project: bt.project,
       branch: bt.branch,

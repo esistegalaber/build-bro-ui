@@ -144,7 +144,7 @@ export interface IBuildSetState {
 }
 
 export interface IBuildSetTemplate {
-  id?: number
+  id?: number | null
   name: string
   buildTemplates: IBuildTemplate[]
 }

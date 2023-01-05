@@ -36,6 +36,12 @@ export const editBuildSetReducer = createReducer(
   on(EditBuildSetActions.buildSetTemplateLoaded, (state: EditBuildSetState, {theTemplate}) => {
     return {...state, theTemplate}
   }),
+  on(EditBuildSetActions.buildSetTemplateToCloneLoaded, (state: EditBuildSetState, {theTemplate}) => {
+    const theNewTemplate = {...theTemplate}
+    theNewTemplate.id = null
+    theNewTemplate.name = `CLONE-OF-${theTemplate.name}`
+    return {...state, theTemplate: theNewTemplate}
+  }),
   on(EditBuildSetActions.buildSetLoaded, (state: EditBuildSetState, {buildSet}) => {
     return {...state, buildSet}
   }),

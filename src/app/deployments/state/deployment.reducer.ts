@@ -1,8 +1,6 @@
 import {IDeploymentSearch, IDeploymentSearchResult} from "../../core";
 import {createReducer, on} from "@ngrx/store";
 import * as DeploymentActions from "./deployment.actions";
-import {toSearchPage} from "../../builds/state/builds.actions";
-import {BuildsState} from "../../builds/state/builds.reducer";
 
 export const FEATURE_DEPLOYMENTS = 'deployments'
 
@@ -30,8 +28,11 @@ export const deploymentsReducer = createReducer(
   on(DeploymentActions.updateDeploymentsSearch, (state, {search}) => {
     return {...state, search}
   }),
-  on(toSearchPage, (state, {page}) => {
-    const newSearch = {...state.search, page: page}
+  on(DeploymentActions.toSearchPage, (state, {page}) => {
+    const newSearch: IDeploymentSearch = {...state.search, page}
+    if(newSearch.serverName !== state.search.serverName || newSearch.pageSize !== state.search.pageSize){
+      newSearch.page = 0;
+    }
     return {
       ...state,
       search: newSearch

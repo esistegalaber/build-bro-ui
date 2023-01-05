@@ -11,11 +11,12 @@ import {BuildLabelInput} from "../../ui/builds/build-label.input";
           <form novalidate (submit)="updateSearch.emit(theSearch)" #searchForm="ngForm">
               <div class="grid grid-cols-12 gap-2">
                   <select class="select select-bordered select-sm w-full max-w-xs col-span-4"
+                          data-cy-id="project-select"
                           name="project"
                           [(ngModel)]="theSearch.project"
                           (ngModelChange)="updateSearch.emit(theSearch)"
                   >
-                      <option value="" i18n="@@project_select_nonw">All</option>
+                      <option value="">All</option>
                       <option *ngFor="let project of available.projectNames" [value]="project">{{project}}</option>
                   </select>
 
@@ -49,6 +50,7 @@ import {BuildLabelInput} from "../../ui/builds/build-label.input";
                   </div>
 
                   <select class="select select-bordered select-sm w-full max-w-xs col-span-4"
+                          data-cy-id="branch-select"
                           name="branch"
                           [(ngModel)]="theSearch.branch"
                           (ngModelChange)="updateSearch.emit(theSearch)"

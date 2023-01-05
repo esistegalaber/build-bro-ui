@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import * as EditBuildSetActions from './edit-build-sets.actions'
-import {catchError, map, switchMap, tap, withLatestFrom} from "rxjs/operators";
+import {catchError, map, switchMap, withLatestFrom} from "rxjs/operators";
 import {of} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {select, Store} from "@ngrx/store";
@@ -9,10 +9,25 @@ import {Buildz, IBuildSet, IBuildSetTemplate} from "../../core";
 import * as CoreActions from "../../core/actions";
 import {Router} from "@angular/router";
 import {theBuildTemplates, theTemplate} from "./edit-build-sets.selectors";
-import {buildSetTemplateLoaded} from "./edit-build-sets.actions";
 
 @Injectable()
 export class EditBuildSetsEffects {
+  loadBuildSetTemplate$ = createEffect(() => this.actions$.pipe(
+    ofType(EditBuildSetActions.loadBuildSetTemplate),
+    switchMap((action) => this.http.get<IBuildSetTemplate>(`/api/v1/build-sets/${action.name}`).pipe(
+      map((theTemplate: IBuildSetTemplate) => EditBuildSetActions.buildSetTemplateLoaded({theTemplate})),
+      catchError(errorResponse => of(CoreActions.backendErrorOccurred({errorResponse})))
+    ))
+  ))
+
+  loadBuildSetTemplateToClone$ = createEffect(() => this.actions$.pipe(
+    ofType(EditBuildSetActions.loadBuildSetTemplateToClone),
+    switchMap((action) => this.http.get<IBuildSetTemplate>(`/api/v1/build-sets/${action.name}`).pipe(
+      map((theTemplate: IBuildSetTemplate) => EditBuildSetActions.buildSetTemplateToCloneLoaded({theTemplate})),
+      catchError(errorResponse => of(CoreActions.backendErrorOccurred({errorResponse})))
+    ))
+  ))
+
   verifyBuildsOfEnv$ = createEffect(() => this.actions$.pipe(
     ofType(EditBuildSetActions.buildTemplateUpdated, EditBuildSetActions.buildSetTemplateLoaded),
     withLatestFrom(this.store.pipe(select(theBuildTemplates))),
