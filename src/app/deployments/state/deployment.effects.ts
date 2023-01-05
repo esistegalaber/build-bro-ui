@@ -8,7 +8,6 @@ import {theDeploymentSearch} from "./deployment.selectors";
 import {of} from "rxjs";
 import * as CoreActions from "../../core/actions";
 import {HttpClient} from "@angular/common/http";
-import {DeploymentsSearchForm} from "../ui/deployments-search.form";
 
 
 @Injectable()

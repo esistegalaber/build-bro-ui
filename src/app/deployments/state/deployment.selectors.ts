@@ -1,4 +1,4 @@
-import {createAction, createFeatureSelector, createSelector} from "@ngrx/store";
+import {createFeatureSelector, createSelector} from "@ngrx/store";
 import {DeploymentsState, FEATURE_DEPLOYMENTS} from "./deployment.reducer";
 import {IDeployment, IPaginationParams} from "../../core";
 

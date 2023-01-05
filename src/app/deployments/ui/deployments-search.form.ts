@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {IBuildSearchParams, IDeploymentSearch, IServer} from "../../core";
+import {IDeploymentSearch, IServer} from "../../core";
 import {FormsModule} from "@angular/forms";
 
 @Component({
@@ -63,13 +63,13 @@ import {FormsModule} from "@angular/forms";
           </div>
         </div>
       </form>
-<!--      <div class="grid grid-cols-12 gap-2" *ngFor="let label of theSearch.labels | keyvalue">-->
-<!--        <input type="text" value="{{label.key}}" class="input-bordered input input-sm col-span-5" readonly>-->
-<!--        <input type="text" value="{{label.value}}" class="input-bordered input input-sm col-span-5" readonly>-->
-<!--        <button class="btn btn-sm btn-secondary" (click)="removeSearchLabel(label.key)">-->
-<!--          <span class="material-icons">remove</span>-->
-<!--        </button>-->
-<!--      </div>-->
+      <!--      <div class="grid grid-cols-12 gap-2" *ngFor="let label of theSearch.labels | keyvalue">-->
+      <!--        <input type="text" value="{{label.key}}" class="input-bordered input input-sm col-span-5" readonly>-->
+      <!--        <input type="text" value="{{label.value}}" class="input-bordered input input-sm col-span-5" readonly>-->
+      <!--        <button class="btn btn-sm btn-secondary" (click)="removeSearchLabel(label.key)">-->
+      <!--          <span class="material-icons">remove</span>-->
+      <!--        </button>-->
+      <!--      </div>-->
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

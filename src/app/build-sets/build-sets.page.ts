@@ -11,24 +11,24 @@ import {BuildSetNamesMenu} from "../ui/build-sets/build-set-names.menu";
 
 @Component({
   template: `
-    <div class="flex flex-row gap-2">
-      <div class="basis-1/4 overflow-hidden">
-        <bb-build-set-names-menu
-          [names]="(names$ | async)!"
-          [selectedName]="(theSelectedBuildSetName$|async)!"
-          (buildSetSelected)="onBuildSetTemplateSelected($event)"
-        ></bb-build-set-names-menu>
-      </div>
+      <div class="flex flex-row gap-2">
+          <div class="basis-1/4 overflow-hidden">
+              <bb-build-set-names-menu
+                      [names]="(names$ | async)!"
+                      [selectedName]="(theSelectedBuildSetName$|async)!"
+                      (buildSetSelected)="onBuildSetTemplateSelected($event)"
+              ></bb-build-set-names-menu>
+          </div>
 
-      <div class="basis-3/4">
-        <div class="flex justify-end">
-          <a class="btn btn-circle" routerLink="/edit-build-set">
-            <span class="material-icons">add</span>
-          </a>
-        </div>
-        <bb-build-set-accordion [buildSet]="(theBuildSet$|async)!"></bb-build-set-accordion>
+          <div class="basis-3/4">
+              <div class="flex justify-end">
+                  <a class="btn btn-circle" routerLink="/edit-build-set">
+                      <span class="material-icons">add</span>
+                  </a>
+              </div>
+              <bb-build-set-accordion [buildSet]="(theBuildSet$|async)!"></bb-build-set-accordion>
+          </div>
       </div>
-    </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,

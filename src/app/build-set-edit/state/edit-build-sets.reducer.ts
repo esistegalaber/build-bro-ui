@@ -1,6 +1,5 @@
 import {createReducer, on} from '@ngrx/store'
 import * as EditBuildSetActions from './edit-build-sets.actions'
-import {navigateTo} from './edit-build-sets.actions'
 import {IBuildSet, IBuildSetTemplate} from "../../core";
 import {deepClone} from "../../core/util/deep-clone";
 
