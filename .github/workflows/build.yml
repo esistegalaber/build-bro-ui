@@ -23,7 +23,11 @@ jobs:
       - name: Boot Build Bruh API
         uses: cyrusroshan/generic-docker-run@main
         with:
-          command: "docker run -d --rm -p 8080:8085 --name build-bro-api esistegalaber/build-bruh-api:0.1.0"
+          command: "docker run -d --rm -p 8080:8085 --name api esistegalaber/build-bruh-api:0.1.0"
+      - name: Print Logs
+        uses: cyrusroshan/generic-docker-run@main
+        with:
+          command: "docker logs api"
 
       - uses: actions/checkout@v3
       - name: Use Node.js 18
