@@ -36,7 +36,7 @@ pipeline {
         stage('Build UI') {
             steps {
                 script {
-                    withEnv(["PATH+EXTRA=/Users/josip/.nvm/versions/node/v18.12.0/bin/npm"]){
+                    withEnv(["PATH+EXTRA=/Users/josip/.nvm/versions/node/v18.12.0/bin"]){
                     sh "npm install"
                     sh "npm run cypress:run"
                     sh "npm run build"
@@ -53,7 +53,6 @@ pipeline {
                     sh "docker rm build_bruh_db api | true"
                     sh "docker network rm jnk_bb | true"
                 }
-
             }
         }
     }
