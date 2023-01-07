@@ -36,8 +36,9 @@ pipeline {
         stage('Build UI') {
             steps {
                 script {
-//                     sh "./gradlew clean build jacocoTestReport"
-                  echo "OK"
+                    sh "npm install"
+                    sh "npm run cypress:run"
+                    sh "npm run build"
                 }
             }
         }
