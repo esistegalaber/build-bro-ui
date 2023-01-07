@@ -22,14 +22,16 @@ pipeline {
             steps {
                 script {
                     withEnv(["PATH+EXTRA=/usr/local/bin"]) {
-                        sh "docker run --name build_bruh_db -d -p 3306:3306 -e MYSQL_DATABASE=build_bruh -e MYSQL_USER=build_bruh -e MYSQL_PASSWORD=build_bruh -e MYSQL_ROOT_PASSWORD=build_bruh mariadb:10.10"
-                        sh "docker run --name api -d -p 8080:8080 esistegalaber/build-bruh-api:0.1.0"
+                        sh "docker network create jnk_bb"
+                        sh "docker run --name build_bruh_db --network jnk_bb -d -p 3306:3306 -e MYSQL_DATABASE=build_bruh -e MYSQL_USER=build_bruh -e MYSQL_PASSWORD=build_bruh -e MYSQL_ROOT_PASSWORD=build_bruh mariadb:10.10"
+                        sh "docker run --name api --network jnk_bb -d -p 8080:8080 esistegalaber/build-bruh-api:0.1.0"
+                        sleep 5
                         sh "docker exec -i build_bruh_db sh -c 'exec mariadb -ubuild_bruh -pbuild_bruh' < testdata.sql"
                     }
                 }
             }
         }
-        stage('Build Api') {
+        stage('Build UI') {
             steps {
                 script {
 //                     sh "./gradlew clean build jacocoTestReport"
@@ -44,6 +46,7 @@ pipeline {
                 withEnv(["PATH+EXTRA=/usr/local/bin"]) {
                     sh "docker stop build_bruh_db api | true"
                     sh "docker rm build_bruh_db api | true"
+                    sh "docker network rm jnk_bb | true"
                 }
 
             }

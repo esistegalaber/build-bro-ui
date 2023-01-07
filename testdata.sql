@@ -1,5 +1,5 @@
 # noinspection SqlWithoutWhereForFile
-
+use build_bruh
 delete
 from deployed_builds;
 delete
