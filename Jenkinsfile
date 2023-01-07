@@ -36,9 +36,11 @@ pipeline {
         stage('Build UI') {
             steps {
                 script {
+                    withEnv(["PATH+EXTRA=/Users/josip/.nvm/versions/node/v18.12.0/bin/npm"]){
                     sh "npm install"
                     sh "npm run cypress:run"
                     sh "npm run build"
+                    }
                 }
             }
         }
