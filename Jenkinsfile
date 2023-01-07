@@ -24,7 +24,7 @@ pipeline {
                     withEnv(["PATH+EXTRA=/usr/local/bin"]) {
                         sh "docker network create jnk_bb"
                         sh "docker run --name build_bruh_db --network jnk_bb -d -p 3306:3306 -e MYSQL_DATABASE=build_bruh -e MYSQL_USER=build_bruh -e MYSQL_PASSWORD=build_bruh -e MYSQL_ROOT_PASSWORD=build_bruh mariadb:10.10"
-                        sh "docker run --name api --network jnk_bb -d -p 8080:8080 esistegalaber/build-bruh-api:0.1.0"
+                        sh "docker run --name api --network jnk_bb -d -p 8080:8080 -e DB_USR=build_bruh -e DB_PWD=build_bruh -e DB_URL=jdbc:mariadb://build_bruh_db:3306/build_bruh esistegalaber/build-bruh-api:0.1.0"
                         sleep 5
                         sh "docker logs api"
                         sh "docker exec -i build_bruh_db sh -c 'exec mariadb -ubuild_bruh -pbuild_bruh' < testdata.sql"
