@@ -6,9 +6,6 @@ import {RouterLink} from "@angular/router";
   selector: 'bb-build-set-names-menu',
   template: `
     <ul class="menu bg-base-100 w-56 rounded-box">
-      <li class="hover-bordered">
-        <a routerLink="/edit-build-set/new">Create New</a>
-      </li>
       <li *ngFor="let name of names" class="hover-bordered">
         <a [ngClass]="{'active':name === selectedName}"
            (click)="buildSetSelected.emit(name)">
