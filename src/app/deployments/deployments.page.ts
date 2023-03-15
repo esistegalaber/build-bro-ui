@@ -12,21 +12,21 @@ import {BuildSetAccordion} from "../ui/deployments/depoyment.accordion";
 
 @Component({
   template: `
-      <div class="grid grid-cols-1 gap-4">
-          <bb-deployments-search-form
-                  [servers]="(servers$ | async)!"
-                  [theSearch]="(theDeploymentsSearch$ | async | deepClone)!"
-                  (updateSearch)="updateDeploymentsSearch($event)"
-          >
-          </bb-deployments-search-form>
-          <div class="mx-auto">
-              <bb-paginator
-                      [maxSize]="10" [paginationParams]="(thePaginationParams$|async)!"
-                      (toPage)="toPage($event)"
-              ></bb-paginator>
-          </div>
-          <bb-deployment-accordion [deployments]="(theDeployments$ | async)!"></bb-deployment-accordion>
+    <div class="grid grid-cols-1 gap-4">
+      <bb-deployments-search-form
+        [servers]="(servers$ | async)!"
+        [theSearch]="(theDeploymentsSearch$ | async | deepClone)!"
+        (updateSearch)="updateDeploymentsSearch($event)"
+      >
+      </bb-deployments-search-form>
+      <div class="mx-auto">
+        <bb-paginator
+          [maxSize]="10" [paginationParams]="(thePaginationParams$|async)!"
+          (toPage)="toPage($event)"
+        ></bb-paginator>
       </div>
+      <bb-deployment-accordion [deployments]="(theDeployments$ | async)!"></bb-deployment-accordion>
+    </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
