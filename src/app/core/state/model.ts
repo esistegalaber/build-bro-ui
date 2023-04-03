@@ -220,6 +220,7 @@ export interface ICreateReservationEvent {
 export interface IDeployment {
   id: number
   deployedAt: string
+  serverName: string
   builds: IBuild[]
   labels: IDeploymentLabel[]
 }

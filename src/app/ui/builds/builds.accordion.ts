@@ -1,7 +1,8 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core'
-import {IBuild} from '../../core'
+import {CloningPipe, IBuild} from '../../core'
 import {CommonModule} from "@angular/common";
 import {BuildId} from "./build.id";
+import {SortedLabelsPipe} from "../../core/pipes/sort-label.pipe";
 
 @Component({
   selector: 'bb-builds-accordion',
@@ -17,7 +18,7 @@ import {BuildId} from "./build.id";
                       <td>Build Bro ID:</td>
                       <td>{{build.id}}</td>
                   </tr>
-                  <tr *ngFor="let label of build.labels">
+                  <tr *ngFor="let label of build.labels | deepClone | sortedLabels">
                       <td>{{label.key}}</td>
                       <td>{{label.value}}</td>
                   </tr>
@@ -26,7 +27,7 @@ import {BuildId} from "./build.id";
       </div>
   `,
   standalone: true,
-  imports: [CommonModule, BuildId],
+  imports: [CommonModule, BuildId, SortedLabelsPipe, CloningPipe],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BuildsAccordion {

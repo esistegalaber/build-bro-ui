@@ -8,6 +8,7 @@ import {HttpClient} from "@angular/common/http";
 import {Store} from "@ngrx/store";
 import {Buildz, IBuildSet} from "../../core";
 import {Router} from "@angular/router";
+import {loadBuildSetNames} from "./build-sets.actions";
 
 @Injectable()
 export class BuildSetsEffects {
@@ -25,6 +26,16 @@ export class BuildSetsEffects {
     switchMap((templateName) => this.http.get<IBuildSet>(`/api/v1/build-sets/of/${templateName}`).pipe(
       map((buildSet: IBuildSet) =>
         BuildSetActions.buildSetLoaded({buildSet})
+      ),
+      catchError(errorResponse => of(CoreActions.backendErrorOccurred({errorResponse})))
+    ))
+  ))
+
+  delete$ = createEffect(() => this.actions$.pipe(
+    ofType(BuildSetActions.deleteBuildSetTemplate),
+    switchMap((action) => this.http.delete<IBuildSet>(`/api/v1/build-sets/${action.name}`).pipe(
+      map((buildSet: IBuildSet) =>
+        loadBuildSetNames()
       ),
       catchError(errorResponse => of(CoreActions.backendErrorOccurred({errorResponse})))
     ))

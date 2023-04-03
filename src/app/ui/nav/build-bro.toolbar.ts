@@ -37,7 +37,7 @@ import {FormsModule} from "@angular/forms";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BuildBroToolbar {
-  theme: string | null = null
+  theme: string | null = 'light'
 
   toggleSideNavState(): void {
     this.store.dispatch(toggleSideNavState())
