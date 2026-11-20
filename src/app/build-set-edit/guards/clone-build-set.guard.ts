@@ -1,21 +1,14 @@
-import {ActivatedRouteSnapshot, RouterStateSnapshot} from "@angular/router";
+import {CanActivateFn} from "@angular/router";
+import {inject} from "@angular/core";
 import {Store} from "@ngrx/store";
 import {Buildz} from "../../core";
-import {HttpClient} from "@angular/common/http";
 import * as BuildSetActions from "../state/edit-build-sets.actions";
-import {Injectable} from "@angular/core";
 
-@Injectable()
-export class CloneBuildSetGuard {
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    const buildSetName = route.params['build-set-name']
-    if (!!buildSetName) {
-      this.store.dispatch(BuildSetActions.loadBuildSetTemplateToClone({name: buildSetName}))
-    }
-    return true;
+/** Loads the build set named in the route as a copy to clone. Only loads data, never blocks the navigation. */
+export const cloneBuildSetGuard: CanActivateFn = (route) => {
+  const buildSetName = route.params['build-set-name']
+  if (!!buildSetName) {
+    inject(Store<Buildz>).dispatch(BuildSetActions.loadBuildSetTemplateToClone({name: buildSetName}))
   }
-
-
-  constructor(private store: Store<Buildz>, private http: HttpClient) {
-  }
+  return true
 }

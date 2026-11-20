@@ -21,6 +21,7 @@ export const buildSetRoutes: Route[] = [
   }
 ]
 
-function loadBuildSetNames() {
+function loadBuildSetNames(): boolean {
   inject(Store<Buildz>).dispatch(BuildSetActions.loadBuildSetNames())
+  return true
 }
