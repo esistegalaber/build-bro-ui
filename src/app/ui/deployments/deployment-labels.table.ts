@@ -6,7 +6,7 @@ import {IDeployment} from '../../core'
   template: `
       <table class="table table-compact w-full">
         <tbody>
-          @for (label of deployment.labels; track label) {
+          @for (label of deployment.labels; track label.id) {
             <tr>
               <td><strong>{{label.key}}</strong></td>
               <td>{{label.value}}</td>

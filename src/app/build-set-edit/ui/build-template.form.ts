@@ -29,7 +29,7 @@ import {EditableBuildTemplate, IBranch, IProject} from "../../core";
                     (change)="templateUpdated.emit(template)"
                     [(ngModel)]="template.branch"
                     >
-                    @for (branch of template.project.branches; track branch) {
+                    @for (branch of template.project.branches; track branch.id) {
                       <option [ngValue]="branch">{{branch.name}}</option>
                     }
                   </select>

@@ -28,6 +28,40 @@ describe('Edit Build Set Page', () => {
     cy.get('[data-cy-id=build-template-backend] [data-cy-id=project-toggle]').should('be.checked')
   })
 
+  // The edit page keeps its store state between visits, so the next build set is first rendered with the
+  // previous one's templates. The template cards are reused (tracked by project id) and must show the new values.
+  it('Shows the right values after switching to another build set', () => {
+    cy.intercept({method: 'GET', url: '/api/v1/build-sets/main'}).as('main')
+    cy.visit('/edit-build-set/main')
+    cy.wait('@main')
+    cy.get('[data-cy-id=build-template-backend]').within(() => {
+      cy.get('[data-cy-id=project-toggle]').should('be.checked')
+      cy.get('[data-cy-id=template-branch-select]').find('option:selected').should('have.text', 'main')
+      cy.get('input[name=buildNumber]').should('have.value', '9')
+    })
+
+    cy.intercept({method: 'GET', url: '/api/v1/build-sets/feature-test-stage-1'}).as('other')
+    cy.get('[data-cy-id=nav-build-sets]').click()
+    cy.get('[data-cy-id="build-set-name-feature-test-stage-1"]').click()
+    cy.get('[data-cy-id=build-set-edit]').click()
+    cy.wait('@other')
+    cy.get('[data-cy-id=build-set-name-input]').should('have.value', 'feature-test-stage-1')
+    cy.get('[data-cy-id=project-toggle]').should('have.length', 3).and('not.be.checked')
+    cy.get('[data-cy-id=build-template-backend] input[name=buildNumber]').should('have.value', '')
+
+    cy.get('[data-cy-id=nav-build-sets]').click()
+    cy.get('[data-cy-id="build-set-name-main"]').click()
+    cy.get('[data-cy-id=build-set-edit]').click()
+    cy.wait('@main')
+    cy.get('[data-cy-id=build-template-backend]').within(() => {
+      cy.get('[data-cy-id=project-toggle]').should('be.checked')
+      cy.get('[data-cy-id=template-branch-select]').find('option:selected').should('have.text', 'main')
+      cy.get('input[name=buildNumber]').should('have.value', '9')
+    })
+    cy.get('[data-cy-id=build-template-frontend] [data-cy-id=project-toggle]').should('be.checked')
+    cy.get('[data-cy-id=build-template-backoffice] [data-cy-id=project-toggle]').should('not.be.checked')
+  })
+
   it('Creates a new build set and deletes it again', () => {
     const name = `cy-e2e-${Date.now()}`
 
@@ -37,11 +71,11 @@ describe('Edit Build Set Page', () => {
 
     // add the backoffice project and pick its 'next' branch
     cy.intercept({method: 'POST', url: '/api/v1/build-sets/verify'}).as('verify')
-    // the toggle updates the store, which re-renders the template cards, so always re-query
-    cy.get('[data-cy-id=build-template-backoffice] [data-cy-id=project-toggle]').click()
-    cy.get('[data-cy-id=build-template-backoffice] [data-cy-id=project-toggle]').should('be.checked')
-    cy.get('[data-cy-id=build-template-backoffice] [data-cy-id=template-branch-select]')
-      .should('be.visible').select('next')
+    // the template cards are tracked by project id, so the toggle updates the existing card in place
+    cy.get('[data-cy-id=build-template-backoffice]').within(() => {
+      cy.get('[data-cy-id=project-toggle]').click().should('be.checked')
+      cy.get('[data-cy-id=template-branch-select]').should('be.visible').select('next')
+    })
     cy.wait('@verify').its('request.body').should('deep.equal', [
       {project: 'backoffice', branch: 'next', labels: {}, buildNumber: null}
     ])

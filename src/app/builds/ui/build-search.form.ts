@@ -86,7 +86,7 @@ import {FormsModule} from "@angular/forms";
             </div>
           </div>
         </form>
-        @for (label of theSearch.labels | keyvalue; track label) {
+        @for (label of theSearch.labels | keyvalue; track label.key) {
           <div class="grid grid-cols-12 gap-2" data-cy-id="search-label">
             <input type="text" value="{{label.key}}" class="input-bordered input input-sm col-span-5" readonly>
             <input type="text" value="{{label.value}}" class="input-bordered input input-sm col-span-5" readonly>

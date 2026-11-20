@@ -20,7 +20,7 @@ import * as CoreActions from "../core/actions";
               <td></td>
             </tr>
           </thead>
-          @for (server of allServers$|async; track server) {
+          @for (server of allServers$|async; track server.id) {
             <tr attr.data-cy-id="server-{{server.name}}">
               <td>{{server.id}}</td>
               <td>{{server.name}}</td>

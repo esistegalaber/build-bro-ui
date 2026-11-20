@@ -6,7 +6,7 @@ import {SortedLabelsPipe} from "../../core/pipes/sort-label.pipe";
 @Component({
   selector: 'bb-builds-accordion',
   template: `
-      @for (build of builds; track build) {
+      @for (build of builds; track build.id) {
         <div class="collapse collapse-arrow border rounded-box">
           <input type="checkbox" class="peer" attr.data-cy-id="build-{{build.id}}"/>
           <div class="collapse-title">
@@ -18,7 +18,7 @@ import {SortedLabelsPipe} from "../../core/pipes/sort-label.pipe";
                 <td>Build Bro ID:</td>
                 <td>{{build.id}}</td>
               </tr>
-              @for (label of build.labels | deepClone | sortedLabels; track label) {
+              @for (label of build.labels | deepClone | sortedLabels; track label.id) {
                 <tr>
                   <td>{{label.key}}</td>
                   <td>{{label.value}}</td>
