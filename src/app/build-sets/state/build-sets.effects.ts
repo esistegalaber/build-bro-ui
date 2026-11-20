@@ -1,4 +1,4 @@
-import {Injectable} from "@angular/core";
+import {Injectable, inject} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import * as BuildSetActions from './build-sets.actions'
 import * as CoreActions from '../../core/actions'
@@ -12,6 +12,11 @@ import {loadBuildSetNames} from "./build-sets.actions";
 
 @Injectable()
 export class BuildSetsEffects {
+  private actions$ = inject(Actions);
+  private http = inject(HttpClient);
+  private store = inject<Store<Buildz>>(Store);
+  private router = inject(Router);
+
   loadKnownTemplateNames = createEffect(() => this.actions$.pipe(
     ofType(BuildSetActions.loadBuildSetNames),
     exhaustMap(() => this.http.get<string[]>(`/api/v1/build-sets/names`).pipe(
@@ -40,8 +45,4 @@ export class BuildSetsEffects {
       catchError(errorResponse => of(CoreActions.backendErrorOccurred({errorResponse})))
     ))
   ))
-
-
-  constructor(private actions$: Actions, private http: HttpClient, private store: Store<Buildz>, private router: Router) {
-  }
 }

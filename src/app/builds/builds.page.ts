@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from "@angular/core";
+import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {select, Store} from "@ngrx/store";
 import {Buildz, CloningPipe, IBuildSearchParams} from "../core";
 import * as SearchActions from "./state/builds.actions";
@@ -42,6 +42,8 @@ import {Paginator} from "../ui/paginator";
   ]
 })
 export class BuildsPage {
+  private store = inject<Store<Buildz>>(Store);
+
   availableSearchData$ = this.store.pipe(select(searchData))
   theSearch$ = this.store.pipe(select(theBuildSearchParams))
   theBuilds$ = this.store.pipe(select(theBuilds))
@@ -59,7 +61,7 @@ export class BuildsPage {
     this.store.dispatch(SearchActions.toSearchPage({page}))
   }
 
-  constructor(private store: Store<Buildz>) {
+  constructor() {
     this.store.dispatch(SearchActions.doBuildSearch())
   }
 }

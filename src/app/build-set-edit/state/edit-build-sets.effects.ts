@@ -1,4 +1,4 @@
-import {Injectable} from "@angular/core";
+import {Injectable, inject} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import * as EditBuildSetActions from './edit-build-sets.actions'
 import {catchError, map, switchMap, withLatestFrom} from "rxjs/operators";
@@ -12,6 +12,11 @@ import {theBuildTemplates, theTemplate} from "./edit-build-sets.selectors";
 
 @Injectable()
 export class EditBuildSetsEffects {
+  private actions$ = inject(Actions);
+  private http = inject(HttpClient);
+  private store = inject<Store<Buildz>>(Store);
+  private router = inject(Router);
+
   loadBuildSetTemplate$ = createEffect(() => this.actions$.pipe(
     ofType(EditBuildSetActions.loadBuildSetTemplate),
     switchMap((action) => this.http.get<IBuildSetTemplate>(`/api/v1/build-sets/${action.name}`).pipe(
@@ -53,8 +58,4 @@ export class EditBuildSetsEffects {
       catchError(errorResponse => of(CoreActions.backendErrorOccurred({errorResponse})))
     ))
   ))
-
-
-  constructor(private actions$: Actions, private http: HttpClient, private store: Store<Buildz>, private router: Router) {
-  }
 }

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from "@angular/core";
+import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {select, Store} from "@ngrx/store";
 import {allActiveProjects, Buildz, CloningPipe, EditableBuildSetTemplate, EditableBuildTemplate, IProject} from "../core";
 import {CommonModule} from "@angular/common";
@@ -38,6 +38,8 @@ import {BuildSetNameForm} from "./ui/build-set-name.form";
   ]
 })
 export class EditBuildSetPage {
+  private store = inject<Store<Buildz>>(Store);
+
   currentBuildSetTemplate$ = this.store.pipe(select(theEditableTemplate))
   EditableBuildTemplates$ = this.store.pipe(select(theEditableBuildTemplates))
   projects$ = this.store.pipe(select(allActiveProjects))
@@ -67,8 +69,5 @@ export class EditBuildSetPage {
 
   toNavState(navState: string) {
     this.store.dispatch(navigateTo({navState}))
-  }
-
-  constructor(private store: Store<Buildz>) {
   }
 }

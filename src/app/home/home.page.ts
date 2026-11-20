@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from "@angular/core";
+import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {select, Store} from "@ngrx/store";
 import {Buildz} from "../core/state/model";
 import {theBuildStats} from "../core/state/selectors";
@@ -16,8 +16,7 @@ import {StatsHero} from "./ui/stats.hero";
   ]
 })
 export class HomePage {
-  stats = this.store.pipe(select(theBuildStats))
+  private store = inject<Store<Buildz>>(Store);
 
-  constructor(private store: Store<Buildz>) {
-  }
+  stats = this.store.pipe(select(theBuildStats))
 }

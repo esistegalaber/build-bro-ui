@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from "@angular/core";
+import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {select, Store} from "@ngrx/store";
 import {Buildz, IBuildSet, IBuildSetTemplate} from "../core";
 import {theBuildSet, theBuildSetTemplateNames, theSelectedBuildSetName} from "./state/build-sets.selectors";
@@ -51,6 +51,8 @@ import {BuildSetNamesMenu} from "../ui/build-sets/build-set-names.menu";
   ]
 })
 export class BuildSetsPage {
+  private store = inject<Store<Buildz>>(Store);
+
   names$ = this.store.pipe(select(theBuildSetTemplateNames))
   theBuildSet$ = this.store.pipe(select(theBuildSet))
   theSelectedBuildSetName$ = this.store.pipe(select(theSelectedBuildSetName))
@@ -73,8 +75,5 @@ export class BuildSetsPage {
   deleteBuildSetTemplate() {
     this.store.dispatch(deleteBuildSetTemplate({name: this.toDelete?.name}))
     this.showDeleteConfirmation = false
-  }
-
-  constructor(private store: Store<Buildz>) {
   }
 }

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from "@angular/core";
+import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {select, Store} from "@ngrx/store";
 import {Buildz, IServer} from "../core";
 import {CommonModule} from "@angular/common";
@@ -46,6 +46,8 @@ import * as CoreActions from "../core/actions";
   ]
 })
 export class ServersPage {
+  private store = inject<Store<Buildz>>(Store);
+
   allServers$ = this.store.pipe(select(allServers))
   selectedServer: IServer | null = null
 
@@ -56,8 +58,5 @@ export class ServersPage {
   updateSingleServer(server: IServer) {
     this.store.dispatch(CoreActions.updateServer({server}))
     this.selectedServer = null;
-  }
-
-  constructor(private store: Store<Buildz>) {
   }
 }
