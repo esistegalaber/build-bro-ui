@@ -17,6 +17,7 @@ import {BuildSetAccordion} from "../ui/deployments/depoyment.accordion";
         [servers]="(servers$ | async)!"
         [theSearch]="(theDeploymentsSearch$ | async | deepClone)!"
         (updateSearch)="updateDeploymentsSearch($event)"
+        (resetSearch)="resetDeploymentsSearch()"
       >
       </bb-deployments-search-form>
       <div class="mx-auto">
@@ -48,6 +49,10 @@ export class DeploymentsPage {
 
   updateDeploymentsSearch(search: IDeploymentSearch): void {
     this.store.dispatch(DeploymentActions.updateDeploymentsSearch({search}))
+  }
+
+  resetDeploymentsSearch(): void {
+    this.store.dispatch(DeploymentActions.resetDeploymentsSearch())
   }
 
   toPage(page: number): void {

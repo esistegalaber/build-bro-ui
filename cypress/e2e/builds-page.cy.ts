@@ -49,6 +49,7 @@ describe('Builds Page', () => {
     cy.get('[data-cy-id=min-build-number-input]').type('5')
     cy.wait('@min-search').its('request.body.minBuildNumber').should('eq', '5')
     cy.get('[data-cy-id=search-reset]').click()
+    cy.wait('@min-search').its('request.body').should('deep.include', {minBuildNumber: null, page: 0, pageSize: 10})
     cy.get('[data-cy-id=min-build-number-input]').should('have.value', '')
   })
 
