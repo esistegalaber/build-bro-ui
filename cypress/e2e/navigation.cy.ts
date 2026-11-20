@@ -7,6 +7,16 @@ describe('Navigation', () => {
     {nav: 'nav-projects', path: '/projects', request: null},
   ]
 
+  it('Switches the theme and toggles the side nav labels', () => {
+    cy.visit('/home')
+    cy.get('[data-cy-id=theme-select]').select('dark')
+    cy.get('#bb-html').should('have.attr', 'data-theme', 'dark')
+    cy.get('[data-cy-id=nav-builds]').invoke('text').then((before) => {
+      cy.get('[data-cy-id=side-nav-toggle]').click()
+      cy.get('[data-cy-id=nav-builds]').invoke('text').should('not.eq', before)
+    })
+  })
+
   it('Redirects the root url to the home page', () => {
     cy.visit('/')
     cy.location('pathname').should('eq', '/home')

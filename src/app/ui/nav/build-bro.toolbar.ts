@@ -10,7 +10,7 @@ import {FormsModule} from "@angular/forms";
   template: `
     <div class="navbar bg-base-100">
       <div class="flex-none">
-        <button class="btn btn-square btn-ghost" (click)="toggleSideNavState()">
+        <button class="btn btn-square btn-ghost" (click)="toggleSideNavState()" data-cy-id="side-nav-toggle">
           <span class="material-icons">menu</span>
         </button>
       </div>
@@ -18,7 +18,7 @@ import {FormsModule} from "@angular/forms";
         <a routerLink="/" class="btn btn-ghost normal-case text-xl">Build Bruh</a>
       </div>
       <div class="flex-none tooltip tooltip-bottom" data-tip="Choose a Theme at your own risk.">
-        <select class="select select-sm" name="bb-theme" [(ngModel)]="theme" (change)="switchTheme()">
+        <select class="select select-sm" name="bb-theme" [(ngModel)]="theme" (change)="switchTheme()" data-cy-id="theme-select">
           <option value="null">Select Theme</option>
           <option value="dark">dark</option>
           <option value="light">light</option>

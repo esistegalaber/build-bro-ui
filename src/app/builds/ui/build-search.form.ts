@@ -22,13 +22,13 @@ import {FormsModule} from "@angular/forms";
             </select>
       
             <input type="text" placeholder="Min BuildNumber" class="input input-bordered input-sm w-full max-w-xs col-span-2"
-              name="minBuildNumber"
+              name="minBuildNumber" data-cy-id="min-build-number-input"
               [(ngModel)]="theSearch.minBuildNumber"
               (keyup)="updateSearch.emit(theSearch)"/>
       
             <div class="col-span-6">
               <div class="flex justify-around">
-                <button class="btn btn-sm btn-accent" (click)="resetSearch.emit()">
+                <button type="button" class="btn btn-sm btn-accent" (click)="resetSearch.emit()" data-cy-id="search-reset">
                   <span class="material-icons">restart_alt</span>
                   Reset
                 </button>
@@ -42,7 +42,7 @@ import {FormsModule} from "@angular/forms";
                   <option [value]="25">25 / Page</option>
                   <option [value]="50">50 / Page</option>
                 </select>
-                <button class="btn btn-sm btn-primary" (click)="updateSearch.emit(theSearch)" css="btn-sm btn-secondary">
+                <button type="submit" class="btn btn-sm btn-primary" data-cy-id="search-reload">
                   <span class="material-icons">search</span>
                   (Re-)Load
                 </button>
@@ -69,16 +69,16 @@ import {FormsModule} from "@angular/forms";
             <div class="col-span-6">
               <div class="grid grid-cols-12">
                 <div class="col-span-4">
-                  <input class="input input-bordered input-sm" type="text" placeholder="Key" name="newLabelKey"
+                  <input class="input input-bordered input-sm" type="text" placeholder="Key" name="newLabelKey" data-cy-id="label-key-input"
                     [(ngModel)]="newLabelKey"
                     >
                 </div>
                 <div class="col-span-4">
-                  <input class="input input-bordered input-sm" type="text" placeholder="Value" name="newLabelVal"
+                  <input class="input input-bordered input-sm" type="text" placeholder="Value" name="newLabelVal" data-cy-id="label-value-input"
                     [(ngModel)]="newLabelVal">
                 </div>
                 <div class="col-span-4">
-                  <button [disabled]="newLabelVal.length==0 || newLabelVal.length==0 " class="btn btn-sm" (click)="addSearchLabel()">
+                  <button type="button" [disabled]="newLabelVal.length==0 || newLabelVal.length==0 " class="btn btn-sm" (click)="addSearchLabel()" data-cy-id="label-add">
                     <span class="material-icons">add</span>
                   </button>
                 </div>
@@ -87,10 +87,10 @@ import {FormsModule} from "@angular/forms";
           </div>
         </form>
         @for (label of theSearch.labels | keyvalue; track label) {
-          <div class="grid grid-cols-12 gap-2">
+          <div class="grid grid-cols-12 gap-2" data-cy-id="search-label">
             <input type="text" value="{{label.key}}" class="input-bordered input input-sm col-span-5" readonly>
             <input type="text" value="{{label.value}}" class="input-bordered input input-sm col-span-5" readonly>
-            <button class="btn btn-sm btn-secondary" (click)="removeSearchLabel(label.key)">
+            <button class="btn btn-sm btn-secondary" (click)="removeSearchLabel(label.key)" data-cy-id="search-label-remove">
               <span class="material-icons">remove</span>
             </button>
           </div>

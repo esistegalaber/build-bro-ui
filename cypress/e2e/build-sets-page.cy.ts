@@ -45,6 +45,15 @@ describe('Build Sets Page', () => {
     cy.get('[data-cy-id=build-set-name-input]').should('have.value', 'CLONE-OF-main')
   })
 
+  it('Cancels the delete confirmation', () => {
+    cy.get('[data-cy-id="build-set-name-main"]').click()
+    cy.get('[data-cy-id=build-set-delete]').click()
+    cy.get('#delete-confirmation-dialog').should('be.checked')
+    cy.get('[data-cy-id=delete-cancel]').click()
+    cy.get('#delete-confirmation-dialog').should('not.be.checked')
+    cy.get('[data-cy-id="build-set-name-main"]').should('exist')
+  })
+
   it('Opens the new build set form', () => {
     cy.get('[data-cy-id=build-set-add]').click()
     cy.location('pathname').should('eq', '/edit-build-set/new')
