@@ -1,27 +1,61 @@
-# BuildBroUi
+# Build Bro UI
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.7.
+The web frontend for the [Build Bro API](https://github.com/esistegalaber/build-bro-api). It lets you browse builds and deployments, put builds together into build sets, and manage projects, branches and servers.
 
-## Development server
+Built with Angular 22, NgRx 22, TypeScript 6 and Tailwind CSS / daisyUI.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Requirements
 
-## Code scaffolding
+- **Node 26** (the Angular 22 CLI also accepts ^22.22.3 and ^24.15; builds and tests are verified on 26)
+- **Chrome**, for the end-to-end tests
+- **Docker**, to build the production image
+- For the live tests: the Build Bro API on port 8080, with `testdata.sql` loaded into its database
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Getting started
+
+```bash
+npm ci        # also downloads the Cypress binary (approved in package.json -> allowScripts)
+npm start     # dev server on http://localhost:4200, proxies /api to http://localhost:8080
+```
+
+`npm run start-iso` starts the dev server without the API proxy.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+```bash
+npm run build   # production build in dist/build-bro-ui/browser
+npm run watch   # development build in watch mode
+```
 
-## Running unit tests
+## Tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+The Cypress end-to-end tests in `cypress/e2e/` cover every page. There are no unit tests. The tests need the app on :4200 (`npm start`) and can run in two modes:
 
-## Running end-to-end tests
+```bash
+npm run cypress:run        # against an in-memory fake API, no backend needed
+npm run cypress:run:live   # against the real API on :8080 (needs testdata.sql loaded)
+npm run cypress:open       # interactive Cypress
+```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+The fake API (`cypress/support/fake-api.ts`) serves a snapshot of the real API with `testdata.sql` loaded (`cypress/fixtures/api-db.json`). Every test starts with a fresh copy of the data. When `testdata.sql` changes, reload it into the database and regenerate the snapshot with `npm run cypress:snapshot-api`.
 
-## Further help
+The tests that change data clean up after themselves, so live mode can be run again on the same database.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+After upgrading Cypress, run `npm approve-scripts cypress` so that `npm ci` keeps downloading its binary.
+
+## Docker
+
+The `Dockerfile` packages the production build into an nginx image, so build the app first:
+
+```bash
+npm run build
+docker build -t build-bro-ui .
+docker run -p 4200:80 -e BUILDZ_API=<api host> build-bro-ui
+```
+
+nginx proxies `/api` to `http://${BUILDZ_API}:8080/api` (`BUILDZ_API` defaults to `api`) and serves `index.html` for all other routes.
+
+## CI
+
+- **GitHub Actions** (`.github/workflows/build.yml`) runs on pushes to `main` and on pull requests. It installs, builds, and runs the e2e tests in Chrome against the fake API. The SonarCloud job is commented out until its `SONAR_TOKEN` is renewed.
+- **Jenkins** (`Jenkinsfile`) starts MariaDB and the API image with `testdata.sql`, builds the app and its Docker image, and runs the live e2e tests against that image.

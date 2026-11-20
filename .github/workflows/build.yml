@@ -5,54 +5,49 @@ on:
     branches: [ "main" ]
   pull_request:
     types: [ opened, synchronize, reopened ]
+
+permissions:
+  contents: read
+
 jobs:
   build:
+    # ubuntu-latest comes with Chrome, which the e2e tests run in
     runs-on: ubuntu-latest
-    container: cypress/browsers:node18.12.0-chrome106-ff106
 
     steps:
-      - name: Set up Maria DB
-        uses: getong/mariadb-action@v1.1
-        with:
-          mysql database: 'buildz'
-          mysql user: 'buildz'
-          mysql password: 'buildz'
-          character set server: 'utf8'
-          collation server: 'utf8_general_ci'
+      - uses: actions/checkout@v7
 
-      - name: Boot Build Bruh API
-        uses: cyrusroshan/generic-docker-run@main
+      # The Angular 22 CLI needs Node ^22.22.3, ^24.15 or >=26; builds and tests are verified on 26.
+      # npm 12 (bundled with Node 26) runs Cypress's binary download because package.json approves it (allowScripts).
+      - name: Use Node.js 26
+        uses: actions/setup-node@v7
         with:
-          command: "docker run -d --rm -p 8080:8085 --name api esistegalaber/build-bruh-api:0.1.0"
-      - name: Print Logs
-        uses: cyrusroshan/generic-docker-run@main
-        with:
-          command: "docker logs api"
+          node-version: 26
+          cache: npm
 
-      - uses: actions/checkout@v3
-      - name: Use Node.js 18
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: 'npm'
-          build: npm run build
-
+      # Installs the dependencies (npm ci), builds the app, starts it on :4200 and runs the specs
+      # against the in-memory fake API (cypress/support/fake-api.ts), so no backend or database is needed.
       - name: Cypress run
-        uses: cypress-io/github-action@v4.2.0
+        uses: cypress-io/github-action@v7
         with:
-          browser: chrome
-          start: npm run start
           build: npm run build
+          start: npm start
+          wait-on: http://localhost:4200
+          wait-on-timeout: 120
+          browser: chrome
 
-  sonarcloud:
-    name: SonarCloud
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  # SonarCloud is disabled for now: the SONAR_TOKEN secret is rejected (HTTP 403).
+  # To re-enable it, renew the token (gh secret set SONAR_TOKEN) and uncomment this job.
+  # sonarcloud:
+  #   name: SonarCloud
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v7
+  #       with:
+  #         fetch-depth: 0
+  #     # sonarcloud-github-action is archived; sonarqube-scan-action replaces it and talks to SonarQube Cloud
+  #     # by default. The project and organization keys come from sonar-project.properties.
+  #     - name: SonarCloud Scan
+  #       uses: SonarSource/sonarqube-scan-action@v8
+  #       env:
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

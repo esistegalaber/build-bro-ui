@@ -28,7 +28,6 @@ import * as CoreActions from "./core/actions";
       </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     CommonModule, BuildBroToolbar, SideNav, AlertPanel, RouterModule
   ]

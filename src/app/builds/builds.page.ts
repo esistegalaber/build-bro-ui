@@ -33,7 +33,6 @@ import {Paginator} from "../ui/paginator";
       </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     CommonModule,
     BuildSearchForm,

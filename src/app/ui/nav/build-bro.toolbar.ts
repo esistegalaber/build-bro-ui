@@ -1,10 +1,8 @@
-import {ChangeDetectionStrategy, Component, Inject} from '@angular/core'
-import {CommonModule} from "@angular/common";
+import {ChangeDetectionStrategy, Component, Inject, DOCUMENT} from '@angular/core'
 import {RouterModule} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {Buildz} from "../../core";
 import {toggleSideNavState} from "../../core/state/nav/nav.actions";
-import {DOCUMENT} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 
 @Component({
@@ -32,8 +30,7 @@ import {FormsModule} from "@angular/forms";
       </div>
     </div>
   `,
-  standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [RouterModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BuildBroToolbar {

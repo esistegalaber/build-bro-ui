@@ -1,19 +1,18 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
-import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {EditableBuildTemplate, IBranch, IProject} from "../../core";
 
 @Component({
   selector: 'bb-build-template-form',
   template: `
-    <div class="card shadow-sm">
+    <div class="card shadow-sm" attr.data-cy-id="build-template-{{template.project.name}}">
       <div class="card-body">
         <div class="card-title">{{template.project.name}}</div>
         <form #templateForm="ngForm" (ngSubmit)="templateUpdated.emit(template)">
           <div class="flex flex-grow flex-row gap-2">
             <div class="basis-1/12">
               <div class="form-control">
-                <input type="checkbox" [checked]="template.projectSelected" class="toggle toggle-success" (change)="projectSelection()"/>
+                <input type="checkbox" [checked]="template.projectSelected" class="toggle toggle-success" (change)="projectSelection()" data-cy-id="project-toggle"/>
               </div>
             </div>
             <div class="basis-11/12" [class.hidden]="!template.projectSelected">
@@ -23,13 +22,16 @@ import {EditableBuildTemplate, IBranch, IProject} from "../../core";
                     <span class="label-text">The Branch *</span>
                   </label>
                   <select class="select select-bordered select-sm w-full max-w-xs"
-                          name="branch"
-                          required
-                          [compareWith]="compareBranch"
-                          (change)="templateUpdated.emit(template)"
-                          [(ngModel)]="template.branch"
-                  >
-                    <option *ngFor="let branch of template.project.branches" [ngValue]="branch">{{branch.name}}</option>
+                    name="branch"
+                    data-cy-id="template-branch-select"
+                    required
+                    [compareWith]="compareBranch"
+                    (change)="templateUpdated.emit(template)"
+                    [(ngModel)]="template.branch"
+                    >
+                    @for (branch of template.project.branches; track branch) {
+                      <option [ngValue]="branch">{{branch.name}}</option>
+                    }
                   </select>
                 </div>
                 <div class="form-control col-span-2">
@@ -37,8 +39,8 @@ import {EditableBuildTemplate, IBranch, IProject} from "../../core";
                     <span class="label-text">Build Number</span>
                   </label>
                   <input id="buildNumber" class="input input-bordered input-sm" type="number" name="buildNumber" [(ngModel)]="template.buildNumber"
-                         (change)="templateUpdated.emit(template)"
-                  >
+                    (change)="templateUpdated.emit(template)"
+                    >
                 </div>
               </div>
             </div>
@@ -47,8 +49,7 @@ import {EditableBuildTemplate, IBranch, IProject} from "../../core";
       </div>
     </div>
   `,
-  standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 

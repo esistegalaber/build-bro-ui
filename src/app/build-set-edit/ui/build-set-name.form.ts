@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
-import {CommonModule} from "@angular/common";
 import {EditableBuildSetTemplate} from "../../core";
 import {FormsModule} from "@angular/forms";
 
@@ -13,13 +12,13 @@ import {FormsModule} from "@angular/forms";
                       <span class="label-text">Name</span>
                   </label>
                   <input name="templateName" required type="text" placeholder="Name of your BuildSet"
-                         class="input input-bordered input-sm"
+                         class="input input-bordered input-sm" data-cy-id="build-set-name-input"
                          [(ngModel)]="editableTemplate.name"
                          #templateName="ngModel"
                   >
               </div>
               <div class="col-span-4 self-end">
-                  <button class="btn btn-sm sm-primary" (click)="save.emit(editableTemplate)" [disabled]="theForm.invalid">
+                  <button class="btn btn-sm sm-primary" (click)="save.emit(editableTemplate)" [disabled]="theForm.invalid" data-cy-id="build-set-save">
                       <span class="material-icons">save</span>
                       Save
                   </button>
@@ -28,9 +27,7 @@ import {FormsModule} from "@angular/forms";
       </form>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
-    CommonModule,
     FormsModule
   ]
 })

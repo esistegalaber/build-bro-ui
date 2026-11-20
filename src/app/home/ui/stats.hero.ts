@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core'
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core'
 import {IBuildStats} from '../../core'
 
 @Component({
@@ -22,7 +22,7 @@ import {IBuildStats} from '../../core'
           </div>
       </div>
   `,
-  standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: []
 })
 export class StatsHero {

@@ -1,5 +1,4 @@
-import {Component, EventEmitter, Input, Output} from "@angular/core";
-import {CommonModule} from "@angular/common";
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
 import {IBuildLabel} from "../../core";
 import {FormsModule} from "@angular/forms";
 
@@ -27,9 +26,8 @@ import {FormsModule} from "@angular/forms";
           </div>
       </form>
   `,
-  standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    CommonModule,
     FormsModule
   ]
 })
