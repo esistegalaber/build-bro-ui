@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
-import {CommonModule} from "@angular/common";
 import {EditableBuildSetTemplate} from "../../core";
 import {FormsModule} from "@angular/forms";
 
@@ -30,7 +29,6 @@ import {FormsModule} from "@angular/forms";
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule
   ]
 })

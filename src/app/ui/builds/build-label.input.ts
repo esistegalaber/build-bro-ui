@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, Output} from "@angular/core";
-import {CommonModule} from "@angular/common";
 import {IBuildLabel} from "../../core";
 import {FormsModule} from "@angular/forms";
 
@@ -29,7 +28,6 @@ import {FormsModule} from "@angular/forms";
   `,
   standalone: true,
   imports: [
-    CommonModule,
     FormsModule
   ]
 })

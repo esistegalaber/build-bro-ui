@@ -11,29 +11,31 @@ import * as CoreActions from "../core/actions";
 @Component({
   template: `
       <div class="grid grid-cols-2 gap-2">
-          <table class="table table-zebra w-full">
-              <thead>
-              <tr>
-                  <td>ID</td>
-                  <td>Name</td>
-                  <td>Nick Name</td>
-                  <td></td>
-              </tr>
-              </thead>
-              <tr *ngFor="let server of allServers$|async" attr.data-cy-id="server-{{server.name}}">
-                  <td>{{server.id}}</td>
-                  <td>{{server.name}}</td>
-                  <td>{{server.nickName || '---'}}</td>
-                  <td>
-                      <button class="btn btn-ghost" (click)="select(server)" data-cy-id="server-edit">Edit</button>
-                  </td>
-              </tr>
-          </table>
-          <bb-server-details-form
-                  [server]="selectedServer"
-                  (updateServer)="updateSingleServer($event)"
+        <table class="table table-zebra w-full">
+          <thead>
+            <tr>
+              <td>ID</td>
+              <td>Name</td>
+              <td>Nick Name</td>
+              <td></td>
+            </tr>
+          </thead>
+          @for (server of allServers$|async; track server) {
+            <tr attr.data-cy-id="server-{{server.name}}">
+              <td>{{server.id}}</td>
+              <td>{{server.name}}</td>
+              <td>{{server.nickName || '---'}}</td>
+              <td>
+                <button class="btn btn-ghost" (click)="select(server)" data-cy-id="server-edit">Edit</button>
+              </td>
+            </tr>
+          }
+        </table>
+        <bb-server-details-form
+          [server]="selectedServer"
+          (updateServer)="updateSingleServer($event)"
           >
-          </bb-server-details-form>
+        </bb-server-details-form>
       </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

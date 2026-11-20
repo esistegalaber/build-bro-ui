@@ -16,12 +16,16 @@
       "prefix": "bz",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/build-bro-ui",
+            "outputPath": {
+              "base": "dist/build-bro-ui"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "zone.js",
+              "@angular/localize/init"
+            ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
@@ -30,7 +34,8 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "browser": "src/main.ts"
           },
           "configurations": {
             "production": {
@@ -55,9 +60,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -69,10 +72,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "build-bro-ui:build:production"
+              "buildTarget": "build-bro-ui:build:production"
             },
             "development": {
-              "browserTarget": "build-bro-ui:build:development"
+              "buildTarget": "build-bro-ui:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -80,7 +83,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "build-bro-ui:build"
+            "buildTarget": "build-bro-ui:build"
           }
         },
         "cypress-run": {

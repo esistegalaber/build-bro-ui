@@ -4,14 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Build Bro UI is an Angular 16 single-page app with NgRx 16 and Tailwind/daisyUI. Builds and tests are verified on Node 18 (`nvm use 18`), which is also what the Jenkinsfile uses. It is the frontend for the Build Bro REST API (the sibling repo `../build-bro-api`, Spring Boot on port 8080). It browses builds, build sets, projects, servers and deployments.
+Build Bro UI is an Angular 17 single-page app with NgRx 17 and Tailwind/daisyUI, built with the esbuild-based `application` builder (`ng serve` runs on Vite). Use Node 20 (`nvm use 20`): Angular 17 needs Node ^18.13 or >=20.9, and its CLI reports Node 22 as unsupported. The Jenkinsfile still points at Node 18.12. It is the frontend for the Build Bro REST API (the sibling repo `../build-bro-api`, Spring Boot on port 8080). It browses builds, build sets, projects, servers and deployments.
 
 ## Commands
 
 ```bash
 npm start              # ng serve on :4200, proxies /api -> http://[::1]:8080 (proxy.conf.json)
 npm run start-iso      # ng serve without the proxy
-npm run build          # production build to dist/build-bro-ui
+npm run build          # production build to dist/build-bro-ui/browser
 npm run watch          # development build in watch mode
 npm run cypress:run        # headless e2e tests against the fake API (needs only the app on :4200)
 npm run cypress:run:live   # same specs against the real API on :8080 (needs testdata.sql loaded)
@@ -36,9 +36,9 @@ The `Jenkinsfile` shows how to set up live mode: MariaDB container, then the `es
 - **Shared code**: `src/app/ui/` holds presentational components reused across features (accordions, paginator, nav, alert panel). `src/app/core/` holds the shared model interfaces (`core/state/model.ts`), root-level state slices and pipes. Import shared things through the `core/index.ts` barrel.
 - **HTTP lives only in effects** (and some route guards). They call relative `/api/v1/...` URLs with `HttpClient`, and failures map to `AlertActions.backendErrorOccurred`. The global alert reducer reads the backend's error shape (`error.message` / `error.description`, from the API's `IExceptionInfo`).
 - **Route guards load data**: in `build-set-edit`, the `new` / `:build-set-name` / `clone/:build-set-name` guards dispatch load actions and always return `true`.
-- **Templates are inline**, styled with Tailwind utility classes plus daisyUI component classes. Components use `OnPush` change detection. Store values are often passed through the `deepClone` pipe (`CloningPipe`) before reaching forms, so forms never mutate frozen store state.
+- **Templates are inline** and use the built-in control flow (`@if`, `@for`), not `*ngIf`/`*ngFor`. They are styled with Tailwind utility classes plus daisyUI component classes. `src/styles.css` must keep its `@import` above the `@tailwind` directives, or the build leaves it unbundled (browsers ignore a late `@import`) and the Material Icons font is missing. Components use `OnPush` change detection. Store values are often passed through the `deepClone` pipe (`CloningPipe`) before reaching forms, so forms never mutate frozen store state.
 - Model interfaces in `core/state/model.ts` mirror the API DTOs (`IBuild`, `IBuildSearchResult`, …). Keep them in sync with `build-bro-api`'s `api.model` package.
 
 ## Deployment
 
-The `Dockerfile` packages a prebuilt `dist/build-bro-ui` into nginx, so run `npm run build` first. `default.conf.template` proxies `/api` to `http://${BUILDZ_API}:8080/api` (env var `BUILDZ_API`, default `api`) and falls back to `index.html` for SPA routing.
+The `Dockerfile` packages a prebuilt `dist/build-bro-ui/browser` into nginx, so run `npm run build` first. `default.conf.template` proxies `/api` to `http://${BUILDZ_API}:8080/api` (env var `BUILDZ_API`, default `api`) and falls back to `index.html` for SPA routing.

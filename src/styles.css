@@ -1,4 +1,4 @@
+@import 'material-icons/iconfont/material-icons.css';
 @tailwind base; /* Preflight will be injected here */
 @tailwind components;
 @tailwind utilities;
-@import 'material-icons/iconfont/material-icons.css';

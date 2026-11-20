@@ -13,19 +13,20 @@ import {BuildSetAccordion} from "../ui/build-sets/build-set.accordion";
 @Component({
   template: `
       <bb-build-set-name-form
-              [editableTemplate]="(currentBuildSetTemplate$ | async)!"
-              (save)="saveTemplate($event)"
+        [editableTemplate]="(currentBuildSetTemplate$ | async)!"
+        (save)="saveTemplate($event)"
       ></bb-build-set-name-form>
-      <bb-build-template-form
-              *ngFor="let buildTemplate of (EditableBuildTemplates$ | async | deepClone)!"
-              [template]="buildTemplate"
-              (projectAdded)="projectAdded($event)"
-              (projectRemoved)="projectRemoved($event)"
-              (templateUpdated)="buildTemplateUpdated($event)"
-      >
-      </bb-build-template-form>
+      @for (buildTemplate of (EditableBuildTemplates$ | async | deepClone)!; track buildTemplate) {
+        <bb-build-template-form
+          [template]="buildTemplate"
+          (projectAdded)="projectAdded($event)"
+          (projectRemoved)="projectRemoved($event)"
+          (templateUpdated)="buildTemplateUpdated($event)"
+          >
+        </bb-build-template-form>
+      }
       <bb-builds-accordion
-              [builds]="(theBuilds$|async)!">
+        [builds]="(theBuilds$|async)!">
       </bb-builds-accordion>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

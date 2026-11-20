@@ -34,7 +34,7 @@ bootstrapApplication(AppComponent, {
         'servers': serversReducer
       }),
       EffectsModule.forRoot([StatsEffects, ProjectEffects, ServerEffects]),
-      StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production})
+      StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production, connectInZone: true})
     ]),
     provideRouter(appRoutes),
     provideHttpClient()

@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, Inject} from '@angular/core'
-import {CommonModule} from "@angular/common";
 import {RouterModule} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {Buildz} from "../../core";
@@ -33,7 +32,7 @@ import {FormsModule} from "@angular/forms";
     </div>
   `,
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [RouterModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BuildBroToolbar {

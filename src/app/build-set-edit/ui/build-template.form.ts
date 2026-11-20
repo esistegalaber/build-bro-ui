@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
-import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {EditableBuildTemplate, IBranch, IProject} from "../../core";
 
@@ -23,14 +22,16 @@ import {EditableBuildTemplate, IBranch, IProject} from "../../core";
                     <span class="label-text">The Branch *</span>
                   </label>
                   <select class="select select-bordered select-sm w-full max-w-xs"
-                          name="branch"
-                          data-cy-id="template-branch-select"
-                          required
-                          [compareWith]="compareBranch"
-                          (change)="templateUpdated.emit(template)"
-                          [(ngModel)]="template.branch"
-                  >
-                    <option *ngFor="let branch of template.project.branches" [ngValue]="branch">{{branch.name}}</option>
+                    name="branch"
+                    data-cy-id="template-branch-select"
+                    required
+                    [compareWith]="compareBranch"
+                    (change)="templateUpdated.emit(template)"
+                    [(ngModel)]="template.branch"
+                    >
+                    @for (branch of template.project.branches; track branch) {
+                      <option [ngValue]="branch">{{branch.name}}</option>
+                    }
                   </select>
                 </div>
                 <div class="form-control col-span-2">
@@ -38,8 +39,8 @@ import {EditableBuildTemplate, IBranch, IProject} from "../../core";
                     <span class="label-text">Build Number</span>
                   </label>
                   <input id="buildNumber" class="input input-bordered input-sm" type="number" name="buildNumber" [(ngModel)]="template.buildNumber"
-                         (change)="templateUpdated.emit(template)"
-                  >
+                    (change)="templateUpdated.emit(template)"
+                    >
                 </div>
               </div>
             </div>
@@ -49,7 +50,7 @@ import {EditableBuildTemplate, IBranch, IProject} from "../../core";
     </div>
   `,
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
