@@ -1,18 +1,11 @@
-import {ActivatedRouteSnapshot, RouterStateSnapshot} from "@angular/router";
+import {CanActivateFn} from "@angular/router";
+import {inject} from "@angular/core";
 import {Store} from "@ngrx/store";
 import {Buildz} from "../../core";
-import {HttpClient} from "@angular/common/http";
 import * as BuildSetActions from "../state/edit-build-sets.actions";
-import {Injectable} from "@angular/core";
 
-@Injectable()
-export class NewBuildSetGuard {
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    this.store.dispatch(BuildSetActions.newBuildSet())
-    return true
-  }
-
-
-  constructor(private store: Store<Buildz>, private http: HttpClient) {
-  }
+/** Starts an empty build set. Only loads data, never blocks the navigation. */
+export const newBuildSetGuard: CanActivateFn = () => {
+  inject(Store<Buildz>).dispatch(BuildSetActions.newBuildSet())
+  return true
 }
