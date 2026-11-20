@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Build Bro UI is an Angular 20 single-page app with NgRx 20 and Tailwind/daisyUI, built with the esbuild-based `application` builder (`ng serve` runs on Vite). Builds and tests are verified on Node 20 (`nvm use 20`). The Jenkinsfile still points at Node 18.12. It is the frontend for the Build Bro REST API (the sibling repo `../build-bro-api`, Spring Boot on port 8080). It browses builds, build sets, projects, servers and deployments.
+Build Bro UI is an Angular 21 single-page app with NgRx 21 and Tailwind/daisyUI, built with the esbuild-based `application` builder (`ng serve` runs on Vite). Builds and tests are verified on Node 20 (`nvm use 20`). The Jenkinsfile still points at Node 18.12. It is the frontend for the Build Bro REST API (the sibling repo `../build-bro-api`, Spring Boot on port 8080). It browses builds, build sets, projects, servers and deployments.
 
 ## Commands
 
@@ -28,7 +28,7 @@ The `Jenkinsfile` shows how to set up live mode: MariaDB container, then the `es
 
 ## Architecture
 
-- **Standalone components, no NgModules.** Standalone is the default since Angular 19, so components and pipes don't declare `standalone: true`. The compiler warns about components in `imports` that a template doesn't use, so remove those. `src/main.ts` bootstraps `AppComponent` with `bootstrapApplication` and registers the root store slices (`alert`, `stats`, `nav`, `projects`, `servers`) and their effects. `app.routes.ts` lazy-loads one `*.routes.ts` per feature folder.
+- **Standalone components, no NgModules.** Standalone is the default since Angular 19, so components and pipes don't declare `standalone: true`. The compiler warns about components in `imports` that a template doesn't use, so remove those. `src/main.ts` bootstraps `AppComponent` with `bootstrapApplication`. It keeps Zone.js change detection via an explicit `provideZoneChangeDetection()`, because Angular 21 defaults to zoneless. It also registers the root store slices (`alert`, `stats`, `nav`, `projects`, `servers`) and their effects. `app.routes.ts` lazy-loads one `*.routes.ts` per feature folder.
 - **Feature folders** (`builds/`, `build-sets/`, `build-set-edit/`, `deployments/`, `projects/`, `servers/`, `home/`) follow this pattern, though not every folder has every part. `projects/`, `servers/` and `home/` have no `state/` and read the root slices (`projects`, `servers`, `stats`). `build-sets/` has no `ui/` and uses `src/app/ui/build-sets/`.
   - `*.page.ts` is the routed container component. It selects from the store and dispatches actions.
   - `ui/` holds presentational components with `@Input`/`@Output`.
