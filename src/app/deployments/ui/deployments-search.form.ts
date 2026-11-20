@@ -23,7 +23,7 @@ import {FormsModule} from "@angular/forms";
     
           <div class="col-span-6">
             <div class="flex justify-around">
-              <button class="btn btn-sm btn-accent" (click)="resetSearch.emit()">
+              <button type="button" class="btn btn-sm btn-accent" (click)="resetSearch.emit()">
                 <span class="material-icons">restart_alt</span>
                 Reset
               </button>
@@ -38,7 +38,7 @@ import {FormsModule} from "@angular/forms";
                 <option [value]="25">25 / Page</option>
                 <option [value]="50">50 / Page</option>
               </select>
-              <button class="btn btn-sm btn-primary" (click)="updateSearch.emit(theSearch)" css="btn-sm btn-secondary">
+              <button type="submit" class="btn btn-sm btn-primary">
                 <span class="material-icons">search</span>
                 (Re-)Load
               </button>
@@ -58,7 +58,7 @@ import {FormsModule} from "@angular/forms";
                   [(ngModel)]="newLabelVal">
               </div>
               <div class="col-span-4">
-                <button [disabled]="newLabelVal.length==0 || newLabelVal.length==0 " class="btn btn-sm" (click)="addSearchLabel()">
+                <button type="button" [disabled]="newLabelVal.length==0 || newLabelVal.length==0 " class="btn btn-sm" (click)="addSearchLabel()">
                   <span class="material-icons">add</span>
                 </button>
               </div>

@@ -33,8 +33,7 @@
     "material-icons": "^1.12.2",
     "ngx-date-fns": "^11.0.1",
     "rxjs": "~7.8.0",
-    "tslib": "^2.3.0",
-    "zone.js": "~0.15.1"
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^22.3.0",

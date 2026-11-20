@@ -1,4 +1,4 @@
-import {enableProdMode, provideZoneChangeDetection} from '@angular/core';
+import {enableProdMode, provideZonelessChangeDetection} from '@angular/core';
 import {environment} from './environments/environment';
 import {AppComponent} from "./app/app.component";
 import {provideStore} from "@ngrx/store";
@@ -22,7 +22,7 @@ if (environment.production) {
 }
 bootstrapApplication(AppComponent, {
   providers: [
-    provideZoneChangeDetection(),
+    provideZonelessChangeDetection(),
     provideStore({
       'alert': alertReducer,
       'stats': statsReducer,
@@ -31,7 +31,7 @@ bootstrapApplication(AppComponent, {
       'servers': serversReducer
     }),
     provideEffects(StatsEffects, ProjectEffects, ServerEffects),
-    provideStoreDevtools({maxAge: 25, logOnly: environment.production, connectInZone: true}),
+    provideStoreDevtools({maxAge: 25, logOnly: environment.production}),
     provideRouter(appRoutes),
     provideHttpClient(withXhr())
   ]

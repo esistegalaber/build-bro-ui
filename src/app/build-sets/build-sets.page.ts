@@ -33,7 +33,7 @@ import {BuildSetNamesMenu} from "../ui/build-sets/build-set-names.menu";
     <input type="checkbox" id="delete-confirmation-dialog" class="modal-toggle" [checked]="showDeleteConfirmation"/>
     <div class="modal" data-cy-id="delete-confirmation-dialog">
       <div class="modal-box relative">
-        <label for="my-modal-3" class="btn btn-sm btn-circle absolute right-2 top-2" (click)="hideDeleteBuildSetConfirmationDialog()">✕</label>
+        <label for="my-modal-3" class="btn btn-sm btn-circle absolute right-2 top-2" (click)="hideDeleteBuildSetConfirmationDialog()" data-cy-id="delete-cancel">✕</label>
         <h3 class="text-lg font-bold">Delete BuildSet</h3>
         <p class="py-4">Are you sure you eant to delete the BuildSet with name='{{toDelete.name}}' ?</p>
         <div class="modal-action">

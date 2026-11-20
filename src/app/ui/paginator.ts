@@ -15,7 +15,7 @@ import {CommonModule} from "@angular/common";
           data-cy-id="paginator-previous">
           <span class="material-icons">arrow_back_ios</span>
         </button>
-        <button class="btn btn-sm btn-active">{{paginationParams.currentPage + 1}} / {{paginationParams.totalPages}}</button>
+        <button class="btn btn-sm btn-active" data-cy-id="paginator-current">{{paginationParams.currentPage + 1}} / {{paginationParams.totalPages}}</button>
         <button class="btn btn-sm" [class.btn-disabled]="!paginationParams.hasNext" (click)="toPage.emit(paginationParams.currentPage+1)"
           data-cy-id="paginator-next">
           <span class="material-icons">arrow_forward_ios</span>

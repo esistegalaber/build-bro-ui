@@ -12,6 +12,61 @@ describe('Builds Page', () => {
     selectMainBranch()
   })
 
+  it('Pages through the results with first / previous / next / last', () => {
+    loadBuildPage()
+    cy.get('[data-cy-id=paginator-current]').should('contain.text', '1 / 9')
+    cy.get('[data-cy-id=paginator-next]').click()
+    cy.get('[data-cy-id=paginator-current]').should('contain.text', '2 / 9')
+    cy.get('[data-cy-id=paginator-last]').click()
+    cy.get('[data-cy-id=paginator-current]').should('contain.text', '9 / 9')
+    cy.get('[data-cy-id=paginator-previous]').click()
+    cy.get('[data-cy-id=paginator-current]').should('contain.text', '8 / 9')
+    cy.get('[data-cy-id=paginator-first]').click()
+    cy.get('[data-cy-id=paginator-current]').should('contain.text', '1 / 9')
+  })
+
+  it('Adds and removes a search label', () => {
+    loadBuildPage()
+    cy.intercept(buildsSearchRequest).as('label-search')
+    cy.get('[data-cy-id=label-key-input]').type('integration-test')
+    cy.get('[data-cy-id=label-add]').should('be.disabled')
+    cy.get('[data-cy-id=label-value-input]').type('ok')
+    cy.get('[data-cy-id=label-add]').should('be.enabled').click()
+    cy.wait('@label-search').its('request.body.labels').should('deep.equal', {'integration-test': 'ok'})
+    cy.get('[data-cy-id=search-label]').should('have.length', 1)
+      .find('input').first().should('have.value', 'integration-test')
+
+    cy.get('[data-cy-id=search-label-remove]').click()
+    cy.wait('@label-search').its('request.body.labels').should('deep.equal', {})
+    cy.get('[data-cy-id=search-label]').should('not.exist')
+  })
+
+  // Reset and (Re-)Load sit inside the search <form>: only (Re-)Load may submit it, or a click also
+  // re-sends the old search before the form has received the reset values.
+  it('Resets the search', () => {
+    loadBuildPage()
+    cy.intercept(buildsSearchRequest).as('min-search')
+    cy.get('[data-cy-id=min-build-number-input]').type('5')
+    cy.wait('@min-search').its('request.body.minBuildNumber').should('eq', '5')
+    cy.get('[data-cy-id=search-reset]').click()
+    cy.get('[data-cy-id=min-build-number-input]').should('have.value', '')
+  })
+
+  it('(Re-)Load sends the search once, and Enter in a field does not reset it', () => {
+    loadBuildPage()
+    cy.get('[data-cy-id=min-build-number-input]').type('5')
+    let searches = 0
+    cy.intercept(buildsSearchRequest, () => {
+      searches++
+    }).as('reload')
+    cy.get('[data-cy-id=search-reload]').click()
+    cy.wait('@reload').its('request.body.minBuildNumber').should('eq', '5')
+    cy.wait(500).then(() => expect(searches).to.eq(1))
+    cy.get('[data-cy-id=min-build-number-input]').type('{enter}')
+    cy.wait('@reload').its('request.body.minBuildNumber').should('eq', '5')
+    cy.get('[data-cy-id=min-build-number-input]').should('have.value', '5')
+  })
+
   function loadBuildPage() {
     cy.intercept(buildsSearchRequest).as('empty-search-response')
     // open builds page
