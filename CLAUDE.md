@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Build Bro UI is an Angular 15 single-page app with NgRx and Tailwind/daisyUI. It is the frontend for the Build Bro REST API (the sibling repo `../build-bro-api`, Spring Boot on port 8080). It browses builds, build sets, projects, servers and deployments.
+Build Bro UI is an Angular 16 single-page app with NgRx 16 and Tailwind/daisyUI. Builds and tests are verified on Node 18 (`nvm use 18`), which is also what the Jenkinsfile uses. It is the frontend for the Build Bro REST API (the sibling repo `../build-bro-api`, Spring Boot on port 8080). It browses builds, build sets, projects, servers and deployments.
 
 ## Commands
 
