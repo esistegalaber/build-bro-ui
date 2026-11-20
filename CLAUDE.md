@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Build Bro UI is an Angular 17 single-page app with NgRx 17 and Tailwind/daisyUI, built with the esbuild-based `application` builder (`ng serve` runs on Vite). Use Node 20 (`nvm use 20`): Angular 17 needs Node ^18.13 or >=20.9, and its CLI reports Node 22 as unsupported. The Jenkinsfile still points at Node 18.12. It is the frontend for the Build Bro REST API (the sibling repo `../build-bro-api`, Spring Boot on port 8080). It browses builds, build sets, projects, servers and deployments.
+Build Bro UI is an Angular 18 single-page app with NgRx 18 and Tailwind/daisyUI, built with the esbuild-based `application` builder (`ng serve` runs on Vite). Builds and tests are verified on Node 20 (`nvm use 20`). The Jenkinsfile still points at Node 18.12. It is the frontend for the Build Bro REST API (the sibling repo `../build-bro-api`, Spring Boot on port 8080). It browses builds, build sets, projects, servers and deployments.
 
 ## Commands
 
