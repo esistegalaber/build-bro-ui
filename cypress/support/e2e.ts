@@ -1,17 +1,17 @@
-// ***********************************************************
-// This example support/e2e.ts is processed and
-// loaded automatically before your test files.
+// Loaded before every e2e spec (see supportFile in cypress.config.ts).
 //
-// This is a great place to put global configuration and
-// behavior that modifies Cypress.
-//
-// You can change the location of this file or turn off
-// automatically serving support files with the
-// 'supportFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/configuration
-// ***********************************************************
+// By default the specs run against the in-memory fake API in ./fake-api.ts, so no backend is needed.
+// Set CYPRESS_LIVE=true (npm run cypress:run:live) to run them against the real API on :8080
+// instead, which needs testdata.sql loaded into its database.
+import {installFakeApi} from './fake-api'
 
-// When a command from ./commands is ready to use, import with `import './commands'` syntax
-// import './commands';
+export function isLive(): boolean {
+  const live = Cypress.env('LIVE')
+  return live === true || live === 'true'
+}
+
+beforeEach(() => {
+  if (!isLive()) {
+    installFakeApi()
+  }
+})

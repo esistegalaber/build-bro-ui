@@ -10,7 +10,9 @@
     "test": "ng test",
     "e2e": "ng e2e",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "cypress:run:live": "cypress run --env LIVE=true",
+    "cypress:snapshot-api": "node cypress/scripts/snapshot-api.mjs"
   },
   "private": true,
   "dependencies": {
