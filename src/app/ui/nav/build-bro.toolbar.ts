@@ -1,9 +1,8 @@
-import {ChangeDetectionStrategy, Component, Inject} from '@angular/core'
+import {ChangeDetectionStrategy, Component, Inject, DOCUMENT} from '@angular/core'
 import {RouterModule} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {Buildz} from "../../core";
 import {toggleSideNavState} from "../../core/state/nav/nav.actions";
-import {DOCUMENT} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 
 @Component({

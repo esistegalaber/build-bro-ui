@@ -4,12 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Build Bro UI is an Angular 19 single-page app with NgRx 19 and Tailwind/daisyUI, built with the esbuild-based `application` builder (`ng serve` runs on Vite). Builds and tests are verified on Node 20 (`nvm use 20`). The Jenkinsfile still points at Node 18.12. It is the frontend for the Build Bro REST API (the sibling repo `../build-bro-api`, Spring Boot on port 8080). It browses builds, build sets, projects, servers and deployments.
+Build Bro UI is an Angular 20 single-page app with NgRx 20 and Tailwind/daisyUI, built with the esbuild-based `application` builder (`ng serve` runs on Vite). Builds and tests are verified on Node 20 (`nvm use 20`). The Jenkinsfile still points at Node 18.12. It is the frontend for the Build Bro REST API (the sibling repo `../build-bro-api`, Spring Boot on port 8080). It browses builds, build sets, projects, servers and deployments.
 
 ## Commands
 
 ```bash
-npm start              # ng serve on :4200, proxies /api -> http://[::1]:8080 (proxy.conf.json)
+npm start              # ng serve on :4200, proxies /api -> http://localhost:8080 (proxy.conf.json)
 npm run start-iso      # ng serve without the proxy
 npm run build          # production build to dist/build-bro-ui/browser
 npm run watch          # development build in watch mode
@@ -22,7 +22,7 @@ npm run cypress:snapshot-api   # regenerate cypress/fixtures/api-db.json from a 
 
 No linter is configured (there is no `ng lint` target and no ESLint). There is no unit test setup (Karma/Jasmine was removed, so there is no `ng test`), and no Cypress component specs, even though `cypress.config.ts` has a `component` section. Cypress is pinned to an exact version in `devDependencies`. The Cypress e2e tests in `cypress/e2e/` (one spec per page) are the only tests.
 
-**Two e2e modes.** By default, `cypress/support/e2e.ts` installs an in-memory **fake API** (`cypress/support/fake-api.ts`) before every test. It serves `cypress/fixtures/api-db.json`, a snapshot of the real API with `testdata.sql` loaded, and implements search, filtering, sorting (ties by ascending id, like the API), paging and the mutations. Every test gets a fresh copy of the data. Any `/api` call it doesn't stub gets a 501, so **a new endpoint needs a stub in `fake-api.ts`**. Specs use `cy.intercept(...).as(...)` without handlers only to wait on and inspect requests; those fall through to the fake. With `CYPRESS_LIVE=true` (`cypress:run:live`) the fake is skipped and the specs call the real API. The tests that change data clean up after themselves, so live mode can be re-run on the same database. When `testdata.sql` changes, reload it into the DB and run `cypress:snapshot-api`. Cypress's bundled webpack can't parse `?.`/`??` in spec and support files.
+**Two e2e modes.** By default, `cypress/support/e2e.ts` installs an in-memory **fake API** (`cypress/support/fake-api.ts`) before every test. It serves `cypress/fixtures/api-db.json`, a snapshot of the real API with `testdata.sql` loaded, and implements search, filtering, sorting (ties by ascending id, like the API), paging and the mutations. Every test gets a fresh copy of the data. Any `/api` call it doesn't stub gets a 501, so **a new endpoint needs a stub in `fake-api.ts`**. Specs use `cy.intercept(...).as(...)` without handlers only to wait on and inspect requests; those fall through to the fake. With `CYPRESS_LIVE=true` (`cypress:run:live`) the fake is skipped and the specs call the real API. The tests that change data clean up after themselves, so live mode can be re-run on the same database. When `testdata.sql` changes, reload it into the DB and run `cypress:snapshot-api`. Cypress's bundled webpack can't parse `?.`/`??` in spec and support files. Cypress 12 loads `cypress.config.ts` with its own `ts-node`, which can't use the app's `moduleResolution: "bundler"`, so `tsconfig.json` has a `ts-node` section that switches it back to CommonJS / Node resolution.
 
 The `Jenkinsfile` shows how to set up live mode: MariaDB container, then the `esistegalaber/build-bruh-api` image, then `testdata.sql` piped into the DB. It still calls `npm run cypress:run`, which is now the stubbed mode; switch it to `cypress:run:live` to test against that API. CI also runs on GitHub Actions (`.github/workflows/build.yml`: Cypress plus a SonarCloud scan). That workflow does **not** load `testdata.sql`, so it should use the stubbed mode. Elements are selected with `data-cy-id` attributes, so keep them when editing templates.
 
