@@ -36,16 +36,18 @@ jobs:
           wait-on-timeout: 120
           browser: chrome
 
-  sonarcloud:
-    name: SonarCloud
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-      # sonarcloud-github-action is archived; sonarqube-scan-action replaces it and talks to SonarQube Cloud
-      # by default. The project and organization keys come from sonar-project.properties.
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v8
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  # SonarCloud is disabled for now: the SONAR_TOKEN secret is rejected (HTTP 403).
+  # To re-enable it, renew the token (gh secret set SONAR_TOKEN) and uncomment this job.
+  # sonarcloud:
+  #   name: SonarCloud
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v7
+  #       with:
+  #         fetch-depth: 0
+  #     # sonarcloud-github-action is archived; sonarqube-scan-action replaces it and talks to SonarQube Cloud
+  #     # by default. The project and organization keys come from sonar-project.properties.
+  #     - name: SonarCloud Scan
+  #       uses: SonarSource/sonarqube-scan-action@v8
+  #       env:
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
