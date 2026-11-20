@@ -9,31 +9,31 @@ import {ISideNav} from "../../core";
       <nav class="shrink">
           <ul class="menu bg-base-100 p-2 rounded-box" [ngClass]="{'w-48': sideNav.text}">
             <li>
-              <a routerLink="build-sets">
+              <a routerLink="build-sets" data-cy-id="nav-build-sets">
                 <span class="material-icons">construction</span>
                 <span *ngIf="sideNav.text">&nbsp;Build Sets</span>
               </a>
             </li>
             <li>
-            <a routerLink="builds">
+            <a routerLink="builds" data-cy-id="nav-builds">
             <span class="material-icons">build</span>
             <span *ngIf="sideNav.text">&nbsp;Builds</span>
             </a>
             </li>
               <li>
-                  <a routerLink="servers">
+                  <a routerLink="servers" data-cy-id="nav-servers">
                       <span class="material-icons">computer</span>
                       <span *ngIf="sideNav.text">&nbsp;Servers</span>
                   </a>
               </li>
               <li>
-                  <a routerLink="deployments">
+                  <a routerLink="deployments" data-cy-id="nav-deployments">
                       <span class="material-icons">agriculture</span>
                       <span *ngIf="sideNav.text">&nbsp;Deployments</span>
                   </a>
               </li>
               <li>
-                  <a routerLink="projects">
+                  <a routerLink="projects" data-cy-id="nav-projects">
                       <span class="material-icons">factory</span>
                       <span *ngIf="sideNav.text">&nbsp;Projects</span>
                   </a>

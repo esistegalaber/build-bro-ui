@@ -11,7 +11,7 @@ import {DeploymentLabelsTable} from "./deployment-labels.table";
   selector: 'bb-deployment-accordion',
   template: `
       <div class="collapse collapse-arrow border rounded-box" *ngFor="let deployment of deployments">
-          <input type="checkbox" class="peer"/>
+          <input type="checkbox" class="peer" attr.data-cy-id="deployment-{{deployment.id}}"/>
           <div class="collapse-title">
               <strong>{{deployment.serverName}}</strong> ({{deployment.deployedAt | dfnsParseIso | dfnsFormatDistanceToNowPure}} ago)
           </div>

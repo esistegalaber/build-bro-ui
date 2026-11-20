@@ -11,25 +11,25 @@ import {toggleInactiveData} from "../core/actions";
     <h1>Projects</h1>
     <div class="form-control">
       <label for="inactiveToggle">Inactive</label>
-      <input id="inactiveToggle" type="checkbox" [checked]="inactiveDataIncluded$|async" class="toggle toggle-success"
+      <input id="inactiveToggle" type="checkbox" [checked]="inactiveDataIncluded$|async" class="toggle toggle-success" data-cy-id="inactive-toggle"
              (click)="toggleInactive()"
       />
     </div>
     <table class="table table-compact">
       <ng-container *ngFor="let project of (projects$|async)!">
-        <tr>
+        <tr attr.data-cy-id="project-{{project.name}}">
           <td colspan="2">{{project.name}}</td>
           <td>
           </td>
         </tr>
-        <tr *ngFor="let branch of project.branches">
+        <tr *ngFor="let branch of project.branches" attr.data-cy-id="branch-{{branch.id}}">
           <td></td>
           <td>{{branch.name}}</td>
           <td>
-            <button class="btn" *ngIf="branch.active" (click)="deactivateBranch(branch.id)">
+            <button class="btn" *ngIf="branch.active" (click)="deactivateBranch(branch.id)" data-cy-id="branch-deactivate">
               <span class="material-icons">check_box</span>
             </button>
-            <button class="btn" *ngIf="!branch.active" (click)="activateBranch(branch.id)">
+            <button class="btn" *ngIf="!branch.active" (click)="activateBranch(branch.id)" data-cy-id="branch-activate">
               <span class="material-icons">check_box_outline_blank</span>
             </button>
           </td>

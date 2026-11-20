@@ -9,7 +9,7 @@ import {BuildsAccordion} from "../builds/builds.accordion";
   selector: 'bb-build-set-accordion',
   template: `
     <ng-container *ngIf="buildSet.name !== ''">
-      <div class="card lg:card-side bg-base-100 shadow-xl">
+      <div class="card lg:card-side bg-base-100 shadow-xl" data-cy-id="build-set-card">
         <div class="card-body">
           <h2 class="card-title">Builds of {{buildSet.name}}</h2>
           <bb-builds-accordion
@@ -17,13 +17,13 @@ import {BuildsAccordion} from "../builds/builds.accordion";
           </bb-builds-accordion>
           <div class="card-actions justify-end">
             <div class="btn-group">
-              <button class="btn btn-warning" (click)="deleteBuildSet.emit(buildSet)">
+              <button class="btn btn-warning" (click)="deleteBuildSet.emit(buildSet)" data-cy-id="build-set-delete">
                 <span class="material-icons">backspace</span>
               </button>
-              <button class="btn" [routerLink]="['/', 'edit-build-set','clone', buildSet.name]">
+              <button class="btn" [routerLink]="['/', 'edit-build-set','clone', buildSet.name]" data-cy-id="build-set-clone">
                 <span class="material-icons">content_copy</span>
               </button>
-              <button class="btn" [routerLink]="['/', 'edit-build-set', buildSet.name]">
+              <button class="btn" [routerLink]="['/', 'edit-build-set', buildSet.name]" data-cy-id="build-set-edit">
                 <span class="material-icons">edit</span>
               </button>
             </div>

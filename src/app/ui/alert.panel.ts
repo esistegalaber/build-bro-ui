@@ -6,7 +6,7 @@ import {CommonModule} from "@angular/common";
   selector: 'bz-alert-panel',
   template: `
     <ng-container *ngIf="alert.message.length>0">
-      <div class="alert shadow-lg m-2" [ngClass]="alert.type">
+      <div class="alert shadow-lg m-2" [ngClass]="alert.type" data-cy-id="alert">
         <div>
           <span class="material-icons">close</span>
           <div>
@@ -15,7 +15,7 @@ import {CommonModule} from "@angular/common";
           </div>
         </div>
         <div class="flex-none">
-          <button class="btn btn-sm" (click)="clearAlert.emit()">OK</button>
+          <button class="btn btn-sm" (click)="clearAlert.emit()" data-cy-id="alert-ok">OK</button>
         </div>
       </div>
     </ng-container>

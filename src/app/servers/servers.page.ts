@@ -20,12 +20,12 @@ import * as CoreActions from "../core/actions";
                   <td></td>
               </tr>
               </thead>
-              <tr *ngFor="let server of allServers$|async">
+              <tr *ngFor="let server of allServers$|async" attr.data-cy-id="server-{{server.name}}">
                   <td>{{server.id}}</td>
                   <td>{{server.name}}</td>
                   <td>{{server.nickName || '---'}}</td>
                   <td>
-                      <button class="btn btn-ghost" (click)="select(server)">Edit</button>
+                      <button class="btn btn-ghost" (click)="select(server)" data-cy-id="server-edit">Edit</button>
                   </td>
               </tr>
           </table>

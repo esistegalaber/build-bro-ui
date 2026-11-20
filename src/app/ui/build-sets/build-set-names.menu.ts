@@ -7,7 +7,7 @@ import {RouterLink} from "@angular/router";
   template: `
     <ul class="menu bg-base-100 w-56 rounded-box">
       <li *ngFor="let name of names" class="hover-bordered">
-        <a [ngClass]="{'active':name === selectedName}"
+        <a [ngClass]="{'active':name === selectedName}" attr.data-cy-id="build-set-name-{{name}}"
            (click)="buildSetSelected.emit(name)">
           {{name}}
         </a>

@@ -22,7 +22,7 @@ import {BuildSetNamesMenu} from "../ui/build-sets/build-set-names.menu";
 
       <div class="basis-3/4">
         <div class="flex justify-end">
-          <a class="btn btn-circle" routerLink="/edit-build-set">
+          <a class="btn btn-circle" routerLink="/edit-build-set" data-cy-id="build-set-add">
             <span class="material-icons">add</span>
           </a>
         </div>
@@ -32,13 +32,13 @@ import {BuildSetNamesMenu} from "../ui/build-sets/build-set-names.menu";
 
     <!-- Put this part before </body> tag -->
     <input type="checkbox" id="delete-confirmation-dialog" class="modal-toggle" [checked]="showDeleteConfirmation"/>
-    <div class="modal">
+    <div class="modal" data-cy-id="delete-confirmation-dialog">
       <div class="modal-box relative">
         <label for="my-modal-3" class="btn btn-sm btn-circle absolute right-2 top-2" (click)="hideDeleteBuildSetConfirmationDialog()">✕</label>
         <h3 class="text-lg font-bold">Delete BuildSet</h3>
         <p class="py-4">Are you sure you eant to delete the BuildSet with name='{{toDelete.name}}' ?</p>
         <div class="modal-action">
-          <a (click)="deleteBuildSetTemplate()" class="btn btn-danger">Delete It!</a>
+          <a (click)="deleteBuildSetTemplate()" class="btn btn-danger" data-cy-id="delete-confirm">Delete It!</a>
         </div>
       </div>
     </div>

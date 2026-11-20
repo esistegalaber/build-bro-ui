@@ -14,7 +14,7 @@ import {IServer} from "../../core";
             <label class="label">
               <span class="label-text">Description</span>
             </label>
-            <textarea class="textarea textarea-primary" placeholder="Description"
+            <textarea class="textarea textarea-primary" placeholder="Description" data-cy-id="server-description"
                       name="description"
                       [(ngModel)]="server.description"
             ></textarea>
@@ -23,13 +23,13 @@ import {IServer} from "../../core";
             <label class="label">
               <span class="label-text">Description</span>
             </label>
-            <input class="input input-bordered input-sm" placeholder="Nick Name"
+            <input class="input input-bordered input-sm" placeholder="Nick Name" data-cy-id="server-nickname"
                    name="nickName"
                    [(ngModel)]="server.nickName"
             />
           </div>
           <div class="flex justify-end">
-            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-primary" type="submit" data-cy-id="server-save">Save</button>
           </div>
         </div>
       </form>

@@ -11,6 +11,7 @@ import {FormsModule} from "@angular/forms";
         <div class="grid grid-cols-12 gap-2">
           <select class="select select-bordered select-sm w-full max-w-xs col-span-4"
                   name="project"
+                  data-cy-id="server-select"
                   [(ngModel)]="theSearch.serverName"
                   (ngModelChange)="updateSearch.emit(theSearch)"
           >
@@ -28,6 +29,7 @@ import {FormsModule} from "@angular/forms";
 
               <select class="select select-bordered select-sm"
                       name="pageSize"
+                      data-cy-id="page-size-select"
                       [(ngModel)]="theSearch.pageSize"
                       (ngModelChange)="updateSearch.emit(theSearch)"
               >
