@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from "@angular/core";
+import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {select, Store} from "@ngrx/store";
 import {Buildz} from "../core";
 import {CommonModule} from "@angular/common";
@@ -49,6 +49,8 @@ import {toggleInactiveData} from "../core/actions";
   ]
 })
 export class ProjectsPage {
+  private store = inject<Store<Buildz>>(Store);
+
   inactiveDataIncluded$ = this.store.pipe(select(includeInactiveData))
   projects$ = this.store.pipe(select(projectsData))
 
@@ -62,8 +64,5 @@ export class ProjectsPage {
 
   toggleInactive(): void {
     this.store.dispatch(toggleInactiveData())
-  }
-
-  constructor(private store: Store<Buildz>) {
   }
 }

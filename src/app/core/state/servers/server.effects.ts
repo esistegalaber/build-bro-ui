@@ -1,4 +1,4 @@
-import {Injectable} from "@angular/core";
+import {Injectable, inject} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {Store} from "@ngrx/store";
 import {Buildz, IServer} from "../model";
@@ -10,6 +10,10 @@ import {backendErrorOccurred} from "../alerts/alert.actions";
 
 @Injectable()
 export class ServerEffects {
+  private actions$ = inject(Actions);
+  private store = inject<Store<Buildz>>(Store);
+  private http = inject(HttpClient);
+
   loadServers$ = createEffect(() => this.actions$.pipe(
     ofType(ServerActions.loadServers),
     switchMap(() => this.http.get<IServer[]>('/api/v1/servers').pipe(
@@ -25,7 +29,4 @@ export class ServerEffects {
       catchError((errorResponse) => of(backendErrorOccurred({errorResponse})))
     ))
   ))
-
-  constructor(private actions$: Actions, private store: Store<Buildz>, private http: HttpClient) {
-  }
 }

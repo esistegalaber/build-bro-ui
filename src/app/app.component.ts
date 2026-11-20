@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit, inject} from '@angular/core';
 import {select, Store} from "@ngrx/store";
 import {alertState, theSideNavState} from "./core/state/selectors";
 import {Buildz} from "./core";
@@ -33,6 +33,8 @@ import * as CoreActions from "./core/actions";
   ]
 })
 export class AppComponent implements OnInit {
+  private store = inject<Store<Buildz>>(Store);
+
   alert = this.store.pipe(select(alertState))
   sideNavState = this.store.pipe(select(theSideNavState))
 
@@ -40,7 +42,7 @@ export class AppComponent implements OnInit {
     this.store.dispatch(clearAlert())
   }
 
-  constructor(private store: Store<Buildz>) {
+  constructor() {
     this.store.dispatch(loadBuildStats())
   }
 

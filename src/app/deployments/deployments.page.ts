@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from "@angular/core";
+import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {select, Store} from "@ngrx/store";
 import {Buildz, CloningPipe, IDeployment, IDeploymentSearch} from "../core";
@@ -38,6 +38,8 @@ import {BuildSetAccordion} from "../ui/deployments/depoyment.accordion";
   ]
 })
 export class DeploymentsPage {
+  private store = inject<Store<Buildz>>(Store);
+
   servers$ = this.store.pipe(select(allServers))
   theDeploymentsSearch$ = this.store.pipe(select(theDeploymentSearch))
   thePaginationParams$ = this.store.pipe(select(theDeploymentSearchPaginationParams))
@@ -52,7 +54,7 @@ export class DeploymentsPage {
     this.store.dispatch(DeploymentActions.toSearchPage({page}))
   }
 
-  constructor(private store: Store<Buildz>) {
+  constructor() {
     this.store.dispatch(DeploymentActions.doDeploymentsSearch())
   }
 

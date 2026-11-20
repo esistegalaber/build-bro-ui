@@ -1,4 +1,4 @@
-import {Injectable} from "@angular/core";
+import {Injectable, inject} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import * as DeploymentActions from "./deployment.actions";
 import {catchError, exhaustMap, map, withLatestFrom} from "rxjs/operators";
@@ -12,6 +12,10 @@ import {HttpClient} from "@angular/common/http";
 
 @Injectable()
 export class DeploymentEffects {
+  private actions$ = inject(Actions);
+  private store = inject<Store<Buildz>>(Store);
+  private http = inject(HttpClient);
+
   deploymentSearch$ = createEffect(() => this.actions$.pipe(
     ofType(DeploymentActions.doDeploymentsSearch, DeploymentActions.updateDeploymentsSearch, DeploymentActions.toSearchPage),
     withLatestFrom(this.store.pipe(select(theDeploymentSearch))),
@@ -22,7 +26,4 @@ export class DeploymentEffects {
       )
     )
   ))
-
-  constructor(private actions$: Actions, private store: Store<Buildz>, private http: HttpClient) {
-  }
 }

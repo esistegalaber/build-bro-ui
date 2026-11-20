@@ -1,4 +1,4 @@
-import {Injectable} from "@angular/core";
+import {Injectable, inject} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {HttpClient} from "@angular/common/http";
 import * as ProjectActions from "./project.actions";
@@ -10,6 +10,10 @@ import * as AlertActions from "../alerts/alert.actions";
 
 @Injectable()
 export class ProjectEffects {
+  private actions$ = inject(Actions);
+  private http = inject(HttpClient);
+  private store = inject<Store<Buildz>>(Store);
+
   loadProjects$ = createEffect(() => this.actions$.pipe(
     ofType(ProjectActions.loadProjects, ProjectActions.toggleInactiveProjectsVisible),
     switchMap(() => this.http.get<IProject[]>(`/api/v1/projects`).pipe(
@@ -54,7 +58,4 @@ export class ProjectEffects {
       )
     )
   ))
-
-  constructor(private actions$: Actions, private http: HttpClient, private store: Store<Buildz>) {
-  }
 }

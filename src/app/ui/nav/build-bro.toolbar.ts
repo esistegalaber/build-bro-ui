@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Inject, DOCUMENT} from '@angular/core'
+import {ChangeDetectionStrategy, Component, DOCUMENT, inject} from '@angular/core'
 import {RouterModule} from "@angular/router";
 import {Store} from "@ngrx/store";
 import {Buildz} from "../../core";
@@ -34,6 +34,9 @@ import {FormsModule} from "@angular/forms";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BuildBroToolbar {
+  private store = inject<Store<Buildz>>(Store);
+  private document = inject<Document>(DOCUMENT);
+
   theme: string | null = 'light'
 
   toggleSideNavState(): void {
@@ -46,8 +49,5 @@ export class BuildBroToolbar {
     } else {
       this.document.getElementById('bb-html')?.removeAttribute('data-theme')
     }
-  }
-
-  constructor(private store: Store<Buildz>, @Inject(DOCUMENT) private document: Document) {
   }
 }
