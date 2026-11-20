@@ -15,7 +15,7 @@ import {BuildSetNameForm} from "./ui/build-set-name.form";
         [editableTemplate]="(currentBuildSetTemplate$ | async)!"
         (save)="saveTemplate($event)"
       ></bb-build-set-name-form>
-      @for (buildTemplate of (EditableBuildTemplates$ | async | deepClone)!; track buildTemplate) {
+      @for (buildTemplate of (EditableBuildTemplates$ | async | deepClone)!; track buildTemplate.project.id) {
         <bb-build-template-form
           [template]="buildTemplate"
           (projectAdded)="projectAdded($event)"

@@ -7,7 +7,7 @@ import {DeploymentLabelsTable} from "./deployment-labels.table";
 @Component({
   selector: 'bb-deployment-accordion',
   template: `
-      @for (deployment of deployments; track deployment) {
+      @for (deployment of deployments; track deployment.id) {
         <div class="collapse collapse-arrow border rounded-box">
           <input type="checkbox" class="peer" attr.data-cy-id="deployment-{{deployment.id}}"/>
           <div class="collapse-title">

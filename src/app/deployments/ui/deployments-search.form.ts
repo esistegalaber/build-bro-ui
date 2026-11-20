@@ -15,7 +15,7 @@ import {FormsModule} from "@angular/forms";
             (ngModelChange)="updateSearch.emit(theSearch)"
             >
             <option value="" i18n="@@project_select_nonw">All</option>
-            @for (server of servers; track server) {
+            @for (server of servers; track server.id) {
               <option [value]="server.name">{{server.name}}</option>
             }
           </select>

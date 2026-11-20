@@ -16,13 +16,13 @@ import {toggleInactiveData} from "../core/actions";
         />
     </div>
     <table class="table table-compact">
-      @for (project of (projects$|async)!; track project) {
+      @for (project of (projects$|async)!; track project.id) {
         <tr attr.data-cy-id="project-{{project.name}}">
           <td colspan="2">{{project.name}}</td>
           <td>
           </td>
         </tr>
-        @for (branch of project.branches; track branch) {
+        @for (branch of project.branches; track branch.id) {
           <tr attr.data-cy-id="branch-{{branch.id}}">
             <td></td>
             <td>{{branch.name}}</td>
