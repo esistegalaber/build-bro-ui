@@ -28,7 +28,6 @@ import {CommonModule} from "@angular/common";
     <!--      </div>-->
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [CommonModule]
 })
 export class AlertPanel {

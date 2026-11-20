@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core'
 import {IBuild, IBuildSet} from '../../core'
-import {BuildId} from "../builds/build.id";
 import {RouterLink} from "@angular/router";
 import {BuildsAccordion} from "../builds/builds.accordion";
 
@@ -31,10 +30,8 @@ import {BuildsAccordion} from "../builds/builds.accordion";
       </div>
     }
   `,
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    BuildId,
     RouterLink,
     BuildsAccordion
   ]

@@ -5,7 +5,6 @@ import {theBuildSet, theBuildSetTemplateNames, theSelectedBuildSetName} from "./
 import {deleteBuildSetTemplate, loadBuildSetOf} from "./state/build-sets.actions";
 import {CommonModule} from "@angular/common";
 import {RouterModule} from "@angular/router";
-import {BuildsAccordion} from "../ui/builds/builds.accordion";
 import {BuildSetAccordion} from "../ui/build-sets/build-set.accordion";
 import {BuildSetNamesMenu} from "../ui/build-sets/build-set-names.menu";
 
@@ -44,11 +43,9 @@ import {BuildSetNamesMenu} from "../ui/build-sets/build-set-names.menu";
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     CommonModule,
     RouterModule,
-    BuildsAccordion,
     BuildSetAccordion,
     BuildSetNamesMenu
   ]

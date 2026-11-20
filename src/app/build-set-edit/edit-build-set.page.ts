@@ -8,7 +8,6 @@ import {theBuilds, theEditableBuildTemplates, theEditableTemplate} from "./state
 import * as EditBuildSetActions from "./state/edit-build-sets.actions";
 import {navigateTo} from "./state/edit-build-sets.actions";
 import {BuildSetNameForm} from "./ui/build-set-name.form";
-import {BuildSetAccordion} from "../ui/build-sets/build-set.accordion";
 
 @Component({
   template: `
@@ -30,13 +29,11 @@ import {BuildSetAccordion} from "../ui/build-sets/build-set.accordion";
       </bb-builds-accordion>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     CommonModule,
     BuildsAccordion,
     BuildTemplateForm,
     BuildSetNameForm,
-    BuildSetAccordion,
     CloningPipe
   ]
 })

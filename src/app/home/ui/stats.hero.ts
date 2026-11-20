@@ -22,7 +22,6 @@ import {IBuildStats} from '../../core'
           </div>
       </div>
   `,
-  standalone: true,
   imports: []
 })
 export class StatsHero {

@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
 import {CommonModule} from "@angular/common";
-import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'bb-build-set-names-menu',
@@ -17,8 +16,7 @@ import {RouterLink} from "@angular/router";
     </ul>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [CommonModule, RouterLink]
+  imports: [CommonModule]
 })
 export class BuildSetNamesMenu {
   @Input()

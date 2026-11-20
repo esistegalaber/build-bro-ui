@@ -29,7 +29,6 @@ import {SortedLabelsPipe} from "../../core/pipes/sort-label.pipe";
         </div>
       }
   `,
-  standalone: true,
   imports: [BuildId, SortedLabelsPipe, CloningPipe],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

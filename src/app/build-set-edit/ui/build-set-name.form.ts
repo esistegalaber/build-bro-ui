@@ -27,7 +27,6 @@ import {FormsModule} from "@angular/forms";
       </form>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     FormsModule
   ]

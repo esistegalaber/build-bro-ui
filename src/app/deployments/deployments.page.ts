@@ -29,7 +29,6 @@ import {BuildSetAccordion} from "../ui/deployments/depoyment.accordion";
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     CommonModule,
     DeploymentsSearchForm,

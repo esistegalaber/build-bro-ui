@@ -10,7 +10,6 @@ import {StatsHero} from "./ui/stats.hero";
     <bz-stats [stats]="(stats | async)!"></bz-stats>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     CommonModule,
     StatsHero

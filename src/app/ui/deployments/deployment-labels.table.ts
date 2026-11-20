@@ -15,7 +15,6 @@ import {IDeployment} from '../../core'
         </tbody>
       </table>
   `,
-  standalone: true,
   imports: [],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

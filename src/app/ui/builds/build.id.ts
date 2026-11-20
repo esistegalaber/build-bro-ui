@@ -6,7 +6,6 @@ import {IBuild} from "../../core";
   template: `
       <strong class="m-2">{{build.project}} :: {{build.branch}} :: {{build.buildNumber}}</strong>
   `,
-  standalone: true,
   imports: [],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

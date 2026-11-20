@@ -1,7 +1,5 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core'
 import {IDeployment} from '../../core'
-import {BuildId} from "../builds/build.id";
-import {RouterLink} from "@angular/router";
 import {BuildsAccordion} from "../builds/builds.accordion";
 import {DateFnsModule} from "ngx-date-fns";
 import {DeploymentLabelsTable} from "./deployment-labels.table";
@@ -22,11 +20,8 @@ import {DeploymentLabelsTable} from "./deployment-labels.table";
         </div>
       }
   `,
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    BuildId,
-    RouterLink,
     BuildsAccordion,
     DateFnsModule,
     DeploymentLabelsTable

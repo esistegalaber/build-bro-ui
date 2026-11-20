@@ -2,7 +2,6 @@ import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@
 import {IBuildSearchParams, IBuildSearchResult, ISearchData} from "../../core";
 import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
-import {BuildLabelInput} from "../../ui/builds/build-label.input";
 
 @Component({
   selector: 'bb-build-search-form',
@@ -99,9 +98,8 @@ import {BuildLabelInput} from "../../ui/builds/build-label.input";
       </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
-    CommonModule, FormsModule, BuildLabelInput
+    CommonModule, FormsModule
   ]
 })
 export class BuildSearchForm {

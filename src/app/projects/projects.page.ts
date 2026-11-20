@@ -44,7 +44,6 @@ import {toggleInactiveData} from "../core/actions";
     </table>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     CommonModule
   ]

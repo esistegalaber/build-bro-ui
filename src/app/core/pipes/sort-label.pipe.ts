@@ -2,8 +2,7 @@ import {Pipe, PipeTransform} from '@angular/core'
 import {IBuildLabel} from "../state/model";
 
 @Pipe({
-  name: 'sortedLabels',
-  standalone: true
+  name: 'sortedLabels'
 })
 export class SortedLabelsPipe implements PipeTransform {
 

@@ -27,7 +27,6 @@ import {CommonModule} from "@angular/common";
       </div>
     }
   `,
-  standalone: true,
   imports: [
     CommonModule
   ],

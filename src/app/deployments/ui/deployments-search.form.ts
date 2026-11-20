@@ -76,7 +76,6 @@ import {FormsModule} from "@angular/forms";
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [FormsModule]
 })
 export class DeploymentsSearchForm {

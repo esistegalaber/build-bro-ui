@@ -52,7 +52,6 @@ import {ISideNav} from "../../core";
       </nav>
       
   `,
-  standalone: true,
   imports: [CommonModule, RouterModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

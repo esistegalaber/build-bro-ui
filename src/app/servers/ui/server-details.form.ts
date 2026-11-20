@@ -37,7 +37,6 @@ import {IServer} from "../../core";
     
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     FormsModule
   ]

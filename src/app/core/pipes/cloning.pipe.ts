@@ -1,8 +1,7 @@
 import {Pipe, PipeTransform} from '@angular/core'
 
 @Pipe({
-  name: 'deepClone',
-  standalone: true
+  name: 'deepClone'
 })
 export class CloningPipe implements PipeTransform {
 

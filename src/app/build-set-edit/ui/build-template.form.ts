@@ -49,7 +49,6 @@ import {EditableBuildTemplate, IBranch, IProject} from "../../core";
       </div>
     </div>
   `,
-  standalone: true,
   imports: [FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

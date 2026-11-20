@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {select, Store} from "@ngrx/store";
-import {Buildz, CloningPipe, IServer} from "../core";
+import {Buildz, IServer} from "../core";
 import {CommonModule} from "@angular/common";
 import {allServers} from "../core/state/servers/server.selectors";
 import {FormsModule} from "@angular/forms";
@@ -39,12 +39,10 @@ import * as CoreActions from "../core/actions";
       </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
-    ServerDetailsForm,
-    CloningPipe
+    ServerDetailsForm
   ]
 })
 export class ServersPage {

@@ -31,7 +31,6 @@ import {FormsModule} from "@angular/forms";
       </div>
     </div>
   `,
-  standalone: true,
   imports: [RouterModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
