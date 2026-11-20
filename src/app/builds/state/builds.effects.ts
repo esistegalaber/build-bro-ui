@@ -6,7 +6,7 @@ import {Buildz, IBuildSearchResult, ISearchData} from '../../core'
 import {catchError, exhaustMap, map, tap, withLatestFrom} from 'rxjs/operators'
 import {of} from 'rxjs'
 import * as AlertActions from '../../core/state/alerts/alert.actions'
-import {availableBuildSearchDataLoaded, buildSearchLoaded, doBuildSearch, loadAvailableBuildSearchData, toSearchPage, updateSearchParams} from "./builds.actions";
+import {availableBuildSearchDataLoaded, buildSearchLoaded, doBuildSearch, loadAvailableBuildSearchData, resetSearchParams, toSearchPage, updateSearchParams} from "./builds.actions";
 import {theBuildSearchParams} from "./builds.selectors";
 
 @Injectable()
@@ -17,7 +17,7 @@ export class BuildsEffects {
 
   // noinspection JSUnusedLocalSymbols
   doBuildSearch$ = createEffect(() => this.actions$.pipe(
-    ofType(doBuildSearch, updateSearchParams, toSearchPage),
+    ofType(doBuildSearch, updateSearchParams, toSearchPage, resetSearchParams),
     withLatestFrom(this.store.pipe(select(theBuildSearchParams))),
     map(([action, buildSearchParams]) => buildSearchParams),
     exhaustMap((buildSearchParams) => this.http.post<IBuildSearchResult>(`/api/v1/builds/search`, buildSearchParams).pipe(

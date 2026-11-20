@@ -59,19 +59,7 @@ export const buildReducer = createReducer(
     return newState
   }),
   on(resetSearchParams, (state: BuildsState) => {
-    return {
-      ...state, search: {
-        project: '',
-        branch: '',
-        page: 0,
-        pageSize: 50,
-        labels: {},
-        sortAttribute: 'buildNumber',
-        sortDirection: 'DESC',
-        minBuildNumber: null,
-        maxBuildNumber: null
-      }
-    }
+    return {...state, search: INITIAL_BUILD_SEARCH.search}
   }),
   on(searchBuildsOfProject, (state: BuildsState, {project}) => {
     const toReturn: BuildsState = deepClone(state)

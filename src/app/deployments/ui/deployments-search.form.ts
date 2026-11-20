@@ -23,7 +23,7 @@ import {FormsModule} from "@angular/forms";
     
           <div class="col-span-6">
             <div class="flex justify-around">
-              <button type="button" class="btn btn-sm btn-accent" (click)="resetSearch.emit()">
+              <button type="button" class="btn btn-sm btn-accent" (click)="resetSearch.emit()" data-cy-id="search-reset">
                 <span class="material-icons">restart_alt</span>
                 Reset
               </button>
@@ -38,7 +38,7 @@ import {FormsModule} from "@angular/forms";
                 <option [value]="25">25 / Page</option>
                 <option [value]="50">50 / Page</option>
               </select>
-              <button type="submit" class="btn btn-sm btn-primary">
+              <button type="submit" class="btn btn-sm btn-primary" data-cy-id="search-reload">
                 <span class="material-icons">search</span>
                 (Re-)Load
               </button>

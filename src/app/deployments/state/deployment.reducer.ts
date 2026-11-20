@@ -28,6 +28,9 @@ export const deploymentsReducer = createReducer(
   on(DeploymentActions.updateDeploymentsSearch, (state, {search}) => {
     return {...state, search}
   }),
+  on(DeploymentActions.resetDeploymentsSearch, (state) => {
+    return {...state, search: INITIAL_DEPLOYMENTS_STATE.search}
+  }),
   on(DeploymentActions.toSearchPage, (state, {page}) => {
     const newSearch: IDeploymentSearch = {...state.search, page}
     if(newSearch.serverName !== state.search.serverName || newSearch.pageSize !== state.search.pageSize){

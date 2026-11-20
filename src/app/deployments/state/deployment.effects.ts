@@ -17,7 +17,8 @@ export class DeploymentEffects {
   private http = inject(HttpClient);
 
   deploymentSearch$ = createEffect(() => this.actions$.pipe(
-    ofType(DeploymentActions.doDeploymentsSearch, DeploymentActions.updateDeploymentsSearch, DeploymentActions.toSearchPage),
+    ofType(DeploymentActions.doDeploymentsSearch, DeploymentActions.updateDeploymentsSearch, DeploymentActions.toSearchPage,
+      DeploymentActions.resetDeploymentsSearch),
     withLatestFrom(this.store.pipe(select(theDeploymentSearch))),
     map(([action, search]) => search),
     exhaustMap((search: IDeploymentSearch) => this.http.post<IDeploymentSearchResult>(`/api/v1/deployments/search`, search).pipe(

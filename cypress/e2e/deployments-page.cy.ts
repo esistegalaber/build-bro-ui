@@ -40,6 +40,21 @@ describe('Deployments Page', () => {
       .parent().find('.collapse-title').should('contain.text', 'staging')
   })
 
+  it('Resets the server filter and the page size', () => {
+    cy.intercept(deploymentsSearchRequest).as('search')
+    cy.get('[data-cy-id=server-select]').select('staging')
+    cy.wait('@search').its('request.body').should('deep.include', {serverName: 'staging'})
+    cy.get('[data-cy-id=page-size-select]').select('25 / Page')
+    cy.wait('@search').its('request.body').should('deep.include', {serverName: 'staging', pageSize: '25'})
+
+    cy.get('[data-cy-id=search-reset]').click()
+    cy.wait('@search').its('request.body')
+      .should('deep.include', {serverName: '', page: 0, pageSize: 10})
+    cy.get('[data-cy-id=server-select]').should('have.value', '')
+    cy.get('[data-cy-id=page-size-select]').find('option:selected').should('have.text', '10 / Page')
+    cy.get('[data-cy-id^=deployment-]').should('have.length', 10)
+  })
+
   it('Expands a deployment to show its labels and builds', () => {
     cy.get('[data-cy-id^=deployment-]').first().click()
       .parent().find('.collapse-content')
