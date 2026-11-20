@@ -12,7 +12,7 @@ import {appRoutes} from "./app/app.routes";
 import {EffectsModule} from "@ngrx/effects";
 import {StatsEffects} from "./app/core/state/stats/stats.effects";
 import {ProjectEffects} from "./app/core/state/projects/project.effects";
-import {provideHttpClient} from "@angular/common/http";
+import {provideHttpClient, withXhr} from "@angular/common/http";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
 import {serversReducer} from "./app/core/state/servers/server.reducer";
@@ -38,6 +38,6 @@ bootstrapApplication(AppComponent, {
       StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production, connectInZone: true})
     ]),
     provideRouter(appRoutes),
-    provideHttpClient()
+    provideHttpClient(withXhr())
   ]
 }).catch(err => console.error(err));

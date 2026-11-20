@@ -2,6 +2,8 @@
   "extends": "../tsconfig.json",
   "include": ["**/*.ts"],
   "compilerOptions": {
+    "outDir": null,
+    "ignoreDeprecations": "6.0",
     "sourceMap": false,
     "types": ["cypress"]
   }
