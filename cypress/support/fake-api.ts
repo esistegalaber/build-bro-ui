@@ -8,8 +8,6 @@
 //
 // Spec-level `cy.intercept(...).as(...)` calls without a handler still work: newer intercepts
 // run first and, when they don't reply, hand the request on to these stubs.
-//
-// Note: the webpack bundled with Cypress cannot parse `?.` or `??`, so don't use them here.
 
 type Json = any
 

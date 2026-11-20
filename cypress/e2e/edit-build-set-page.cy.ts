@@ -53,7 +53,7 @@ describe('Edit Build Set Page', () => {
     cy.wait('@save').then((interception) => {
       expect(interception.request.body.name).to.eq(name)
       expect(interception.request.body.buildTemplates).to.have.length(1)
-      expect(interception.response!.statusCode).to.eq(200)
+      expect(interception.response?.statusCode).to.eq(200)
     })
     cy.get('[data-cy-id=alert]').should('contain.text', 'Saved')
     cy.get('[data-cy-id=alert-ok]').click()

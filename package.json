@@ -10,7 +10,7 @@
     "e2e": "ng e2e",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "cypress:run:live": "cypress run --env LIVE=true",
+    "cypress:run:live": "cypress run --expose LIVE=true",
     "cypress:snapshot-api": "node cypress/scripts/snapshot-api.mjs"
   },
   "private": true,
@@ -40,9 +40,9 @@
     "@angular-devkit/build-angular": "^22.3.0",
     "@angular/cli": "~22.3.0",
     "@angular/compiler-cli": "^22.3.0",
-    "@cypress/schematic": "^2.3.0",
+    "@cypress/schematic": "^6.0.0",
     "autoprefixer": "^10.4.13",
-    "cypress": "12.2.0",
+    "cypress": "16.3.0",
     "postcss": "^8.4.19",
     "tailwindcss": "^3.2.4",
     "typescript": "~6.0.3"
