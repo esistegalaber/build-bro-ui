@@ -58,4 +58,3 @@ nginx proxies `/api` to `http://${BUILDZ_API}:8080/api` (`BUILDZ_API` defaults t
 ## CI
 
 - **GitHub Actions** (`.github/workflows/build.yml`) runs on pushes to `main` and on pull requests. It installs, builds, and runs the e2e tests in Chrome against the fake API. A second job runs a SonarCloud scan (project `esistegalaber_build-bro-ui`, configured in `sonar-project.properties`; needs the `SONAR_TOKEN` repository secret).
-- **Jenkins** (`Jenkinsfile`) starts MariaDB and the API image with `testdata.sql`, builds the app and its Docker image, and runs the live e2e tests against that image.
