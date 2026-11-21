@@ -8,7 +8,7 @@ import {FormsModule} from "@angular/forms";
     <div class="container p-1">
       <form novalidate (submit)="updateSearch.emit(theSearch)" #searchForm="ngForm">
         <div class="grid grid-cols-12 gap-2">
-          <select class="select select-bordered select-sm w-full max-w-xs col-span-4"
+          <select class="select select-sm w-full max-w-xs col-span-4"
             name="project"
             data-cy-id="server-select"
             [(ngModel)]="theSearch.serverName"
@@ -28,7 +28,7 @@ import {FormsModule} from "@angular/forms";
                 Reset
               </button>
     
-              <select class="select select-bordered select-sm"
+              <select class="select select-sm"
                 name="pageSize"
                 data-cy-id="page-size-select"
                 [(ngModel)]="theSearch.pageSize"
@@ -49,16 +49,16 @@ import {FormsModule} from "@angular/forms";
           <div class="col-span-6">
             <div class="grid grid-cols-12">
               <div class="col-span-4">
-                <input class="input input-bordered input-sm" type="text" placeholder="Key" name="newLabelKey"
+                <input class="input input-sm" type="text" placeholder="Key" name="newLabelKey"
                   [(ngModel)]="newLabelKey"
                   >
               </div>
               <div class="col-span-4">
-                <input class="input input-bordered input-sm" type="text" placeholder="Value" name="newLabelVal"
+                <input class="input input-sm" type="text" placeholder="Value" name="newLabelVal"
                   [(ngModel)]="newLabelVal">
               </div>
               <div class="col-span-4">
-                <button type="button" [disabled]="newLabelVal.length==0 || newLabelVal.length==0 " class="btn btn-sm" (click)="addSearchLabel()">
+                <button type="button" [disabled]="newLabelVal.length==0 || newLabelVal.length==0 " class="btn btn-sm btn-neutral" (click)="addSearchLabel()">
                   <span class="material-icons">add</span>
                 </button>
               </div>
@@ -67,8 +67,8 @@ import {FormsModule} from "@angular/forms";
         </div>
       </form>
       <!--      <div class="grid grid-cols-12 gap-2" *ngFor="let label of theSearch.labels | keyvalue">-->
-      <!--        <input type="text" value="{{label.key}}" class="input-bordered input input-sm col-span-5" readonly>-->
-      <!--        <input type="text" value="{{label.value}}" class="input-bordered input input-sm col-span-5" readonly>-->
+      <!--        <input type="text" value="{{label.key}}" class="input input-sm col-span-5" readonly>-->
+      <!--        <input type="text" value="{{label.value}}" class="input input-sm col-span-5" readonly>-->
       <!--        <button class="btn btn-sm btn-secondary" (click)="removeSearchLabel(label.key)">-->
       <!--          <span class="material-icons">remove</span>-->
     <!--        </button>-->

@@ -2,7 +2,7 @@
 
 The web frontend for the [Build Bro API](https://github.com/esistegalaber/build-bro-api). It lets you browse builds and deployments, put builds together into build sets, and manage projects, branches and servers.
 
-Built with Angular 22, NgRx 22, TypeScript 6 and Tailwind CSS / daisyUI.
+Built with Angular 22, NgRx 22, TypeScript 6, Tailwind CSS 4 and daisyUI 5.
 
 ## Requirements
 

@@ -4,7 +4,7 @@ import {IDeployment} from '../../core'
 @Component({
   selector: 'bb-deployment-labels-table',
   template: `
-      <table class="table table-compact w-full">
+      <table class="table table-sm w-full">
         <tbody>
           @for (label of deployment.labels; track label.id) {
             <tr>

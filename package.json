@@ -28,7 +28,7 @@
     "@ngrx/effects": "22.0.1",
     "@ngrx/store": "22.0.1",
     "@ngrx/store-devtools": "22.0.1",
-    "daisyui": "^2.42.1",
+    "daisyui": "^5.8.2",
     "date-fns": "^3.6.0",
     "material-icons": "^1.12.2",
     "ngx-date-fns": "^11.0.1",
@@ -40,10 +40,10 @@
     "@angular/cli": "~22.3.0",
     "@angular/compiler-cli": "^22.3.0",
     "@cypress/schematic": "^6.0.0",
-    "autoprefixer": "^10.4.13",
+    "@tailwindcss/postcss": "^4.3.5",
     "cypress": "16.3.0",
     "postcss": "^8.4.19",
-    "tailwindcss": "^3.2.4",
+    "tailwindcss": "^4.3.5",
     "typescript": "~6.0.3"
   },
   "allowScripts": {

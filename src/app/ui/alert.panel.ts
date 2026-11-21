@@ -6,17 +6,13 @@ import {CommonModule} from "@angular/common";
   selector: 'bz-alert-panel',
   template: `
     @if (alert.message.length>0) {
-      <div class="alert shadow-lg m-2" [ngClass]="alert.type" data-cy-id="alert">
+      <div role="alert" class="alert alert-horizontal shadow-lg m-2" [ngClass]="alert.type" data-cy-id="alert">
+        <span class="material-icons">close</span>
         <div>
-          <span class="material-icons">close</span>
-          <div>
-            <h3 class="font-bold">{{alert.heading}}</h3>
-            <div class="text-xs">{{alert.message}}</div>
-          </div>
+          <h3 class="font-bold">{{alert.heading}}</h3>
+          <div class="text-xs">{{alert.message}}</div>
         </div>
-        <div class="flex-none">
-          <button class="btn btn-sm" (click)="clearAlert.emit()" data-cy-id="alert-ok">OK</button>
-        </div>
+        <button class="btn btn-sm btn-neutral" (click)="clearAlert.emit()" data-cy-id="alert-ok">OK</button>
       </div>
     }
     <!--      <div [class]="'alert alert-dismissible alert-'+ alert.type" role="alert">-->

@@ -8,7 +8,7 @@ import {DeploymentLabelsTable} from "./deployment-labels.table";
   selector: 'bb-deployment-accordion',
   template: `
       @for (deployment of deployments; track deployment.id) {
-        <div class="collapse collapse-arrow border rounded-box">
+        <div class="collapse collapse-arrow border border-base-content/20 rounded-box">
           <input type="checkbox" class="peer" attr.data-cy-id="deployment-{{deployment.id}}"/>
           <div class="collapse-title">
             <strong>{{deployment.serverName}}</strong> ({{deployment.deployedAt | dfnsParseIso | dfnsFormatDistanceToNowPure}} ago)

@@ -7,7 +7,7 @@ import {SortedLabelsPipe} from "../../core/pipes/sort-label.pipe";
   selector: 'bb-builds-accordion',
   template: `
       @for (build of builds; track build.id) {
-        <div class="collapse collapse-arrow border rounded-box">
+        <div class="collapse collapse-arrow border border-base-content/20 rounded-box">
           <input type="checkbox" class="peer" attr.data-cy-id="build-{{build.id}}"/>
           <div class="collapse-title">
             <bb-build-id [build]="build"></bb-build-id>

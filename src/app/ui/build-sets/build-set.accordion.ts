@@ -14,14 +14,14 @@ import {BuildsAccordion} from "../builds/builds.accordion";
             [builds]="theBuilds()">
           </bb-builds-accordion>
           <div class="card-actions justify-end">
-            <div class="btn-group">
-              <button class="btn btn-warning" (click)="deleteBuildSet.emit(buildSet)" data-cy-id="build-set-delete">
+            <div class="join">
+              <button class="join-item btn btn-warning" (click)="deleteBuildSet.emit(buildSet)" data-cy-id="build-set-delete">
                 <span class="material-icons">backspace</span>
               </button>
-              <button class="btn" [routerLink]="['/', 'edit-build-set','clone', buildSet.name]" data-cy-id="build-set-clone">
+              <button class="join-item btn btn-neutral" [routerLink]="['/', 'edit-build-set','clone', buildSet.name]" data-cy-id="build-set-clone">
                 <span class="material-icons">content_copy</span>
               </button>
-              <button class="btn" [routerLink]="['/', 'edit-build-set', buildSet.name]" data-cy-id="build-set-edit">
+              <button class="join-item btn btn-neutral" [routerLink]="['/', 'edit-build-set', buildSet.name]" data-cy-id="build-set-edit">
                 <span class="material-icons">edit</span>
               </button>
             </div>

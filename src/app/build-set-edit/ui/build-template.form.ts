@@ -5,23 +5,23 @@ import {EditableBuildTemplate, IBranch, IProject} from "../../core";
 @Component({
   selector: 'bb-build-template-form',
   template: `
-    <div class="card shadow-sm" attr.data-cy-id="build-template-{{template.project.name}}">
+    <div class="card shadow-xs" attr.data-cy-id="build-template-{{template.project.name}}">
       <div class="card-body">
         <div class="card-title">{{template.project.name}}</div>
         <form #templateForm="ngForm" (ngSubmit)="templateUpdated.emit(template)">
-          <div class="flex flex-grow flex-row gap-2">
+          <div class="flex grow flex-row gap-2">
             <div class="basis-1/12">
-              <div class="form-control">
+              <div class="flex flex-col">
                 <input type="checkbox" [checked]="template.projectSelected" class="toggle toggle-success" (change)="projectSelection()" data-cy-id="project-toggle"/>
               </div>
             </div>
             <div class="basis-11/12" [class.hidden]="!template.projectSelected">
               <div class="grid grid-cols-6 gap-3">
-                <div class="form-control col-span-2">
+                <div class="flex flex-col col-span-2">
                   <label class="label">
-                    <span class="label-text">The Branch *</span>
+                    <span class="text-sm">The Branch *</span>
                   </label>
-                  <select class="select select-bordered select-sm w-full max-w-xs"
+                  <select class="select select-sm w-full max-w-xs"
                     name="branch"
                     data-cy-id="template-branch-select"
                     required
@@ -34,11 +34,11 @@ import {EditableBuildTemplate, IBranch, IProject} from "../../core";
                     }
                   </select>
                 </div>
-                <div class="form-control col-span-2">
+                <div class="flex flex-col col-span-2">
                   <label class="label" for="buildNumber">
-                    <span class="label-text">Build Number</span>
+                    <span class="text-sm">Build Number</span>
                   </label>
-                  <input id="buildNumber" class="input input-bordered input-sm" type="number" name="buildNumber" [(ngModel)]="template.buildNumber"
+                  <input id="buildNumber" class="input input-sm" type="number" name="buildNumber" [(ngModel)]="template.buildNumber"
                     (change)="templateUpdated.emit(template)"
                     >
                 </div>

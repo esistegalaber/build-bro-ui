@@ -19,7 +19,7 @@ describe('Build Sets Page', () => {
     cy.intercept({method: 'GET', url: '/api/v1/build-sets/of/main'}).as('build-set')
     cy.get('[data-cy-id="build-set-name-main"]').click()
     cy.wait('@build-set')
-    cy.get('[data-cy-id="build-set-name-main"]').should('have.class', 'active')
+    cy.get('[data-cy-id="build-set-name-main"]').should('have.class', 'menu-active')
     cy.get('[data-cy-id=build-set-card]')
       .should('contain.text', 'Builds of main')
       .within(() => {

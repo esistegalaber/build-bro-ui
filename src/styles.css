@@ -1,4 +1,17 @@
-@import 'material-icons/iconfont/material-icons.css';
-@tailwind base; /* Preflight will be injected here */
-@tailwind components;
-@tailwind utilities;
+/* The icon font must be imported first: a CSS @import after other rules is ignored by browsers. */
+@import 'material-icons/iconfont/material-icons.css' layer(base);
+@import 'tailwindcss';
+
+/* The themes offered by the toolbar's theme select (light is the default, see index.html). */
+@plugin 'daisyui' {
+  themes: light --default, dark, retro, cupcake, halloween, luxury;
+}
+
+/* daisyUI's .collapse (the accordions) shares its name with Tailwind's `collapse` utility
+   (visibility: collapse). Utilities win over daisyUI's components and would hide every accordion,
+   so undo the utility for daisyUI's collapse. */
+@layer utilities {
+  .collapse {
+    visibility: visible;
+  }
+}

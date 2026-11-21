@@ -9,20 +9,20 @@ import {IServer} from "../../core";
       <div class="container">
         <form (ngSubmit)="updateServer.emit(server)">
           <div class="grid grid-cols-1 gap-2">
-            <div class="form-control">
+            <div class="flex flex-col">
               <label class="label">
-                <span class="label-text">Description</span>
+                <span class="text-sm">Description</span>
               </label>
               <textarea class="textarea textarea-primary" placeholder="Description" data-cy-id="server-description"
                 name="description"
                 [(ngModel)]="server.description"
               ></textarea>
             </div>
-            <div class="form-control">
+            <div class="flex flex-col">
               <label class="label">
-                <span class="label-text">Description</span>
+                <span class="text-sm">Description</span>
               </label>
-              <input class="input input-bordered input-sm" placeholder="Nick Name" data-cy-id="server-nickname"
+              <input class="input input-sm" placeholder="Nick Name" data-cy-id="server-nickname"
                 name="nickName"
                 [(ngModel)]="server.nickName"
                 />
