@@ -6,21 +6,21 @@ import {CommonModule} from "@angular/common";
   selector: 'bb-paginator',
   template: `
     @if (paginationParams.totalElements>0) {
-      <div class="btn-group" data-cy-id="paginator">
-        <button class="btn btn-sm" [ngClass]="{'btn-disabled':!paginationParams.hasPrevious}" (click)="toPage.emit(0)"
+      <div class="join" data-cy-id="paginator">
+        <button class="join-item btn btn-sm btn-neutral" [ngClass]="{'btn-disabled':!paginationParams.hasPrevious}" (click)="toPage.emit(0)"
           data-cy-id="paginator-first">
           <span class="material-icons">fast_rewind</span>
         </button>
-        <button class="btn btn-sm" [class.btn-disabled]="!paginationParams.hasPrevious" (click)="toPage.emit(paginationParams.currentPage-1)"
+        <button class="join-item btn btn-sm btn-neutral" [class.btn-disabled]="!paginationParams.hasPrevious" (click)="toPage.emit(paginationParams.currentPage-1)"
           data-cy-id="paginator-previous">
           <span class="material-icons">arrow_back_ios</span>
         </button>
-        <button class="btn btn-sm btn-active" data-cy-id="paginator-current">{{paginationParams.currentPage + 1}} / {{paginationParams.totalPages}}</button>
-        <button class="btn btn-sm" [class.btn-disabled]="!paginationParams.hasNext" (click)="toPage.emit(paginationParams.currentPage+1)"
+        <button class="join-item btn btn-sm btn-primary" data-cy-id="paginator-current">{{paginationParams.currentPage + 1}} / {{paginationParams.totalPages}}</button>
+        <button class="join-item btn btn-sm btn-neutral" [class.btn-disabled]="!paginationParams.hasNext" (click)="toPage.emit(paginationParams.currentPage+1)"
           data-cy-id="paginator-next">
           <span class="material-icons">arrow_forward_ios</span>
         </button>
-        <button class="btn btn-sm" [class.btn-disabled]="!paginationParams.hasNext" (click)="toPage.emit(paginationParams.totalPages-1)"
+        <button class="join-item btn btn-sm btn-neutral" [class.btn-disabled]="!paginationParams.hasNext" (click)="toPage.emit(paginationParams.totalPages-1)"
           data-cy-id="paginator-last">
           <span class="material-icons">fast_forward</span>
         </button>

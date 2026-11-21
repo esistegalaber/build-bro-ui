@@ -20,7 +20,7 @@ import * as CoreActions from "./core/actions";
           </div>
           <div class="min-h-screen flex flex-row">
               <bz-sidenav [sideNav]="(sideNavState|async)!"></bz-sidenav>
-              <main class="flex-grow min-w-0 overflow-auto p-1">
+              <main class="grow min-w-0 overflow-auto p-1">
                   <bz-alert-panel (clearAlert)="clearAlert()" [alert]="(alert | async)!"></bz-alert-panel>
                   <router-outlet></router-outlet>
               </main>

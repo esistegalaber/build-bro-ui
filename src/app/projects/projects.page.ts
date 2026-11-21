@@ -9,13 +9,13 @@ import {toggleInactiveData} from "../core/actions";
 @Component({
   template: `
     <h1>Projects</h1>
-    <div class="form-control">
+    <div class="flex flex-col">
       <label for="inactiveToggle">Inactive</label>
       <input id="inactiveToggle" type="checkbox" [checked]="inactiveDataIncluded$|async" class="toggle toggle-success" data-cy-id="inactive-toggle"
         (click)="toggleInactive()"
         />
     </div>
-    <table class="table table-compact">
+    <table class="table table-sm w-auto">
       @for (project of (projects$|async)!; track project.id) {
         <tr attr.data-cy-id="project-{{project.name}}">
           <td colspan="2">{{project.name}}</td>
@@ -28,12 +28,12 @@ import {toggleInactiveData} from "../core/actions";
             <td>{{branch.name}}</td>
             <td>
               @if (branch.active) {
-                <button class="btn" (click)="deactivateBranch(branch.id)" data-cy-id="branch-deactivate">
+                <button class="btn btn-neutral" (click)="deactivateBranch(branch.id)" data-cy-id="branch-deactivate">
                   <span class="material-icons">check_box</span>
                 </button>
               }
               @if (!branch.active) {
-                <button class="btn" (click)="activateBranch(branch.id)" data-cy-id="branch-activate">
+                <button class="btn btn-neutral" (click)="activateBranch(branch.id)" data-cy-id="branch-activate">
                   <span class="material-icons">check_box_outline_blank</span>
                 </button>
               }

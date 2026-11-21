@@ -18,7 +18,7 @@ import {FormsModule} from "@angular/forms";
         <a routerLink="/" class="btn btn-ghost normal-case text-xl">Build Bruh</a>
       </div>
       <div class="flex-none tooltip tooltip-bottom" data-tip="Choose a Theme at your own risk.">
-        <select class="select select-sm" name="bb-theme" [(ngModel)]="theme" (change)="switchTheme()" data-cy-id="theme-select">
+        <select class="select select-sm select-ghost" name="bb-theme" [(ngModel)]="theme" (change)="switchTheme()" data-cy-id="theme-select">
           <option value="null">Select Theme</option>
           <option value="dark">dark</option>
           <option value="light">light</option>

@@ -7,18 +7,18 @@ import {FormsModule} from "@angular/forms";
   template: `
       <form #theForm="ngForm">
           <div class="grid grid-cols-12 itms-end">
-              <div class="form-control col-span-4">
+              <div class="flex flex-col col-span-4">
                   <label class="label" for="templateName">
-                      <span class="label-text">Name</span>
+                      <span class="text-sm">Name</span>
                   </label>
                   <input name="templateName" required type="text" placeholder="Name of your BuildSet"
-                         class="input input-bordered input-sm" data-cy-id="build-set-name-input"
+                         class="input input-sm" data-cy-id="build-set-name-input"
                          [(ngModel)]="editableTemplate.name"
                          #templateName="ngModel"
                   >
               </div>
               <div class="col-span-4 self-end">
-                  <button class="btn btn-sm sm-primary" (click)="save.emit(editableTemplate)" [disabled]="theForm.invalid" data-cy-id="build-set-save">
+                  <button class="btn btn-sm btn-neutral" (click)="save.emit(editableTemplate)" [disabled]="theForm.invalid" data-cy-id="build-set-save">
                       <span class="material-icons">save</span>
                       Save
                   </button>

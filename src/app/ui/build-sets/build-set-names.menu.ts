@@ -6,8 +6,8 @@ import {CommonModule} from "@angular/common";
   template: `
     <ul class="menu bg-base-100 w-56 rounded-box">
       @for (name of names; track name) {
-        <li class="hover-bordered">
-          <a [ngClass]="{'active':name === selectedName}" attr.data-cy-id="build-set-name-{{name}}"
+        <li>
+          <a [ngClass]="{'menu-active bg-primary text-primary-content':name === selectedName}" attr.data-cy-id="build-set-name-{{name}}"
             (click)="buildSetSelected.emit(name)">
             {{name}}
           </a>
