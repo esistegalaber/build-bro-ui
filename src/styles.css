@@ -1,10 +1,129 @@
-/* The icon font must be imported first: a CSS @import after other rules is ignored by browsers. */
+/* @imports must come first: a CSS @import after other rules is ignored by browsers. */
 @import 'material-icons/iconfont/material-icons.css' layer(base);
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/plus-jakarta-sans';
+@import '@fontsource-variable/jetbrains-mono';
 @import 'tailwindcss';
 
-/* The themes offered by the toolbar's theme select (light is the default, see index.html). */
+/* Inter for text, Plus Jakarta Sans for headings (the font-display utility), JetBrains Mono for build numbers and hashes. */
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans Variable', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@layer base {
+  h1, h2, h3 {
+    font-family: var(--font-display);
+  }
+}
+
+/* daisyUI with our own three themes only (see ThemeService and the theme switch in the side nav).
+   Page background: base-200; cards: base-100; borders and dividers: base-300. Projects are never color-coded:
+   the semantic colors mark state only (tests, pins, selection). */
 @plugin 'daisyui' {
-  themes: light --default, dark, retro, cupcake, halloween, luxury;
+  themes: false;
+}
+
+@plugin 'daisyui/theme' {
+  name: 'light';
+  default: true;
+  color-scheme: light;
+  --color-base-100: #FFFFFF;
+  --color-base-200: #F4F5FA;
+  --color-base-300: #E2E5EF;
+  --color-base-content: #1D2033;
+  --color-primary: #4F46E5;
+  --color-primary-content: #FFFFFF;
+  --color-secondary: #596079;
+  --color-secondary-content: #FFFFFF;
+  --color-accent: #C2410C;
+  --color-accent-content: #FFFFFF;
+  --color-neutral: #1D2033;
+  --color-neutral-content: #FFFFFF;
+  --color-info: #1D4ED8;
+  --color-info-content: #FFFFFF;
+  --color-success: #047857;
+  --color-success-content: #FFFFFF;
+  --color-warning: #B45309;
+  --color-warning-content: #FFFFFF;
+  --color-error: #C81E4A;
+  --color-error-content: #FFFFFF;
+  --radius-selector: 0.625rem;
+  --radius-field: 0.625rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin 'daisyui/theme' {
+  name: 'dark';
+  prefersdark: false;
+  color-scheme: dark;
+  --color-base-100: #181B26;
+  --color-base-200: #10121A;
+  --color-base-300: #2C3144;
+  --color-base-content: #E9EBF5;
+  --color-primary: #8D87FF;
+  --color-primary-content: #10121A;
+  --color-secondary: #A3A9C0;
+  --color-secondary-content: #10121A;
+  --color-accent: #FFA163;
+  --color-accent-content: #10121A;
+  --color-neutral: #2C3144;
+  --color-neutral-content: #E9EBF5;
+  --color-info: #7CB2FF;
+  --color-info-content: #10121A;
+  --color-success: #3DD6A3;
+  --color-success-content: #10121A;
+  --color-warning: #F5BF5E;
+  --color-warning-content: #10121A;
+  --color-error: #FF8197;
+  --color-error-content: #10121A;
+  --radius-selector: 0.625rem;
+  --radius-field: 0.625rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin 'daisyui/theme' {
+  name: 'lagoon';
+  color-scheme: light;
+  --color-base-100: #FFFFFF;
+  --color-base-200: #EFF8F6;
+  --color-base-300: #CDE5E0;
+  --color-base-content: #13302C;
+  --color-primary: #0F766E;
+  --color-primary-content: #FFFFFF;
+  --color-secondary: #4D6964;
+  --color-secondary-content: #FFFFFF;
+  --color-accent: #C2410C;
+  --color-accent-content: #FFFFFF;
+  --color-neutral: #13302C;
+  --color-neutral-content: #FFFFFF;
+  --color-info: #1D4ED8;
+  --color-info-content: #FFFFFF;
+  --color-success: #15803D;
+  --color-success-content: #FFFFFF;
+  --color-warning: #A16207;
+  --color-warning-content: #FFFFFF;
+  --color-error: #BE123C;
+  --color-error-content: #FFFFFF;
+  --radius-selector: 0.625rem;
+  --radius-field: 0.625rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
 }
 
 /* daisyUI's .collapse (the accordions) shares its name with Tailwind's `collapse` utility
