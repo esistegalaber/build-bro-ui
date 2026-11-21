@@ -9,18 +9,19 @@ on:
 permissions:
   contents: read
 
+# Actions are pinned to full commit SHAs (a tag can be moved to other code); the comment names the version.
 jobs:
   build:
     # ubuntu-latest comes with Chrome, which the e2e tests run in
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       # The Angular 22 CLI needs Node ^22.22.3, ^24.15 or >=26; builds and tests are verified on 26.
       # npm 12 (bundled with Node 26) runs Cypress's binary download because package.json approves it (allowScripts).
       - name: Use Node.js 26
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 26
           cache: npm
@@ -28,7 +29,7 @@ jobs:
       # Installs the dependencies (npm ci), builds the app, starts it on :4200 and runs the specs
       # against the in-memory fake API (cypress/support/fake-api.ts), so no backend or database is needed.
       - name: Cypress run
-        uses: cypress-io/github-action@v7
+        uses: cypress-io/github-action@0ed14f5d30c4ad6e5e8ffb6f57dbb69150137a3f # v7.4.10
         with:
           build: npm run build
           start: npm start
@@ -40,12 +41,12 @@ jobs:
     name: SonarCloud
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       # sonarcloud-github-action is archived; sonarqube-scan-action replaces it and talks to SonarQube Cloud
       # by default. The project and organization keys come from sonar-project.properties.
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v8
+        uses: SonarSource/sonarqube-scan-action@59202af334b4ba7b5db01b701b8e79f8b3bef0f4 # v8.5.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
