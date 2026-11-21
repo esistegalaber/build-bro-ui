@@ -10,7 +10,7 @@ const STORAGE_KEY = 'build-bruh-theme'
 /** Applies the theme (data-theme on <html>) and remembers it in the browser between visits. */
 @Injectable({providedIn: 'root'})
 export class ThemeService {
-  private document = inject(DOCUMENT)
+  private readonly document = inject(DOCUMENT)
 
   readonly theme = signal<Theme>(this.storedTheme())
 
@@ -29,7 +29,7 @@ export class ThemeService {
   }
 
   private apply(theme: Theme): void {
-    this.document.documentElement.setAttribute('data-theme', theme)
+    this.document.documentElement.dataset['theme'] = theme
   }
 
   private storedTheme(): Theme {
