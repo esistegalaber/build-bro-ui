@@ -1,5 +1,6 @@
 describe('Navigation', () => {
   const pages = [
+    {nav: 'nav-home', path: '/home', request: null},
     {nav: 'nav-build-sets', path: '/build-sets', request: {method: 'GET', url: '/api/v1/build-sets/names'}},
     {nav: 'nav-builds', path: '/builds', request: {method: 'POST', url: '/api/v1/builds/search'}},
     {nav: 'nav-servers', path: '/servers', request: null},
@@ -7,14 +8,28 @@ describe('Navigation', () => {
     {nav: 'nav-projects', path: '/projects', request: null},
   ]
 
-  it('Switches the theme and toggles the side nav labels', () => {
+  it('Switches the theme and keeps it after a reload', () => {
     cy.visit('/home')
-    cy.get('[data-cy-id=theme-select]').select('dark')
+    cy.get('#bb-html').should('have.attr', 'data-theme', 'light')
+    cy.get('[data-cy-id=theme-light]').should('have.attr', 'aria-pressed', 'true')
+    cy.get('[data-cy-id=theme-dark]').click()
     cy.get('#bb-html').should('have.attr', 'data-theme', 'dark')
-    cy.get('[data-cy-id=nav-builds]').invoke('text').then((before) => {
-      cy.get('[data-cy-id=side-nav-toggle]').click()
-      cy.get('[data-cy-id=nav-builds]').invoke('text').should('not.eq', before)
-    })
+    cy.get('[data-cy-id=theme-dark]').should('have.attr', 'aria-pressed', 'true')
+    cy.reload()
+    cy.get('#bb-html').should('have.attr', 'data-theme', 'dark')
+    cy.get('[data-cy-id=theme-lagoon]').click()
+    cy.get('#bb-html').should('have.attr', 'data-theme', 'lagoon')
+  })
+
+  it('Collapses the side nav to icons and expands it again', () => {
+    cy.visit('/home')
+    cy.get('[data-cy-id=nav-builds]').should('contain.text', 'Builds')
+      .find('.sr-only').should('not.exist')
+    cy.get('[data-cy-id=side-nav-toggle]').should('have.attr', 'aria-expanded', 'true').click()
+    cy.get('[data-cy-id=side-nav-toggle]').should('have.attr', 'aria-expanded', 'false')
+    cy.get('[data-cy-id=nav-builds] .sr-only').should('have.text', 'Builds')
+    cy.get('[data-cy-id=side-nav-toggle]').click()
+    cy.get('[data-cy-id=nav-builds] .sr-only').should('not.exist')
   })
 
   it('Redirects the root url to the home page', () => {
@@ -31,6 +46,7 @@ describe('Navigation', () => {
       }
       cy.get(`[data-cy-id=${nav}]`).click()
       cy.location('pathname').should('eq', path)
+      cy.get(`[data-cy-id=${nav}]`).should('have.attr', 'aria-current', 'page')
       if (request) {
         cy.wait('@page-load')
       }
