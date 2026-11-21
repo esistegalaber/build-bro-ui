@@ -1,0 +1,8 @@
+# Keeps the SHA-pinned actions in .github/workflows up to date: Dependabot opens a PR with the new
+# commit SHA (and updates the version comment) when an action releases a new version.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
