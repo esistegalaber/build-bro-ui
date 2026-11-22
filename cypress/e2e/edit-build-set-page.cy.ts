@@ -79,7 +79,10 @@ describe('Edit Build Set Page', () => {
   it('Creates a new build set and deletes it again', () => {
     const name = `cy-e2e-${Date.now()}`
 
+    // the project rows need the projects, which the app loads on start (slow on a cold API)
+    cy.intercept({method: 'GET', url: '/api/v1/projects'}).as('projects')
     cy.visit('/edit-build-set/new')
+    cy.wait('@projects')
     cy.get('[data-cy-id=build-set-name-input]').should('have.value', '')
     cy.get('[data-cy-id=build-set-save]').should('be.disabled')
 
