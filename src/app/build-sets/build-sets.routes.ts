@@ -17,11 +17,11 @@ export const buildSetRoutes: Route[] = [
       provideState(FEATURE_BUILD_SETS, buildSetReducer),
       provideEffects(BuildSetsEffects)
     ],
-    canActivate: [() => loadBuildSetNames()]
+    canActivate: [() => loadBuildSetTemplates()]
   }
 ]
 
-function loadBuildSetNames(): boolean {
-  inject(Store<Buildz>).dispatch(BuildSetActions.loadBuildSetNames())
+function loadBuildSetTemplates(): boolean {
+  inject(Store<Buildz>).dispatch(BuildSetActions.loadBuildSetTemplates())
   return true
 }

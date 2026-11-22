@@ -209,6 +209,7 @@ export function installFakeApi(): void {
       db.buildSetTemplates = db.buildSetTemplates.filter((template) => template.name !== name)
       req.reply({statusCode: 200})
     })
+    cy.intercept({method: 'GET', url: path('/build-sets')}, (req) => req.reply(db.buildSetTemplates))
     cy.intercept({method: 'GET', url: path('/build-sets/names')}, (req) =>
       req.reply(db.buildSetTemplates.map((template) => template.name)))
     cy.intercept({method: 'GET', url: path('/build-sets/of/[^/]+')}, (req) => {

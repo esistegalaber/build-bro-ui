@@ -1,7 +1,7 @@
 describe('Navigation', () => {
   const pages = [
     {nav: 'nav-home', path: '/home', request: null},
-    {nav: 'nav-build-sets', path: '/build-sets', request: {method: 'GET', url: '/api/v1/build-sets/names'}},
+    {nav: 'nav-build-sets', path: '/build-sets', request: {method: 'GET', pathname: '/api/v1/build-sets'}},
     {nav: 'nav-builds', path: '/builds', request: {method: 'POST', url: '/api/v1/builds/search'}},
     {nav: 'nav-servers', path: '/servers', request: null},
     {nav: 'nav-deployments', path: '/deployments', request: {method: 'POST', url: '/api/v1/deployments/search'}},
