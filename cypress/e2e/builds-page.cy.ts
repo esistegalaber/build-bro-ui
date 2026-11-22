@@ -34,7 +34,7 @@ describe('Builds Page', () => {
     cy.get('[data-cy-id=label-add]').should('be.enabled').click()
     cy.wait('@label-search').its('request.body.labels').should('deep.equal', {'integration-test': 'ok'})
     cy.get('[data-cy-id=search-label]').should('have.length', 1)
-      .find('input').first().should('have.value', 'integration-test')
+      .and('contain.text', 'integration-test = ok')
 
     cy.get('[data-cy-id=search-label-remove]').click()
     cy.wait('@label-search').its('request.body.labels').should('deep.equal', {})
