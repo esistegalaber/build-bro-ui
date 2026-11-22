@@ -5,6 +5,11 @@
 @import '@fontsource-variable/jetbrains-mono';
 @import 'tailwindcss';
 
+/* Tailwind generates CSS for every class-like word it finds in the project. Unit specs and test helpers are not
+   app code, so keep their words out of the bundle. */
+@source not './**/*.spec.ts';
+@source not './testing';
+
 /* Inter for text, Plus Jakarta Sans for headings (the font-display utility), JetBrains Mono for build numbers and hashes. */
 @theme {
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;

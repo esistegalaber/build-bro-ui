@@ -29,7 +29,14 @@ npm run watch   # development build in watch mode
 
 ## Tests
 
-The Cypress end-to-end tests in `cypress/e2e/` cover every page. There are no unit tests. The tests need the app on :4200 (`npm start`) and can run in two modes:
+**Unit tests** (Vitest) cover the app's logic: reducers, selectors, effects, guards, pipes and services. They run in a few seconds without a browser or backend:
+
+```bash
+npm test                                  # watch mode
+npm test -- --watch=false --coverage      # once, with a coverage report in coverage/
+```
+
+**End-to-end tests** (Cypress) in `cypress/e2e/` cover every page. They need the app on :4200 (`npm start`) and can run in two modes:
 
 ```bash
 npm run cypress:run        # against an in-memory fake API, no backend needed
@@ -57,4 +64,4 @@ nginx proxies `/api` to `http://${BUILDZ_API}:8080/api` (`BUILDZ_API` defaults t
 
 ## CI
 
-- **GitHub Actions** (`.github/workflows/build.yml`) runs on pushes to `main` and on pull requests. It installs, builds, and runs the e2e tests in Chrome against the fake API. A second job runs a SonarCloud scan (project `esistegalaber_build-bro-ui`, configured in `sonar-project.properties`; needs the `SONAR_TOKEN` repository secret).
+- **GitHub Actions** (`.github/workflows/build.yml`) runs on pushes to `main` and on pull requests. The unit tests (with coverage) and the build with the e2e tests (in Chrome, against the fake API) run as parallel jobs. A third job runs a SonarCloud scan as soon as the unit tests are done, including their coverage (project `esistegalaber_build-bro-ui`, configured in `sonar-project.properties`; needs the `SONAR_TOKEN` repository secret).
