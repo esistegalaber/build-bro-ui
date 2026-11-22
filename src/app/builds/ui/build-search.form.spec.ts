@@ -1,5 +1,5 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing'
-import {BuildSearchForm} from './build-search.form'
+import {BuildSearchForm, TYPING_PAUSE_MS} from './build-search.form'
 import {INITIAL_BUILD_SEARCH} from '../state/builds.reducer'
 import {IBuildSearchParams, ISearchData} from '../../core'
 
@@ -22,13 +22,10 @@ describe('BuildSearchForm', () => {
     await fixture.whenStable()
   }
 
-  async function type(id: string, value: string, event = 'input') {
+  async function type(id: string, value: string) {
     const input = byCy(id) as HTMLInputElement
     input.value = value
     input.dispatchEvent(new Event('input'))
-    if (event !== 'input') {
-      input.dispatchEvent(new Event(event))
-    }
     await fixture.whenStable()
   }
 
@@ -52,11 +49,71 @@ describe('BuildSearchForm', () => {
     expect(updates.at(-1)?.project).toBe('frontend')
   })
 
-  it('searches while a build number is typed', async () => {
-    await render()
-    await type('min-build-number-input', '5', 'keyup')
-    await type('max-build-number-input', '9', 'keyup')
-    expect(updates.at(-1)).toMatchObject({minBuildNumber: '5', maxBuildNumber: '9'})
+  describe('while a build number is typed', () => {
+    // fake only the timers of the form, so Angular's own scheduling keeps working
+    beforeEach(() => vi.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']}))
+    afterEach(() => vi.useRealTimers())
+
+    /** types without waiting, like a fast typist: ngModel takes each value right away */
+    function typeFast(id: string, ...values: string[]) {
+      const input = byCy(id) as HTMLInputElement
+      for (const value of values) {
+        input.value = value
+        input.dispatchEvent(new Event('input'))
+      }
+    }
+
+    it('searches once, when typing has paused', async () => {
+      await render()
+      typeFast('min-build-number-input', '9', '99', '999')
+      typeFast('max-build-number-input', '1', '12')
+      vi.advanceTimersByTime(TYPING_PAUSE_MS - 1)
+      expect(updates).toHaveLength(0)
+      vi.advanceTimersByTime(1)
+      expect(updates).toEqual([expect.objectContaining({minBuildNumber: '999', maxBuildNumber: '12'})])
+    })
+
+    it('does not search for keys that change nothing, such as Tab or the arrow keys', async () => {
+      await render()
+      byCy('min-build-number-input').dispatchEvent(new KeyboardEvent('keyup', {key: 'Tab'}))
+      vi.advanceTimersByTime(TYPING_PAUSE_MS)
+      expect(updates).toHaveLength(0)
+    })
+
+    it.each([
+      ['a project is chosen', () => {
+        const select = byCy('project-select') as HTMLSelectElement
+        select.value = 'frontend'
+        select.dispatchEvent(new Event('change'))
+      }],
+      ['Reload is clicked', () => byCy('search-reload').click()]
+    ])('searches right away, and only once, when %s meanwhile', async (_, act) => {
+      await render()
+      typeFast('min-build-number-input', '5')
+      act()
+      expect(updates).toEqual([expect.objectContaining({minBuildNumber: '5'})])
+      vi.advanceTimersByTime(TYPING_PAUSE_MS)
+      expect(updates).toHaveLength(1)
+    })
+
+    it('drops the waiting search on reset', async () => {
+      await render()
+      let resets = 0
+      fixture.componentInstance.resetSearch.subscribe(() => resets++)
+      typeFast('min-build-number-input', '5')
+      byCy('search-reset').click()
+      vi.advanceTimersByTime(TYPING_PAUSE_MS)
+      expect(resets).toBe(1)
+      expect(updates).toHaveLength(0)
+    })
+
+    it('drops the waiting search when the form goes away', async () => {
+      await render()
+      typeFast('min-build-number-input', '5')
+      fixture.destroy()
+      vi.advanceTimersByTime(TYPING_PAUSE_MS)
+      expect(updates).toHaveLength(0)
+    })
   })
 
   it('adds a label filter only with both key and value, and then clears the inputs', async () => {

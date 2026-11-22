@@ -1,7 +1,7 @@
 import {Injectable, inject} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import * as DeploymentActions from "./deployment.actions";
-import {catchError, exhaustMap, map, withLatestFrom} from "rxjs/operators";
+import {catchError, map, switchMap, withLatestFrom} from "rxjs/operators";
 import {select, Store} from "@ngrx/store";
 import {Buildz, IDeploymentSearch, IDeploymentSearchResult} from "../../core";
 import {theDeploymentSearch} from "./deployment.selectors";
@@ -21,7 +21,8 @@ export class DeploymentEffects {
       DeploymentActions.resetDeploymentsSearch),
     withLatestFrom(this.store.pipe(select(theDeploymentSearch))),
     map(([action, search]) => search),
-    exhaustMap((search: IDeploymentSearch) => this.http.post<IDeploymentSearchResult>(`/api/v1/deployments/search`, search).pipe(
+    // the newest search wins: a newer one cancels a request still running, so the results match the filters
+    switchMap((search: IDeploymentSearch) => this.http.post<IDeploymentSearchResult>(`/api/v1/deployments/search`, search).pipe(
         map((result: IDeploymentSearchResult) => DeploymentActions.deploymentsSearchLoaded({result})),
         catchError(errorResponse => of(CoreActions.backendErrorOccurred({errorResponse})))
       )

@@ -34,4 +34,24 @@ describe('DeploymentEffects', () => {
     http.expectOne('/api/v1/deployments/search').flush(API_ERROR, {status: 500, statusText: 'Server Error'})
     expect(emitted.map((a) => a.type)).toEqual([backendErrorOccurred.type])
   })
+
+  it('lets the newest search win: a newer search cancels the request still running', () => {
+    const {effects, actions$, http, store} = setUp()
+    const emitted = collect(effects.deploymentSearch$)
+    actions$.next(DeploymentActions.updateDeploymentsSearch({search}))
+    const first = http.expectOne('/api/v1/deployments/search')
+
+    const newer = {...search, serverName: 'prod-1'}
+    store.overrideSelector(theDeploymentSearch, newer)
+    store.refreshState()
+    actions$.next(DeploymentActions.updateDeploymentsSearch({search: newer}))
+    const second = http.expectOne('/api/v1/deployments/search')
+
+    expect(first.cancelled).toBe(true)
+    expect(second.request.body).toEqual(newer)
+    const newest = {...result, totalElements: 3}
+    second.flush(newest)
+    expect(emitted).toEqual([DeploymentActions.deploymentsSearchLoaded({result: newest})])
+    http.verify()
+  })
 })
