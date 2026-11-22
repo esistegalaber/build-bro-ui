@@ -6,8 +6,9 @@ import {IBuildLabel} from "../state/model";
 })
 export class SortedLabelsPipe implements PipeTransform {
 
-  transform(value: IBuildLabel[], ...args: any): any {
-    return value.sort(
+  /** Sorts a copy, so the pipe also works on (frozen) store state. */
+  transform(value: IBuildLabel[], ...args: any): IBuildLabel[] {
+    return [...value].sort(
       (first, second) => first.key > second.key ? -1 : 1
     )
   }

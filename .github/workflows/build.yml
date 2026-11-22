@@ -37,13 +37,36 @@ jobs:
           wait-on-timeout: 120
           browser: chrome
 
+      # Vitest unit tests with coverage (the Cypress step above already installed the dependencies).
+      # They also run when the e2e tests failed, so both results show up.
+      - name: Unit tests
+        if: ${{ !cancelled() }}
+        run: npm test -- --watch=false --coverage
+
+      # The SonarCloud job reads the coverage report from here.
+      - name: Keep the coverage report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage
+          path: coverage/build-bro-ui/lcov.info
+          retention-days: 7
+
   sonarcloud:
     name: SonarCloud
+    # needs the coverage report of the build job, but still runs when its tests failed
+    needs: build
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+      - name: Get the coverage report
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: coverage
+          path: coverage/build-bro-ui
       # sonarcloud-github-action is archived; sonarqube-scan-action replaces it and talks to SonarQube Cloud
       # by default. The project and organization keys come from sonar-project.properties.
       - name: SonarCloud Scan
