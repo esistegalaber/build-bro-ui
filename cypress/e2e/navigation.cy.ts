@@ -32,6 +32,24 @@ describe('Navigation', () => {
     cy.get('[data-cy-id=nav-builds] .sr-only').should('not.exist')
   })
 
+  it('Uses a top bar and a slide-out menu on phones', () => {
+    cy.viewport(390, 844)
+    cy.visit('/home')
+    cy.get('[data-cy-id=nav-builds]').should('not.be.visible')
+    cy.get('[data-cy-id=side-nav-toggle]').should('not.be.visible')
+    cy.get('[data-cy-id=drawer-open]').should('have.attr', 'aria-expanded', 'false').click()
+    cy.get('[data-cy-id=drawer-close]').should('be.focused')
+    cy.get('[data-cy-id=nav-builds]').should('be.visible').click()
+    cy.location('pathname').should('eq', '/builds')
+    cy.get('[data-cy-id=nav-builds]').should('not.be.visible')
+
+    cy.get('[data-cy-id=drawer-open]').click()
+    cy.get('[data-cy-id=nav-home]').should('be.visible')
+    cy.get('body').type('{esc}')
+    cy.get('[data-cy-id=nav-home]').should('not.be.visible')
+    cy.get('[data-cy-id=drawer-open]').should('be.focused').and('have.attr', 'aria-expanded', 'false')
+  })
+
   it('Redirects the root url to the home page', () => {
     cy.visit('/')
     cy.location('pathname').should('eq', '/home')

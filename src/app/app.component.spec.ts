@@ -65,4 +65,87 @@ describe('AppComponent', () => {
     const {byCy} = render()
     expect(byCy('alert')).toBeNull()
   })
+
+  describe('on a phone', () => {
+    let listeners: ((event: { matches: boolean }) => void)[]
+
+    beforeEach(() => {
+      listeners = []
+      window.matchMedia = vi.fn().mockReturnValue({
+        matches: true,
+        addEventListener: (_: string, listener: (event: { matches: boolean }) => void) => listeners.push(listener),
+        removeEventListener: vi.fn()
+      })
+    })
+    afterEach(() => {
+      delete (window as Partial<Window>).matchMedia
+    })
+
+    function renderOnPhone() {
+      TestBed.configureTestingModule({
+        imports: [AppComponent],
+        providers: [provideRouter([{path: '**', children: []}]), provideMockStore({initialState: {alert: NO_ALERT, nav: {sidenav: {text: false}}}})]
+      })
+      const fixture = TestBed.createComponent(AppComponent)
+      fixture.detectChanges()
+      const byCy = (id: string) => fixture.nativeElement.querySelector(`[data-cy-id="${id}"]`) as HTMLElement
+      const toggle = () => fixture.nativeElement.querySelector('#nav-drawer') as HTMLInputElement
+      return {fixture, byCy, toggle}
+    }
+
+    it('shows the labels in the slide-out menu even when collapsed on wide screens', () => {
+      const {fixture, byCy} = renderOnPhone()
+      expect(fixture.componentInstance.nav().text).toBe(true)
+      expect(byCy('nav-builds').textContent).toContain('Builds')
+      listeners.forEach((l) => l({matches: false}))
+      expect(fixture.componentInstance.nav().text).toBe(false)
+    })
+
+    it('opens the menu with the focus inside and closes it after choosing a page', async () => {
+      const {fixture, byCy, toggle} = renderOnPhone()
+      expect(byCy('drawer-open').getAttribute('aria-expanded')).toBe('false')
+      byCy('drawer-open').click()
+      await fixture.whenStable()
+      expect(toggle().checked).toBe(true)
+      expect(byCy('drawer-open').getAttribute('aria-expanded')).toBe('true')
+      expect(document.activeElement).toBe(byCy('drawer-close'))
+      byCy('nav-builds').click()
+      await fixture.whenStable()
+      expect(toggle().checked).toBe(false)
+    })
+
+    it('closes the menu with its button and with Escape, and gives the focus back', async () => {
+      const {fixture, byCy, toggle} = renderOnPhone()
+      byCy('drawer-open').click()
+      await fixture.whenStable()
+      byCy('drawer-close').click()
+      await fixture.whenStable()
+      expect(toggle().checked).toBe(false)
+      expect(document.activeElement).toBe(byCy('drawer-open'))
+
+      byCy('drawer-open').click()
+      await fixture.whenStable()
+      byCy('nav-home').dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}))
+      await fixture.whenStable()
+      expect(toggle().checked).toBe(false)
+    })
+
+    it('closes the menu when the screen gets wide', async () => {
+      const {fixture, byCy, toggle} = renderOnPhone()
+      byCy('drawer-open').click()
+      await fixture.whenStable()
+      listeners.forEach((l) => l({matches: false}))
+      await fixture.whenStable()
+      expect(toggle().checked).toBe(false)
+    })
+
+    it('follows the checkbox when the overlay closes the menu', async () => {
+      const {fixture, toggle} = renderOnPhone()
+      fixture.componentInstance.openMenu()
+      await fixture.whenStable()
+      toggle().checked = false
+      toggle().dispatchEvent(new Event('change'))
+      expect(fixture.componentInstance.menuOpen()).toBe(false)
+    })
+  })
 })
