@@ -1,62 +1,42 @@
-import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
-import {select, Store} from "@ngrx/store";
-import {Buildz, IServer} from "../core";
-import {CommonModule} from "@angular/common";
-import {allServers} from "../core/state/servers/server.selectors";
-import {FormsModule} from "@angular/forms";
-import {deepClone} from "../core/util/deep-clone";
-import {ServerDetailsForm} from "./ui/server-details.form";
-import * as CoreActions from "../core/actions";
+import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core'
+import {AsyncPipe} from '@angular/common'
+import {Store} from '@ngrx/store'
+import {Buildz, IServer} from '../core'
+import {allServers} from '../core/state/servers/server.selectors'
+import * as CoreActions from '../core/actions'
+import {ServerList} from './ui/server.list'
+import {ServerDetailsForm} from './ui/server-details.form'
 
 @Component({
   template: `
-      <div class="grid grid-cols-2 gap-2">
-        <table class="table table-zebra w-full">
-          <thead>
-            <tr>
-              <td>ID</td>
-              <td>Name</td>
-              <td>Nick Name</td>
-              <td></td>
-            </tr>
-          </thead>
-          @for (server of allServers$|async; track server.id) {
-            <tr attr.data-cy-id="server-{{server.name}}">
-              <td>{{server.id}}</td>
-              <td>{{server.name}}</td>
-              <td>{{server.nickName || '---'}}</td>
-              <td>
-                <button class="btn btn-ghost" (click)="select(server)" data-cy-id="server-edit">Edit</button>
-              </td>
-            </tr>
-          }
-        </table>
-        <bb-server-details-form
-          [server]="selectedServer"
-          (updateServer)="updateSingleServer($event)"
-          >
-        </bb-server-details-form>
+    <div class="flex flex-col gap-6">
+      <header class="flex flex-col gap-1">
+        <h1 class="text-3xl font-extrabold tracking-tight">Servers</h1>
+        <p class="text-base-content/70">Where builds get deployed. A nickname makes them easier to tell apart.</p>
+      </header>
+
+      <div class="flex flex-wrap items-start gap-6">
+        <bb-server-list class="block min-w-0 grow-[999] basis-[420px]"
+                        [servers]="(servers$ | async) ?? []" [selectedId]="selected()?.id ?? null"
+                        (editServer)="selected.set($event)"></bb-server-list>
+        <bb-server-details-form class="block min-w-0 grow basis-72 sticky top-6"
+                                [server]="selected()" (updateServer)="save($event)"
+                                (cancel)="selected.set(null)"></bb-server-details-form>
       </div>
+    </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ServerDetailsForm
-  ]
+  imports: [AsyncPipe, ServerList, ServerDetailsForm]
 })
 export class ServersPage {
-  private store = inject<Store<Buildz>>(Store);
+  private store = inject<Store<Buildz>>(Store)
 
-  allServers$ = this.store.pipe(select(allServers))
-  selectedServer: IServer | null = null
+  servers$ = this.store.select(allServers)
+  /** The server being edited, or null */
+  readonly selected = signal<IServer | null>(null)
 
-  select(server: IServer | null) {
-    this.selectedServer = deepClone(server)
-  }
-
-  updateSingleServer(server: IServer) {
+  save(server: IServer): void {
     this.store.dispatch(CoreActions.updateServer({server}))
-    this.selectedServer = null;
+    this.selected.set(null)
   }
 }
