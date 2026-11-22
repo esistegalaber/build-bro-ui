@@ -9,6 +9,7 @@ describe('Servers Page', () => {
   })
 
   it('Lists the servers', () => {
+    cy.get('[data-cy-id=servers-count]').should('have.text', ' 3 servers ')
     cy.get('[data-cy-id=server-testserver]').should('contain.text', 'Tester')
     cy.get('[data-cy-id=server-staging]').should('contain.text', 'Company Staging')
     cy.get('[data-cy-id=server-prod-1]').should('contain.text', 'Prod')
@@ -25,6 +26,14 @@ describe('Servers Page', () => {
     saveNickName('Tester')
     cy.get('[data-cy-id=server-testserver]').should('contain.text', 'Tester')
       .and('not.contain.text', newNickName)
+  })
+
+  it('Cancels an edit without saving', () => {
+    cy.get('[data-cy-id=server-staging] [data-cy-id=server-edit]').click()
+    cy.get('[data-cy-id=server-nickname]').should('be.focused').clear().type('Not saved')
+    cy.get('[data-cy-id=edit-server-cancel]').click()
+    cy.get('[data-cy-id=server-nickname]').should('not.exist')
+    cy.get('[data-cy-id=server-staging]').should('contain.text', 'Company Staging')
   })
 
   function saveNickName(nickName: string) {
