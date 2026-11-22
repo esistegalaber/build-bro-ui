@@ -68,6 +68,29 @@ describe('Builds Page', () => {
     cy.get('[data-cy-id=min-build-number-input]').should('have.value', '5')
   })
 
+  // #50: with a slow API, a quickly typed number must neither lose characters nor end on the results of an older search
+  it('Shows the results of the last typed build number, even when an older search answers late', () => {
+    loadBuildPage()
+    // the search for "9" answers only after 1.5 s; the handler then passes the request on to the API
+    cy.intercept(buildsSearchRequest, (req) => new Promise<void>((resolve) =>
+      setTimeout(resolve, req.body.minBuildNumber === '9' ? 1500 : 0))).as('search')
+    cy.get('[data-cy-id=min-build-number-input]').type('9')
+    cy.wait(400) // typing pauses: the slow search for "9" starts
+    cy.get('[data-cy-id=min-build-number-input]').type('99')
+
+    cy.get('[data-cy-id=min-build-number-input]').should('have.value', '999')
+    cy.get('[data-cy-id=builds-empty]').should('be.visible')
+    cy.get('[data-cy-id=builds-count]').should('contain.text', '0 builds')
+    // the late answer for "9" must not replace the results
+    cy.wait(1600)
+    cy.get('[data-cy-id=builds-empty]').should('be.visible')
+    cy.get('[data-cy-id=min-build-number-input]').should('have.value', '999')
+    cy.get('@search.all').then((searches) => {
+      const typed = searches.map((s) => (s as unknown as { request: { body: { minBuildNumber: string } } }).request.body.minBuildNumber)
+      expect(typed).to.deep.equal(['9', '999'])
+    })
+  })
+
   function loadBuildPage() {
     cy.intercept(buildsSearchRequest).as('empty-search-response')
     // open builds page

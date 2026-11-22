@@ -34,4 +34,24 @@ describe('BuildsEffects', () => {
     http.expectOne('/api/v1/builds/search').flush(API_ERROR, {status: 500, statusText: 'Server Error'})
     expect(emitted.map((a) => a.type)).toEqual([backendErrorOccurred.type])
   })
+
+  it('lets the newest search win: a newer search cancels the request still running', () => {
+    const {effects, actions$, http, store} = setUp()
+    const emitted = collect(effects.doBuildSearch$)
+    actions$.next(BuildActions.updateSearchParams({search}))
+    const first = http.expectOne('/api/v1/builds/search')
+
+    const newer = {...search, minBuildNumber: '999'}
+    store.overrideSelector(theBuildSearchParams, newer)
+    store.refreshState()
+    actions$.next(BuildActions.updateSearchParams({search: newer}))
+    const second = http.expectOne('/api/v1/builds/search')
+
+    expect(first.cancelled).toBe(true)
+    expect(second.request.body).toEqual(newer)
+    const newest = {...result, totalElements: 7}
+    second.flush(newest)
+    expect(emitted).toEqual([BuildActions.buildSearchLoaded({result: newest})])
+    http.verify()
+  })
 })

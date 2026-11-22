@@ -3,7 +3,7 @@ import {Actions, createEffect, ofType} from '@ngrx/effects'
 import {HttpClient} from '@angular/common/http'
 import {select, Store} from '@ngrx/store'
 import {Buildz, IBuildSearchResult, ISearchData} from '../../core'
-import {catchError, exhaustMap, map, tap, withLatestFrom} from 'rxjs/operators'
+import {catchError, exhaustMap, map, switchMap, tap, withLatestFrom} from 'rxjs/operators'
 import {of} from 'rxjs'
 import * as AlertActions from '../../core/state/alerts/alert.actions'
 import {availableBuildSearchDataLoaded, buildSearchLoaded, doBuildSearch, loadAvailableBuildSearchData, resetSearchParams, toSearchPage, updateSearchParams} from "./builds.actions";
@@ -20,7 +20,8 @@ export class BuildsEffects {
     ofType(doBuildSearch, updateSearchParams, toSearchPage, resetSearchParams),
     withLatestFrom(this.store.pipe(select(theBuildSearchParams))),
     map(([action, buildSearchParams]) => buildSearchParams),
-    exhaustMap((buildSearchParams) => this.http.post<IBuildSearchResult>(`/api/v1/builds/search`, buildSearchParams).pipe(
+    // the newest search wins: a newer one cancels a request still running, so the results match the filters
+    switchMap((buildSearchParams) => this.http.post<IBuildSearchResult>(`/api/v1/builds/search`, buildSearchParams).pipe(
         map((result: IBuildSearchResult) => buildSearchLoaded({result})),
         catchError(errorResponse => of(AlertActions.backendErrorOccurred({errorResponse})))
       )
