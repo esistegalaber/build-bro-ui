@@ -41,7 +41,7 @@ describe('BuildsEffects', () => {
     actions$.next(BuildActions.updateSearchParams({search}))
     const first = http.expectOne('/api/v1/builds/search')
 
-    const newer = {...search, minBuildNumber: '999'}
+    const newer = {...search, minBuildNumber: 999}
     store.overrideSelector(theBuildSearchParams, newer)
     store.refreshState()
     actions$.next(BuildActions.updateSearchParams({search: newer}))

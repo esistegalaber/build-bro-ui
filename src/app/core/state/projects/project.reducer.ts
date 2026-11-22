@@ -1,7 +1,6 @@
 import {createReducer, on} from "@ngrx/store";
 import * as ProjectActions from "./project.actions";
 import {IBranch, IProject, ProjectsState} from "../model";
-import {deepClone} from "../../util/deep-clone";
 
 const INITIAL_PROJECTS: ProjectsState = {
   includeInactiveProjects: false,
@@ -14,18 +13,12 @@ export const projectsReducer = createReducer(
     return {...state, projects}
   }),
   on(ProjectActions.branchUpdated, (state: ProjectsState, {branch}) => {
-    const newState: ProjectsState = deepClone(state)
-    const theProject = newState.projects.find((project: IProject) => project.id === branch.projectId)
-    if (!!theProject) {
-      const currentBranch = theProject.branches.find((b: IBranch) => b.id === branch.id)
-      if (!!currentBranch) {
-        const indexOfBranch = theProject.branches.indexOf(currentBranch)
-        if (indexOfBranch > -1) {
-          theProject.branches[indexOfBranch] = branch
-        }
-      }
-    }
-    return newState;
+    // only the changed project and branch are new objects; everything else is shared with the old state
+    const projects = state.projects.map((project: IProject) => project.id !== branch.projectId ? project : {
+      ...project,
+      branches: project.branches.map((b: IBranch) => b.id === branch.id ? branch : b)
+    })
+    return {...state, projects}
   }),
   on(ProjectActions.projectUpdated, (state: ProjectsState, {project}) => {
     return state;

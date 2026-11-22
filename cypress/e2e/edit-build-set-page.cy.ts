@@ -60,7 +60,7 @@ describe('Edit Build Set Page', () => {
     cy.get('[data-cy-id=build-template-backend]').within(() => {
       cy.get('[data-cy-id=project-toggle]').should('be.checked')
       cy.get('[data-cy-id=template-branch-select]').find('option:selected').should('have.text', 'main')
-      cy.get('input[name=buildNumber]').should('have.value', '9')
+      cy.get('[data-cy-id=template-build-number]').should('have.value', '9')
     })
 
     cy.intercept({method: 'GET', url: '/api/v1/build-sets/feature-test-stage-1'}).as('other')
@@ -72,7 +72,7 @@ describe('Edit Build Set Page', () => {
     cy.get('[data-cy-id=project-toggle]').should('have.length', 3).and('not.be.checked')
     // excluded projects are a single line without fields
     cy.get('[data-cy-id=build-template-backend]').should('contain.text', 'Not included')
-      .find('input[name=buildNumber]').should('not.exist')
+      .find('[data-cy-id=template-build-number]').should('not.exist')
 
     cy.get('[data-cy-id=nav-build-sets]').click()
     cy.get('[data-cy-id="build-set-name-main"]').click()
@@ -81,7 +81,7 @@ describe('Edit Build Set Page', () => {
     cy.get('[data-cy-id=build-template-backend]').within(() => {
       cy.get('[data-cy-id=project-toggle]').should('be.checked')
       cy.get('[data-cy-id=template-branch-select]').find('option:selected').should('have.text', 'main')
-      cy.get('input[name=buildNumber]').should('have.value', '9')
+      cy.get('[data-cy-id=template-build-number]').should('have.value', '9')
     })
     cy.get('[data-cy-id=build-template-frontend] [data-cy-id=project-toggle]').should('be.checked')
     cy.get('[data-cy-id=build-template-backoffice] [data-cy-id=project-toggle]').should('not.be.checked')

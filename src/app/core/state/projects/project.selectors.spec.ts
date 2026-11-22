@@ -1,9 +1,11 @@
 import {allActiveProjects, allProjects, includeInactiveData, projectsData} from './project.selectors'
 import {someProjects} from '../../../../testing/data'
 import {ProjectsState} from '../model'
+import {deepFreeze} from '../../../../testing/freeze'
 
 describe('project selectors', () => {
-  const state = (includeInactiveProjects = false): ProjectsState => ({includeInactiveProjects, projects: someProjects()})
+  // frozen, as NgRx keeps its state in dev mode: a selector that changes it fails the test
+  const state = (includeInactiveProjects = false): ProjectsState => deepFreeze({includeInactiveProjects, projects: someProjects()})
 
   it('tell whether inactive projects are shown', () => {
     expect(includeInactiveData.projector(state(true))).toBe(true)

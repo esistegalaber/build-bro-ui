@@ -2,6 +2,7 @@ import {editBuildSetReducer, EditBuildSetState, INITIAL_STATE} from './edit-buil
 import * as EditActions from './edit-build-sets.actions'
 import {build, someProjects} from '../../../testing/data'
 import {IBuildSetTemplate} from '../../core'
+import {deepFreeze} from '../../../testing/freeze'
 
 describe('editBuildSetReducer', () => {
   const main = (): IBuildSetTemplate => ({
@@ -10,7 +11,8 @@ describe('editBuildSetReducer', () => {
       {id: 2, project: 'frontend', branch: 'main', buildNumber: null, labels: {}}
     ]
   })
-  const withMain = (): EditBuildSetState => ({...INITIAL_STATE, theTemplate: main()})
+  // frozen, as NgRx keeps its state in dev mode: a reducer that changes it fails the test
+  const withMain = (): EditBuildSetState => deepFreeze(structuredClone({...INITIAL_STATE, theTemplate: main()}))
   const [backend, frontend] = someProjects()
 
   it('starts with an empty, unnamed template', () => {

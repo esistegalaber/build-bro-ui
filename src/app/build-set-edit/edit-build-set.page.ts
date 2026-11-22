@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {select, Store} from "@ngrx/store";
-import {allActiveProjects, Buildz, CloningPipe, EditableBuildSetTemplate, EditableBuildTemplate, IProject} from "../core";
+import {allActiveProjects, Buildz, EditableBuildSetTemplate, EditableBuildTemplate, IProject} from "../core";
 import {CommonModule} from "@angular/common";
 import {theBuilds, theEditableBuildTemplates, theEditableTemplate, theTemplate} from "./state/edit-build-sets.selectors";
 import * as EditBuildSetActions from "./state/edit-build-sets.actions";
@@ -12,7 +12,7 @@ import {ResolvedBuildsPanel} from "./ui/resolved-builds.panel";
 @Component({
   template: `
     @let saved = (savedTemplate$ | async)!;
-    @let templates = (EditableBuildTemplates$ | async | deepClone)!;
+    @let templates = (EditableBuildTemplates$ | async)!;
     <div class="flex flex-col gap-6">
       <bb-build-set-name-form
         [editableTemplate]="(currentBuildSetTemplate$ | async)!"
@@ -36,8 +36,7 @@ import {ResolvedBuildsPanel} from "./ui/resolved-builds.panel";
     CommonModule,
     BuildSetNameForm,
     BuildTemplateList,
-    ResolvedBuildsPanel,
-    CloningPipe
+    ResolvedBuildsPanel
   ]
 })
 export class EditBuildSetPage {

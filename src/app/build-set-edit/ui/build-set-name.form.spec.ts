@@ -2,6 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing'
 import {provideRouter} from '@angular/router'
 import {BuildSetNameForm} from './build-set-name.form'
 import {EditableBuildSetTemplate} from '../../core'
+import {deepFreeze} from '../../../testing/freeze'
 
 describe('BuildSetNameForm', () => {
   let fixture: ComponentFixture<BuildSetNameForm>
@@ -12,7 +13,7 @@ describe('BuildSetNameForm', () => {
   async function render(name: string, savedName: string | null, cloned = false) {
     TestBed.configureTestingModule({providers: [provideRouter([])]})
     fixture = TestBed.createComponent(BuildSetNameForm)
-    fixture.componentRef.setInput('editableTemplate', {name, projects: []})
+    fixture.componentRef.setInput('editableTemplate', deepFreeze({name, projects: []}))
     fixture.componentRef.setInput('savedName', savedName)
     fixture.componentRef.setInput('cloned', cloned)
     saved = []
@@ -54,7 +55,9 @@ describe('BuildSetNameForm', () => {
     await render('main', 'main')
     await typeName('main-renamed')
     byCy('build-set-save').click()
+    await fixture.whenStable()
     expect(saved).toEqual([{name: 'main-renamed', projects: []}])
+    expect(fixture.componentInstance.editableTemplate().name).toBe('main')
   })
 
   it('keeps the typed name when other parts of the build set change', async () => {
@@ -70,5 +73,12 @@ describe('BuildSetNameForm', () => {
     fixture.componentRef.setInput('editableTemplate', {name: 'feature-test-stage-1', projects: []})
     await fixture.whenStable()
     expect((byCy('build-set-name-input') as HTMLInputElement).value).toBe('feature-test-stage-1')
+  })
+
+  it('does not save without a name, also not with Enter', async () => {
+    await render('', null)
+    ;(byCy('build-set-name-input').closest('form') as HTMLFormElement).dispatchEvent(new Event('submit', {cancelable: true}))
+    await fixture.whenStable()
+    expect(saved).toHaveLength(0)
   })
 })

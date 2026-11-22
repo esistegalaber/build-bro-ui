@@ -47,7 +47,7 @@ describe('Builds Page', () => {
     loadBuildPage()
     cy.intercept(buildsSearchRequest).as('min-search')
     cy.get('[data-cy-id=min-build-number-input]').type('5')
-    cy.wait('@min-search').its('request.body.minBuildNumber').should('eq', '5')
+    cy.wait('@min-search').its('request.body.minBuildNumber').should('eq', 5)
     cy.get('[data-cy-id=search-reset]').click()
     cy.wait('@min-search').its('request.body').should('deep.include', {minBuildNumber: null, page: 0, pageSize: 10})
     cy.get('[data-cy-id=min-build-number-input]').should('have.value', '')
@@ -61,10 +61,10 @@ describe('Builds Page', () => {
       searches++
     }).as('reload')
     cy.get('[data-cy-id=search-reload]').click()
-    cy.wait('@reload').its('request.body.minBuildNumber').should('eq', '5')
+    cy.wait('@reload').its('request.body.minBuildNumber').should('eq', 5)
     cy.wait(500).then(() => expect(searches).to.eq(1))
     cy.get('[data-cy-id=min-build-number-input]').type('{enter}')
-    cy.wait('@reload').its('request.body.minBuildNumber').should('eq', '5')
+    cy.wait('@reload').its('request.body.minBuildNumber').should('eq', 5)
     cy.get('[data-cy-id=min-build-number-input]').should('have.value', '5')
   })
 
@@ -73,7 +73,7 @@ describe('Builds Page', () => {
     loadBuildPage()
     // the search for "9" answers only after 1.5 s; the handler then passes the request on to the API
     cy.intercept(buildsSearchRequest, (req) => new Promise<void>((resolve) =>
-      setTimeout(resolve, req.body.minBuildNumber === '9' ? 1500 : 0))).as('search')
+      setTimeout(resolve, req.body.minBuildNumber === 9 ? 1500 : 0))).as('search')
     cy.get('[data-cy-id=min-build-number-input]').type('9')
     cy.wait(400) // typing pauses: the slow search for "9" starts
     cy.get('[data-cy-id=min-build-number-input]').type('99')
@@ -86,8 +86,8 @@ describe('Builds Page', () => {
     cy.get('[data-cy-id=builds-empty]').should('be.visible')
     cy.get('[data-cy-id=min-build-number-input]').should('have.value', '999')
     cy.get('@search.all').then((searches) => {
-      const typed = searches.map((s) => (s as unknown as { request: { body: { minBuildNumber: string } } }).request.body.minBuildNumber)
-      expect(typed).to.deep.equal(['9', '999'])
+      const typed = searches.map((s) => (s as unknown as { request: { body: { minBuildNumber: number } } }).request.body.minBuildNumber)
+      expect(typed).to.deep.equal([9, 999])
     })
   })
 

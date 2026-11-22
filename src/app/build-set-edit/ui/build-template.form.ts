@@ -1,77 +1,98 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
-import {FormsModule} from "@angular/forms";
-import {EditableBuildTemplate, IBranch, IProject} from "../../core";
-import {formatLabels, parseLabels} from "../state/utils";
+import {ChangeDetectionStrategy, Component, computed, input, output} from '@angular/core'
+import {debounce, form, FormField, min} from '@angular/forms/signals'
+import {EditableBuildTemplate, IProject} from '../../core'
+import {storeDraft, TYPING_PAUSE_MS} from '../../ui/forms/store-draft'
+import {formatLabels, parseLabels} from '../state/utils'
+
+/**
+ * What a row edits, flat: Signal Forms mark objects inside arrays to track them, and the store's
+ * row holds the project with its (frozen) branches, so the form gets only these fields.
+ */
+interface RowFields {
+  /** the branch's name, empty when none is chosen */
+  branch: string
+  /** empty for the latest */
+  buildNumber: number | null
+  /** the label filter as text: key=value, key=value */
+  labels: string
+}
 
 /**
  * One project of the build set as a compact row: switch, name, and, when the project is included, its branch,
  * build number (empty: the latest) and label filter. An excluded project is a single muted line.
+ * Edits a draft of the row (see storeDraft); every change goes out as a new row, the input stays untouched.
  */
 @Component({
   selector: 'bb-build-template-form',
   template: `
+    @let row = template();
     <div class="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-base-300 px-5 py-3"
-         [class.text-base-content/60]="!template.projectSelected" attr.data-cy-id="build-template-{{template.project.name}}">
-      <input type="checkbox" class="toggle toggle-success toggle-sm" [checked]="template.projectSelected" (change)="projectSelection()"
-             [attr.aria-label]="'Include ' + template.project.name" data-cy-id="project-toggle"/>
+         [class.text-base-content/60]="!row.projectSelected" attr.data-cy-id="build-template-{{row.project.name}}">
+      <input type="checkbox" class="toggle toggle-success toggle-sm" [checked]="row.projectSelected" (change)="projectSelection()"
+             [attr.aria-label]="'Include ' + row.project.name" data-cy-id="project-toggle"/>
       <div class="flex min-w-0 grow basis-28 flex-wrap items-center gap-2">
-        <span [class.font-semibold]="template.projectSelected">{{ template.project.name }}</span>
-        @if (template.projectSelected && template.buildNumber != null) {
+        <span [class.font-semibold]="row.projectSelected">{{ row.project.name }}</span>
+        @if (row.projectSelected && row.buildNumber != null) {
           <span class="badge badge-soft badge-warning badge-sm" data-cy-id="template-pinned">pinned</span>
         }
       </div>
-      @if (template.projectSelected) {
+      @if (row.projectSelected) {
         <select class="select select-sm w-36 grow sm:grow-0" data-cy-id="template-branch-select"
-                [attr.aria-label]="'Branch of ' + template.project.name"
-                [compareWith]="compareBranch" [(ngModel)]="template.branch" [ngModelOptions]="{standalone: true}"
-                (change)="templateUpdated.emit(template)">
-          <option [ngValue]="null">Choose a branch</option>
-          @for (branch of template.project.branches; track branch.id) {
-            <option [ngValue]="branch">{{ branch.name }}</option>
+                [attr.aria-label]="'Branch of ' + row.project.name" [formField]="rowForm.branch">
+          <option value="">Choose a branch</option>
+          @for (branch of row.project.branches; track branch.id) {
+            <option [value]="branch.name">{{ branch.name }}</option>
           }
         </select>
-        <input class="input input-sm w-24 font-mono" type="number" min="1" name="buildNumber" placeholder="latest"
-               [attr.aria-label]="'Build number of ' + template.project.name + ', empty for the latest'"
-               [(ngModel)]="template.buildNumber" [ngModelOptions]="{standalone: true}" (change)="templateUpdated.emit(template)">
-        <input class="input input-sm w-36 grow sm:grow-0" type="text" name="labels" placeholder="key=value"
-               [attr.aria-label]="'Label filter of ' + template.project.name + ', as key=value, key=value'"
-               [value]="labelText" (change)="labelsChanged($any($event.target).value)" data-cy-id="template-labels">
+        <input class="input input-sm w-24 font-mono" type="number" placeholder="latest" data-cy-id="template-build-number"
+               [attr.aria-label]="'Build number of ' + row.project.name + ', empty for the latest'"
+               [formField]="rowForm.buildNumber">
+        <input class="input input-sm w-36 grow sm:grow-0" type="text" placeholder="key=value" data-cy-id="template-labels"
+               [attr.aria-label]="'Label filter of ' + row.project.name + ', as key=value, key=value'"
+               [formField]="rowForm.labels">
       } @else {
         <span class="w-[25.5rem] max-w-full text-sm">Not included</span>
       }
     </div>
   `,
-  imports: [FormsModule],
+  imports: [FormField],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BuildTemplateForm {
-  @Input()
-  template!: EditableBuildTemplate
-  @Output()
-  templateUpdated = new EventEmitter<EditableBuildTemplate>()
-  @Output()
-  projectAdded = new EventEmitter<IProject>();
-  @Output()
-  projectRemoved = new EventEmitter<IProject>();
+  readonly template = input.required<EditableBuildTemplate>()
+  readonly templateUpdated = output<EditableBuildTemplate>()
+  readonly projectAdded = output<IProject>()
+  readonly projectRemoved = output<IProject>()
 
-  get labelText(): string {
-    return formatLabels(this.template.labels)
-  }
+  private readonly fieldsFromStore = computed((): RowFields => {
+    const row = this.template()
+    return {branch: row.branch?.name ?? '', buildNumber: row.buildNumber, labels: formatLabels(row.labels)}
+  })
+  private readonly draft = storeDraft(() => this.fieldsFromStore(), (fields) => this.templateUpdated.emit(this.toRow(fields)))
+  readonly rowForm = form(this.draft.model, (fields) => {
+    // a build number typed quickly is verified once, not once per keystroke
+    debounce(fields.buildNumber, TYPING_PAUSE_MS)
+    min(fields.buildNumber, 1)
+    // a label filter counts once it is complete: when the field is left
+    debounce(fields.labels, 'blur')
+  })
 
-  compareBranch(some: IBranch | null, other: IBranch | null): boolean {
-    return some?.name === other?.name
-  }
-
-  labelsChanged(text: string): void {
-    this.template.labels = parseLabels(text)
-    this.templateUpdated.emit(this.template)
-  }
-
-  projectSelection() {
-    if (this.template.projectSelected) {
-      this.projectRemoved.emit(this.template.project)
+  projectSelection(): void {
+    const row = this.template()
+    if (row.projectSelected) {
+      this.projectRemoved.emit(row.project)
     } else {
-      this.projectAdded.emit(this.template.project)
+      this.projectAdded.emit(row.project)
+    }
+  }
+
+  private toRow(fields: RowFields): EditableBuildTemplate {
+    const row = this.template()
+    return {
+      ...row,
+      branch: row.project.branches.find((b) => b.name === fields.branch) ?? null,
+      buildNumber: fields.buildNumber,
+      labels: parseLabels(fields.labels)
     }
   }
 }
