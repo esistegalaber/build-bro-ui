@@ -20,6 +20,18 @@ describe('Edit Build Set Page', () => {
     cy.get('[data-cy-id=build-40]').should('exist')
   })
 
+  it('Sends a label filter with the verification', () => {
+    cy.intercept({method: 'POST', url: '/api/v1/build-sets/verify'}).as('verify')
+    cy.visit('/edit-build-set/main')
+    cy.wait('@verify')
+    cy.get('[data-cy-id=build-template-backend] [data-cy-id=template-labels]').type('integration-test=ok').blur()
+    cy.wait('@verify').its('request.body').should((body) => {
+      expect(body.find((t: { project: string }) => t.project === 'backend').labels).to.deep.equal({'integration-test': 'ok'})
+    })
+    // backend main #9 is pinned and has integration-test=ok, so it still resolves to #9
+    cy.get('[data-cy-id=resolved-backend]').should('contain.text', '#9')
+  })
+
   it('Prefills the clone form with a CLONE-OF name', () => {
     cy.intercept({method: 'GET', url: '/api/v1/build-sets/main'}).as('template')
     cy.visit('/edit-build-set/clone/main')
@@ -47,7 +59,9 @@ describe('Edit Build Set Page', () => {
     cy.wait('@other')
     cy.get('[data-cy-id=build-set-name-input]').should('have.value', 'feature-test-stage-1')
     cy.get('[data-cy-id=project-toggle]').should('have.length', 3).and('not.be.checked')
-    cy.get('[data-cy-id=build-template-backend] input[name=buildNumber]').should('have.value', '')
+    // excluded projects are a single line without fields
+    cy.get('[data-cy-id=build-template-backend]').should('contain.text', 'Not included')
+      .find('input[name=buildNumber]').should('not.exist')
 
     cy.get('[data-cy-id=nav-build-sets]').click()
     cy.get('[data-cy-id="build-set-name-main"]').click()

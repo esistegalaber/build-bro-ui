@@ -34,7 +34,8 @@ export class EditBuildSetsEffects {
   ))
 
   verifyBuildsOfEnv$ = createEffect(() => this.actions$.pipe(
-    ofType(EditBuildSetActions.buildTemplateUpdated, EditBuildSetActions.buildSetTemplateLoaded),
+    ofType(EditBuildSetActions.buildTemplateUpdated, EditBuildSetActions.buildSetTemplateLoaded,
+      EditBuildSetActions.buildSetTemplateToCloneLoaded),
     withLatestFrom(this.store.pipe(select(theBuildTemplates))),
     switchMap(([action, theBuildTemplates]) => this.http.post<IBuildSet>(`/api/v1/build-sets/verify`, theBuildTemplates).pipe(
       map((buildSet: IBuildSet) => EditBuildSetActions.buildSetLoaded({buildSet})),

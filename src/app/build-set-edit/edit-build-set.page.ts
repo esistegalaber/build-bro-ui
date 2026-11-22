@@ -2,44 +2,48 @@ import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {select, Store} from "@ngrx/store";
 import {allActiveProjects, Buildz, CloningPipe, EditableBuildSetTemplate, EditableBuildTemplate, IProject} from "../core";
 import {CommonModule} from "@angular/common";
-import {BuildsAccordion} from "../ui/builds/builds.accordion";
-import {BuildTemplateForm} from "./ui/build-template.form";
-import {theBuilds, theEditableBuildTemplates, theEditableTemplate} from "./state/edit-build-sets.selectors";
+import {theBuilds, theEditableBuildTemplates, theEditableTemplate, theTemplate} from "./state/edit-build-sets.selectors";
 import * as EditBuildSetActions from "./state/edit-build-sets.actions";
 import {navigateTo} from "./state/edit-build-sets.actions";
 import {BuildSetNameForm} from "./ui/build-set-name.form";
+import {BuildTemplateList} from "./ui/build-template.list";
+import {ResolvedBuildsPanel} from "./ui/resolved-builds.panel";
 
 @Component({
   template: `
+    @let saved = (savedTemplate$ | async)!;
+    @let templates = (EditableBuildTemplates$ | async | deepClone)!;
+    <div class="flex flex-col gap-6">
       <bb-build-set-name-form
         [editableTemplate]="(currentBuildSetTemplate$ | async)!"
+        [savedName]="saved.id ? saved.name : null"
+        [cloned]="saved.id === null"
         (save)="saveTemplate($event)"
       ></bb-build-set-name-form>
-      @for (buildTemplate of (EditableBuildTemplates$ | async | deepClone)!; track buildTemplate.project.id) {
-        <bb-build-template-form
-          [template]="buildTemplate"
-          (projectAdded)="projectAdded($event)"
-          (projectRemoved)="projectRemoved($event)"
-          (templateUpdated)="buildTemplateUpdated($event)"
-          >
-        </bb-build-template-form>
-      }
-      <bb-builds-accordion
-        [builds]="(theBuilds$|async)!">
-      </bb-builds-accordion>
+      <div class="flex flex-wrap items-start gap-6">
+        <bb-build-template-list class="block min-w-0 grow-[999] basis-[560px]"
+                                [templates]="templates"
+                                (projectAdded)="projectAdded($event)"
+                                (projectRemoved)="projectRemoved($event)"
+                                (templateUpdated)="buildTemplateUpdated($event)"></bb-build-template-list>
+        <bb-resolved-builds class="block min-w-0 grow basis-[300px] lg:sticky lg:top-6"
+                            [builds]="(theBuilds$ | async)!" [templates]="templates"></bb-resolved-builds>
+      </div>
+    </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    BuildsAccordion,
-    BuildTemplateForm,
     BuildSetNameForm,
+    BuildTemplateList,
+    ResolvedBuildsPanel,
     CloningPipe
   ]
 })
 export class EditBuildSetPage {
   private store = inject<Store<Buildz>>(Store);
 
+  savedTemplate$ = this.store.pipe(select(theTemplate))
   currentBuildSetTemplate$ = this.store.pipe(select(theEditableTemplate))
   EditableBuildTemplates$ = this.store.pipe(select(theEditableBuildTemplates))
   projects$ = this.store.pipe(select(allActiveProjects))

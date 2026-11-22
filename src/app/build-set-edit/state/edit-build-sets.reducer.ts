@@ -69,6 +69,7 @@ export const editBuildSetReducer = createReducer(
     if (!!theBuildTemplate) {
       theBuildTemplate.branch = buildTemplate.branch?.name || null
       theBuildTemplate.buildNumber = buildTemplate.buildNumber
+      theBuildTemplate.labels = {...buildTemplate.labels}
     }
     return {...state, theTemplate};
   }),
