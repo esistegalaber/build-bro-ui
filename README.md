@@ -64,4 +64,4 @@ nginx proxies `/api` to `http://${BUILDZ_API}:8080/api` (`BUILDZ_API` defaults t
 
 ## CI
 
-- **GitHub Actions** (`.github/workflows/build.yml`) runs on pushes to `main` and on pull requests. It installs, builds, runs the e2e tests in Chrome against the fake API, and runs the unit tests with coverage. A second job runs a SonarCloud scan, including that coverage (project `esistegalaber_build-bro-ui`, configured in `sonar-project.properties`; needs the `SONAR_TOKEN` repository secret).
+- **GitHub Actions** (`.github/workflows/build.yml`) runs on pushes to `main` and on pull requests. The unit tests (with coverage) and the build with the e2e tests (in Chrome, against the fake API) run as parallel jobs. A third job runs a SonarCloud scan as soon as the unit tests are done, including their coverage (project `esistegalaber_build-bro-ui`, configured in `sonar-project.properties`; needs the `SONAR_TOKEN` repository secret).

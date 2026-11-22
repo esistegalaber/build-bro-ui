@@ -9,16 +9,49 @@ on:
 permissions:
   contents: read
 
+# Three jobs: the unit tests and the build with the e2e tests run in parallel; SonarCloud starts as soon as the
+# unit tests have produced the coverage report.
 # Actions are pinned to full commit SHAs (a tag can be moved to other code); the comment names the version.
+# The Angular 22 CLI needs Node ^22.22.3, ^24.15 or >=26; builds and tests are verified on 26.
 jobs:
-  build:
-    # ubuntu-latest comes with Chrome, which the e2e tests run in
+  unit:
+    name: Unit tests
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      # The Angular 22 CLI needs Node ^22.22.3, ^24.15 or >=26; builds and tests are verified on 26.
+      - name: Use Node.js 26
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 26
+          cache: npm
+
+      # The unit tests don't need the Cypress binary, so skip its download.
+      - name: Install
+        run: npm ci
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+
+      # Vitest with coverage; writes coverage/build-bro-ui/lcov.info
+      - name: Unit tests
+        run: npm test -- --watch=false --coverage
+
+      # The SonarCloud job reads the coverage report from here.
+      - name: Keep the coverage report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage
+          path: coverage/build-bro-ui/lcov.info
+          retention-days: 7
+
+  build:
+    name: Build and e2e tests
+    # ubuntu-latest comes with Chrome, which the e2e tests run in
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
       # npm 12 (bundled with Node 26) runs Cypress's binary download because package.json approves it (allowScripts).
       - name: Use Node.js 26
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -37,25 +70,10 @@ jobs:
           wait-on-timeout: 120
           browser: chrome
 
-      # Vitest unit tests with coverage (the Cypress step above already installed the dependencies).
-      # They also run when the e2e tests failed, so both results show up.
-      - name: Unit tests
-        if: ${{ !cancelled() }}
-        run: npm test -- --watch=false --coverage
-
-      # The SonarCloud job reads the coverage report from here.
-      - name: Keep the coverage report
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: coverage
-          path: coverage/build-bro-ui/lcov.info
-          retention-days: 7
-
   sonarcloud:
     name: SonarCloud
-    # needs the coverage report of the build job, but still runs when its tests failed
-    needs: build
+    # needs the coverage report of the unit tests, but still runs when they failed
+    needs: unit
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
