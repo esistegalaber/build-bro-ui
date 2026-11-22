@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {select, Store} from "@ngrx/store";
-import {Buildz, CloningPipe, IBuildSearchParams} from "../core";
+import {Buildz, IBuildSearchParams} from "../core";
 import * as SearchActions from "./state/builds.actions";
 import {searchData, theBuilds, theBuildSearchPaginationParams, theBuildSearchParams} from "./state/builds.selectors";
 import {CommonModule} from "@angular/common";
@@ -19,7 +19,7 @@ import {EmptyState} from '../ui/empty-state'
 
       <bb-build-search-form
         [available]="(availableSearchData$ | async)!"
-        [theSearch]="(theSearch$ | async | deepClone)!"
+        [theSearch]="(theSearch$ | async)!"
         (updateSearch)="updateSearch($event)"
         (resetSearch)="resetSearch()"
       ></bb-build-search-form>
@@ -53,7 +53,7 @@ import {EmptyState} from '../ui/empty-state'
     BuildSearchForm,
     BuildsAccordion,
     Paginator,
-    CloningPipe, PageHeader, EmptyState]
+    PageHeader, EmptyState]
 })
 export class BuildsPage {
   private store = inject<Store<Buildz>>(Store);

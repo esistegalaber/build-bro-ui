@@ -2,9 +2,11 @@ import {projectsReducer} from './project.reducer'
 import * as ProjectActions from './project.actions'
 import {branch, someProjects} from '../../../../testing/data'
 import {ProjectsState} from '../model'
+import {deepFreeze} from '../../../../testing/freeze'
 
 describe('projectsReducer', () => {
-  const loaded = (): ProjectsState => ({includeInactiveProjects: false, projects: someProjects()})
+  // frozen, as NgRx keeps its state in dev mode: a reducer that changes it fails the test
+  const loaded = (): ProjectsState => deepFreeze({includeInactiveProjects: false, projects: someProjects()})
 
   it('starts without projects, hiding inactive ones', () => {
     expect(projectsReducer(undefined, {type: '@@init'})).toEqual({includeInactiveProjects: false, projects: []})

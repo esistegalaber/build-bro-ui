@@ -2,9 +2,11 @@ import {buildReducer, BuildsState, INITIAL_BUILD_SEARCH} from './builds.reducer'
 import * as BuildActions from './builds.actions'
 import {build} from '../../../testing/data'
 import {IBuildSearchResult} from '../../core'
+import {deepFreeze} from '../../../testing/freeze'
 
 describe('buildReducer', () => {
-  const onPage = (page: number): BuildsState => ({...INITIAL_BUILD_SEARCH, search: {...INITIAL_BUILD_SEARCH.search, page}})
+  // frozen, as NgRx keeps its state in dev mode: a reducer that changes it fails the test
+  const onPage = (page: number): BuildsState => deepFreeze(structuredClone({...INITIAL_BUILD_SEARCH, search: {...INITIAL_BUILD_SEARCH.search, page}}))
 
   it('starts with the newest builds of all projects, 10 per page', () => {
     expect(buildReducer(undefined, {type: '@@init'}).search).toEqual({
@@ -31,7 +33,7 @@ describe('buildReducer', () => {
 
     it('keeps the page for other changes', () => {
       const state = onPage(3)
-      const search = {...state.search, minBuildNumber: '5'}
+      const search = {...state.search, minBuildNumber: 5}
       expect(buildReducer(state, BuildActions.updateSearchParams({search})).search).toEqual(search)
     })
   })
@@ -51,7 +53,7 @@ describe('buildReducer', () => {
   })
 
   it('resets the search to the starting values', () => {
-    const state = {...onPage(2), search: {...onPage(2).search, project: 'backend', pageSize: 50, minBuildNumber: '5'}}
+    const state = {...onPage(2), search: {...onPage(2).search, project: 'backend', pageSize: 50, minBuildNumber: 5}}
     expect(buildReducer(state, BuildActions.resetSearchParams()).search).toEqual(INITIAL_BUILD_SEARCH.search)
   })
 })

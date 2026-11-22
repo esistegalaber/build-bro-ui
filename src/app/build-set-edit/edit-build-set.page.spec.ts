@@ -61,11 +61,13 @@ describe('EditBuildSetPage', () => {
   })
 
   it('reports a changed project', async () => {
-    const {byCy, dispatched} = await render({id: 1, name: 'main', buildTemplates: []})
-    const number = byCy('build-template-backend').querySelector('[name=buildNumber]') as HTMLInputElement
+    const {fixture, byCy, dispatched} = await render({id: 1, name: 'main', buildTemplates: []})
+    const number = byCy('build-template-backend').querySelector('[data-cy-id=template-build-number]') as HTMLInputElement
     number.value = '8'
     number.dispatchEvent(new Event('input'))
-    number.dispatchEvent(new Event('change'))
+    // leaving the field takes the number over without waiting for the typing pause
+    number.dispatchEvent(new Event('blur'))
+    await fixture.whenStable()
     expect(dispatched).toHaveBeenCalledWith(EditActions.buildTemplateUpdated({buildTemplate: {...editable[0], buildNumber: 8}}))
   })
 })

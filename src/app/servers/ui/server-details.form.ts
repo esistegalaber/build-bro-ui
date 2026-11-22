@@ -1,15 +1,15 @@
 import {afterRenderEffect, ChangeDetectionStrategy, Component, ElementRef, input, linkedSignal, output, viewChild} from '@angular/core'
-import {FormsModule} from '@angular/forms'
+import {form, FormField, FormRoot} from '@angular/forms/signals'
 import {IServer} from '../../core'
+import {EmptyState} from '../../ui/empty-state'
 
 /** Edits the nickname and description of one server; works on its own copy until Save. */
-import {EmptyState} from '../../ui/empty-state'
 @Component({
   selector: 'bb-server-details-form',
   template: `
     @if (server(); as server) {
       <form class="card bg-base-100 border border-base-300 shadow-sm" [attr.aria-label]="'Edit ' + server.name"
-            (ngSubmit)="save(server)" (keydown.escape)="cancel.emit()" data-cy-id="server-form">
+            [formRoot]="detailsForm" (keydown.escape)="cancel.emit()" data-cy-id="server-form">
         <div class="card-body gap-4 p-5">
           <div>
             <h2 class="text-lg font-bold wrap-anywhere">Edit {{ server.name }}</h2>
@@ -17,13 +17,13 @@ import {EmptyState} from '../../ui/empty-state'
           </div>
           <label class="flex flex-col gap-1">
             <span class="text-sm font-medium">Nickname</span>
-            <input #nickNameInput class="input w-full" placeholder="e.g. Staging" name="nickName"
-                   [(ngModel)]="nickName" data-cy-id="server-nickname"/>
+            <input #nickNameInput class="input w-full" placeholder="e.g. Staging"
+                   [formField]="detailsForm.nickName" data-cy-id="server-nickname"/>
           </label>
           <label class="flex flex-col gap-1">
             <span class="text-sm font-medium">Description</span>
-            <textarea class="textarea w-full" rows="3" placeholder="What runs here?" name="description"
-                      [(ngModel)]="description" data-cy-id="server-description"></textarea>
+            <textarea class="textarea w-full" rows="3" placeholder="What runs here?"
+                      [formField]="detailsForm.description" data-cy-id="server-description"></textarea>
           </label>
           <div class="flex justify-end gap-2">
             <button type="button" class="btn btn-ghost" (click)="cancel.emit()" data-cy-id="edit-server-cancel">Cancel</button>
@@ -38,15 +38,18 @@ import {EmptyState} from '../../ui/empty-state'
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, EmptyState]
+  imports: [FormRoot, FormField, EmptyState]
 })
 export class ServerDetailsForm {
   readonly server = input<IServer | null>(null)
   readonly updateServer = output<IServer>()
   readonly cancel = output<void>()
 
-  readonly nickName = linkedSignal(() => this.server()?.nickName ?? '')
-  readonly description = linkedSignal(() => this.server()?.description ?? '')
+  /** what the form edits: starts over whenever another server is chosen */
+  readonly fields = linkedSignal(() => ({nickName: this.server()?.nickName ?? '', description: this.server()?.description ?? ''}))
+  readonly detailsForm = form(this.fields, {
+    submission: {action: async () => this.save()}
+  })
   private readonly nickNameInput = viewChild<ElementRef<HTMLInputElement>>('nickNameInput')
 
   constructor() {
@@ -56,7 +59,8 @@ export class ServerDetailsForm {
     })
   }
 
-  save(server: IServer): void {
-    this.updateServer.emit({...server, nickName: this.nickName(), description: this.description()})
+  private save(): void {
+    const server = this.server()
+    if (server) this.updateServer.emit({...server, ...this.fields()})
   }
 }

@@ -1,6 +1,5 @@
 import {createReducer, on} from '@ngrx/store'
 import {IBuildSearchParams, IBuildSearchResult} from '../../core'
-import {deepClone} from '../../core/util/deep-clone'
 import {addSearchLabel, availableBuildSearchDataLoaded, buildSearchLoaded, removeSearchLabel, resetSearchParams, searchBuildsOfProject, toSearchPage, updateSearchParams} from "./builds.actions";
 
 export const FEATURE_BUILDS = 'builds'
@@ -49,21 +48,16 @@ export const buildReducer = createReducer(
     }
   }),
   on(addSearchLabel, (state: BuildsState, {label}) => {
-    const newState: BuildsState = deepClone(state)
-    newState.search.labels[label.key] = label.value
-    return newState
+    return {...state, search: {...state.search, labels: {...state.search.labels, [label.key]: label.value}}}
   }),
   on(removeSearchLabel, (state: BuildsState, {label}) => {
-    const newState: BuildsState = deepClone(state)
-    delete newState.search.labels[label.key]
-    return newState
+    const {[label.key]: _, ...labels} = state.search.labels
+    return {...state, search: {...state.search, labels}}
   }),
   on(resetSearchParams, (state: BuildsState) => {
     return {...state, search: INITIAL_BUILD_SEARCH.search}
   }),
   on(searchBuildsOfProject, (state: BuildsState, {project}) => {
-    const toReturn: BuildsState = deepClone(state)
-    toReturn.search.project = project
-    return toReturn
+    return {...state, search: {...state.search, project}}
   })
 )

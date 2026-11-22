@@ -1,7 +1,6 @@
 import {createReducer, on} from '@ngrx/store'
 import * as EditBuildSetActions from './edit-build-sets.actions'
 import {IBuildSet, IBuildSetTemplate} from "../../core";
-import {deepClone} from "../../core/util/deep-clone";
 
 export const FEATURE_EDIT_BUILD_SET = 'edit-build-set'
 export const NAV_PROJECTS: string = 'projects'
@@ -48,28 +47,28 @@ export const editBuildSetReducer = createReducer(
     return INITIAL_STATE
   }),
   on(EditBuildSetActions.projectAdded, (state: EditBuildSetState, {project}) => {
-    const theTemplate: IBuildSetTemplate = deepClone(state.theTemplate)
-    theTemplate.buildTemplates.push({
-      project: project.name,
-      branch: null,
-      labels: {},
-      buildNumber: null
-    })
+    const theTemplate: IBuildSetTemplate = {
+      ...state.theTemplate,
+      buildTemplates: [...state.theTemplate.buildTemplates, {project: project.name, branch: null, labels: {}, buildNumber: null}]
+    }
     return {...state, theTemplate};
   }),
   on(EditBuildSetActions.projectRemoved, (state: EditBuildSetState, {project}) => {
-    const theTemplate: IBuildSetTemplate = deepClone(state.theTemplate)
-    theTemplate.buildTemplates = theTemplate.buildTemplates.filter((b) => b.project !== project.name)
+    const theTemplate: IBuildSetTemplate = {
+      ...state.theTemplate,
+      buildTemplates: state.theTemplate.buildTemplates.filter((b) => b.project !== project.name)
+    }
     return {...state, theTemplate};
   }),
   on(EditBuildSetActions.buildTemplateUpdated, (state: EditBuildSetState, {buildTemplate}) => {
-    const theTemplate: IBuildSetTemplate = deepClone(state.theTemplate)
-    const theBuildTemplate = theTemplate.buildTemplates
-      .find((template) => template.project === buildTemplate.project.name)
-    if (!!theBuildTemplate) {
-      theBuildTemplate.branch = buildTemplate.branch?.name || null
-      theBuildTemplate.buildNumber = buildTemplate.buildNumber
-      theBuildTemplate.labels = {...buildTemplate.labels}
+    const theTemplate: IBuildSetTemplate = {
+      ...state.theTemplate,
+      buildTemplates: state.theTemplate.buildTemplates.map((template) => template.project !== buildTemplate.project.name ? template : {
+        ...template,
+        branch: buildTemplate.branch?.name || null,
+        buildNumber: buildTemplate.buildNumber,
+        labels: {...buildTemplate.labels}
+      })
     }
     return {...state, theTemplate};
   }),

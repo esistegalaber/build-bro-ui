@@ -1,7 +1,10 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing'
-import {BuildSearchForm, TYPING_PAUSE_MS} from './build-search.form'
+import {BuildSearchForm} from './build-search.form'
+import {TYPING_PAUSE_MS} from '../../ui/forms/store-draft'
 import {INITIAL_BUILD_SEARCH} from '../state/builds.reducer'
 import {IBuildSearchParams, ISearchData} from '../../core'
+import {deepFreeze} from '../../../testing/freeze'
+
 
 describe('BuildSearchForm', () => {
   const available: ISearchData = {
@@ -11,27 +14,40 @@ describe('BuildSearchForm', () => {
   }
   let fixture: ComponentFixture<BuildSearchForm>
   let updates: IBuildSearchParams[]
-  const byCy = (id: string) => fixture.nativeElement.querySelector(`[data-cy-id="${id}"]`) as HTMLElement
+  let resets: number
+  const byCy = <T extends HTMLElement = HTMLElement>(id: string) => fixture.nativeElement.querySelector(`[data-cy-id="${id}"]`) as T
+
+  const searchWith = (search: Partial<IBuildSearchParams> = {}) => deepFreeze({...structuredClone(INITIAL_BUILD_SEARCH.search), ...search})
 
   async function render(search: Partial<IBuildSearchParams> = {}) {
     fixture = TestBed.createComponent(BuildSearchForm)
     fixture.componentRef.setInput('available', available)
-    fixture.componentRef.setInput('theSearch', structuredClone({...INITIAL_BUILD_SEARCH.search, ...search}))
+    fixture.componentRef.setInput('theSearch', searchWith(search))
     updates = []
-    fixture.componentInstance.updateSearch.subscribe((s) => updates.push(structuredClone(s)))
+    resets = 0
+    fixture.componentInstance.updateSearch.subscribe((s) => updates.push(s))
+    fixture.componentInstance.resetSearch.subscribe(() => resets++)
+    await fixture.whenStable()
+  }
+
+  /** what the page does: the store answers with the reported search */
+  async function storeAnswers() {
+    fixture.componentRef.setInput('theSearch', deepFreeze(structuredClone(updates.at(-1)!)))
     await fixture.whenStable()
   }
 
   async function type(id: string, value: string) {
-    const input = byCy(id) as HTMLInputElement
+    const input = byCy<HTMLInputElement>(id)
     input.value = value
     input.dispatchEvent(new Event('input'))
     await fixture.whenStable()
   }
 
   async function choose(id: string, value: string) {
-    const select = byCy(id) as HTMLSelectElement
+    const select = byCy<HTMLSelectElement>(id)
     select.value = value
+    // like a browser: a select fires input, then change
+    select.dispatchEvent(new Event('input'))
     select.dispatchEvent(new Event('change'))
     await fixture.whenStable()
   }
@@ -41,84 +57,44 @@ describe('BuildSearchForm', () => {
     const options = (id: string) => Array.from(byCy(id).querySelectorAll('option')).map((o) => o.textContent?.trim())
     expect(options('project-select')).toEqual(['All projects', 'backend', 'frontend'])
     expect(options('branch-select')).toEqual(['All branches', 'main', 'next'])
+    expect(byCy<HTMLSelectElement>('project-select').value).toBe('backend')
   })
 
-  it('searches when a project is chosen', async () => {
+  it('searches when a project is chosen, without changing the store\'s search', async () => {
     await render()
     await choose('project-select', 'frontend')
-    expect(updates.at(-1)?.project).toBe('frontend')
+    expect(updates).toEqual([expect.objectContaining({project: 'frontend'})])
+    expect(fixture.componentInstance.theSearch().project).toBe('')
   })
 
-  describe('while a build number is typed', () => {
-    // fake only the timers of the form, so Angular's own scheduling keeps working
-    beforeEach(() => vi.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']}))
-    afterEach(() => vi.useRealTimers())
+  it('searches with the chosen page size as a number', async () => {
+    await render()
+    expect(byCy<HTMLSelectElement>('page-size-select').value).toBe('10')
+    await choose('page-size-select', '25')
+    expect(updates).toEqual([expect.objectContaining({pageSize: 25})])
+  })
 
-    /** types without waiting, like a fast typist: ngModel takes each value right away */
-    function typeFast(id: string, ...values: string[]) {
-      const input = byCy(id) as HTMLInputElement
-      for (const value of values) {
-        input.value = value
-        input.dispatchEvent(new Event('input'))
-      }
-    }
+  it('searches only once per change, also after the store has answered', async () => {
+    await render()
+    await choose('project-select', 'frontend')
+    await storeAnswers()
+    await storeAnswers()
+    expect(updates).toHaveLength(1)
+    expect(byCy<HTMLSelectElement>('project-select').value).toBe('frontend')
+  })
 
-    it('searches once, when typing has paused', async () => {
-      await render()
-      typeFast('min-build-number-input', '9', '99', '999')
-      typeFast('max-build-number-input', '1', '12')
-      vi.advanceTimersByTime(TYPING_PAUSE_MS - 1)
-      expect(updates).toHaveLength(0)
-      vi.advanceTimersByTime(1)
-      expect(updates).toEqual([expect.objectContaining({minBuildNumber: '999', maxBuildNumber: '12'})])
-    })
-
-    it('does not search for keys that change nothing, such as Tab or the arrow keys', async () => {
-      await render()
-      byCy('min-build-number-input').dispatchEvent(new KeyboardEvent('keyup', {key: 'Tab'}))
-      vi.advanceTimersByTime(TYPING_PAUSE_MS)
-      expect(updates).toHaveLength(0)
-    })
-
-    it.each([
-      ['a project is chosen', () => {
-        const select = byCy('project-select') as HTMLSelectElement
-        select.value = 'frontend'
-        select.dispatchEvent(new Event('change'))
-      }],
-      ['Reload is clicked', () => byCy('search-reload').click()]
-    ])('searches right away, and only once, when %s meanwhile', async (_, act) => {
-      await render()
-      typeFast('min-build-number-input', '5')
-      act()
-      expect(updates).toEqual([expect.objectContaining({minBuildNumber: '5'})])
-      vi.advanceTimersByTime(TYPING_PAUSE_MS)
-      expect(updates).toHaveLength(1)
-    })
-
-    it('drops the waiting search on reset', async () => {
-      await render()
-      let resets = 0
-      fixture.componentInstance.resetSearch.subscribe(() => resets++)
-      typeFast('min-build-number-input', '5')
-      byCy('search-reset').click()
-      vi.advanceTimersByTime(TYPING_PAUSE_MS)
-      expect(resets).toBe(1)
-      expect(updates).toHaveLength(0)
-    })
-
-    it('drops the waiting search when the form goes away', async () => {
-      await render()
-      typeFast('min-build-number-input', '5')
-      fixture.destroy()
-      vi.advanceTimersByTime(TYPING_PAUSE_MS)
-      expect(updates).toHaveLength(0)
-    })
+  it('shows a new search from the store, such as after a reset', async () => {
+    await render({project: 'backend', minBuildNumber: 5})
+    fixture.componentRef.setInput('theSearch', searchWith())
+    await fixture.whenStable()
+    expect(byCy<HTMLSelectElement>('project-select').value).toBe('')
+    expect(byCy<HTMLInputElement>('min-build-number-input').value).toBe('')
+    expect(updates).toHaveLength(0)
   })
 
   it('adds a label filter only with both key and value, and then clears the inputs', async () => {
     await render()
-    const add = () => byCy('label-add') as HTMLButtonElement
+    const add = () => byCy<HTMLButtonElement>('label-add')
     expect(add().disabled).toBe(true)
     await type('label-key-input', 'integration-test')
     expect(add().disabled).toBe(true)
@@ -127,31 +103,117 @@ describe('BuildSearchForm', () => {
     add().click()
     await fixture.whenStable()
     expect(updates.at(-1)?.labels).toEqual({'integration-test': 'ok'})
-    expect((byCy('label-key-input') as HTMLInputElement).value).toBe('')
+    expect(byCy<HTMLInputElement>('label-key-input').value).toBe('')
+    expect(byCy<HTMLInputElement>('label-value-input').value).toBe('')
   })
 
   it('shows the label filters as chips and removes one', async () => {
-    await render({labels: {'integration-test': 'ok'}})
+    await render({labels: {'integration-test': 'ok', 'smoke': 'ok'}})
     expect(byCy('search-label').textContent).toContain('integration-test = ok')
     byCy('search-label-remove').click()
     await fixture.whenStable()
-    expect(updates.at(-1)?.labels).toEqual({})
-    expect(byCy('search-label')).toBeNull()
+    expect(updates.at(-1)?.labels).toEqual({'smoke': 'ok'})
   })
 
   it('reloads with the current search, once per click', async () => {
     await render({project: 'backend'})
     byCy('search-reload').click()
-    expect(updates).toHaveLength(1)
-    expect(updates[0].project).toBe('backend')
+    await fixture.whenStable()
+    expect(updates).toEqual([expect.objectContaining({project: 'backend'})])
   })
 
   it('asks for a reset without searching', async () => {
     await render()
-    let resets = 0
-    fixture.componentInstance.resetSearch.subscribe(() => resets++)
     byCy('search-reset').click()
+    await fixture.whenStable()
     expect(resets).toBe(1)
     expect(updates).toHaveLength(0)
+  })
+
+  describe('while a build number is typed', () => {
+    // fake only the timers of the debounce, so Angular's own scheduling keeps working
+    beforeEach(() => vi.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']}))
+    afterEach(() => vi.useRealTimers())
+
+    /** types without waiting, like a fast typist */
+    function typeFast(id: string, ...values: string[]) {
+      const input = byCy<HTMLInputElement>(id)
+      for (const value of values) {
+        input.value = value
+        input.dispatchEvent(new Event('input'))
+      }
+    }
+
+    async function pause(ms: number) {
+      await vi.advanceTimersByTimeAsync(ms)
+      await fixture.whenStable()
+    }
+
+    it('searches once, when typing has paused, with the numbers as numbers', async () => {
+      await render()
+      typeFast('min-build-number-input', '9', '99', '999')
+      typeFast('max-build-number-input', '1', '12')
+      await pause(TYPING_PAUSE_MS - 50)
+      expect(updates).toHaveLength(0)
+      await pause(50)
+      expect(updates.at(-1)).toMatchObject({minBuildNumber: 999, maxBuildNumber: 12})
+    })
+
+    it('clears a build number when the field is emptied', async () => {
+      await render({minBuildNumber: 5})
+      typeFast('min-build-number-input', '')
+      await pause(TYPING_PAUSE_MS)
+      expect(updates.at(-1)?.minBuildNumber).toBeNull()
+    })
+
+    it('does not search for text that is no number', async () => {
+      await render()
+      typeFast('min-build-number-input', 'abc')
+      await pause(TYPING_PAUSE_MS)
+      expect(updates).toHaveLength(0)
+    })
+
+    it('does not search for keys that change nothing, such as Tab or the arrow keys', async () => {
+      await render()
+      byCy('min-build-number-input').dispatchEvent(new KeyboardEvent('keyup', {key: 'Tab'}))
+      await pause(TYPING_PAUSE_MS)
+      expect(updates).toHaveLength(0)
+    })
+
+    it('takes the typed number along on Reload, right away and only once', async () => {
+      await render()
+      typeFast('min-build-number-input', '5')
+      byCy('search-reload').click()
+      await fixture.whenStable()
+      expect(updates).toEqual([expect.objectContaining({minBuildNumber: 5})])
+      await pause(TYPING_PAUSE_MS)
+      expect(updates).toHaveLength(1)
+    })
+
+    it('takes the typed number along when the field is left for a select', async () => {
+      await render()
+      typeFast('min-build-number-input', '5')
+      byCy('min-build-number-input').dispatchEvent(new Event('blur'))
+      await choose('project-select', 'frontend')
+      expect(updates.at(-1)).toMatchObject({minBuildNumber: 5, project: 'frontend'})
+    })
+
+    it('drops the waiting number when the store sends a new search, such as after a reset', async () => {
+      await render()
+      typeFast('min-build-number-input', '5')
+      byCy('search-reset').click()
+      fixture.componentRef.setInput('theSearch', searchWith())
+      await pause(TYPING_PAUSE_MS)
+      expect(resets).toBe(1)
+      expect(updates).toHaveLength(0)
+    })
+
+    it('drops the waiting number when the form goes away', async () => {
+      await render()
+      typeFast('min-build-number-input', '5')
+      fixture.destroy()
+      await vi.advanceTimersByTimeAsync(TYPING_PAUSE_MS)
+      expect(updates).toHaveLength(0)
+    })
   })
 })

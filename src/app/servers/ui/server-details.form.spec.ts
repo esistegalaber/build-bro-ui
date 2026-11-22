@@ -2,6 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing'
 import {ServerDetailsForm} from './server-details.form'
 import {someServers} from '../../../testing/data'
 import {IServer} from '../../core'
+import {deepFreeze} from '../../../testing/freeze'
 
 describe('ServerDetailsForm', () => {
   let fixture: ComponentFixture<ServerDetailsForm>
@@ -9,7 +10,8 @@ describe('ServerDetailsForm', () => {
 
   async function render(server: IServer | null) {
     fixture = TestBed.createComponent(ServerDetailsForm)
-    fixture.componentRef.setInput('server', server)
+    // frozen, as NgRx hands it over in dev mode
+    fixture.componentRef.setInput('server', deepFreeze(server))
     await fixture.whenStable()
   }
 

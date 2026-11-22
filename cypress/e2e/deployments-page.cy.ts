@@ -34,7 +34,7 @@ describe('Deployments Page', () => {
   it('Changes the page size', () => {
     cy.intercept(deploymentsSearchRequest).as('page-size')
     cy.get('[data-cy-id=page-size-select]').select('25')
-    cy.wait('@page-size').its('request.body').should('deep.include', {pageSize: '25'})
+    cy.wait('@page-size').its('request.body').should('deep.include', {pageSize: 25})
     cy.get('[data-cy-id^=deployment-]').should('have.length', 11)
   })
 
@@ -51,7 +51,7 @@ describe('Deployments Page', () => {
     cy.get('[data-cy-id=server-select]').select('staging')
     cy.wait('@search').its('request.body').should('deep.include', {serverName: 'staging'})
     cy.get('[data-cy-id=page-size-select]').select('25')
-    cy.wait('@search').its('request.body').should('deep.include', {serverName: 'staging', pageSize: '25'})
+    cy.wait('@search').its('request.body').should('deep.include', {serverName: 'staging', pageSize: 25})
 
     cy.get('[data-cy-id=search-reset]').click()
     cy.wait('@search').its('request.body')

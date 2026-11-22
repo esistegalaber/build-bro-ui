@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {select, Store} from "@ngrx/store";
-import {Buildz, CloningPipe, IDeployment, IDeploymentSearch} from "../core";
+import {Buildz, IDeployment, IDeploymentSearch} from "../core";
 import * as DeploymentActions from "./state/deployment.actions";
 import {theDeployments, theDeploymentSearch, theDeploymentSearchPaginationParams} from "./state/deployment.selectors";
 import {allServers} from "../core/state/servers/server.selectors";
@@ -21,7 +21,7 @@ import {EmptyState} from '../ui/empty-state'
 
       <bb-deployments-search-form
         [servers]="(servers$ | async)!"
-        [theSearch]="(theDeploymentsSearch$ | async | deepClone)!"
+        [theSearch]="(theDeploymentsSearch$ | async)!"
         (updateSearch)="updateDeploymentsSearch($event)"
         (resetSearch)="resetDeploymentsSearch()"
       ></bb-deployments-search-form>
@@ -53,7 +53,6 @@ import {EmptyState} from '../ui/empty-state'
   imports: [
     CommonModule,
     DeploymentsSearchForm,
-    CloningPipe,
     Paginator,
     DeploymentList, PageHeader, EmptyState]
 })
