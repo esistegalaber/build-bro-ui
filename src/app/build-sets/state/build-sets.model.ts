@@ -17,3 +17,12 @@ export interface BuildSetSummary {
   projects: number
   pinned: number
 }
+
+/** Summarizes a build set template: how many projects it has, and how many of them are pinned to a build number. */
+export function toBuildSetSummary(template: IBuildSetTemplate): BuildSetSummary {
+  return {
+    name: template.name,
+    projects: template.buildTemplates.length,
+    pinned: template.buildTemplates.filter((bt) => bt.buildNumber !== null && bt.buildNumber !== undefined).length
+  }
+}
