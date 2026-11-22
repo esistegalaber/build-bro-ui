@@ -8,19 +8,17 @@ import {deleteBuildSetTemplate, loadBuildSetOf} from "./state/build-sets.actions
 import {BuildSetList} from "../ui/build-sets/build-set.list";
 import {BuildSetCard} from "../ui/build-sets/build-set.card";
 
+import {PageHeader} from '../ui/page-header'
+import {EmptyState} from '../ui/empty-state'
 @Component({
   template: `
     @let selected = (selectedName$ | async);
     <div class="flex flex-col gap-6">
-      <header class="flex flex-wrap items-end justify-between gap-4">
-        <div class="flex flex-col gap-1">
-          <h1 class="text-3xl font-extrabold tracking-tight">Build sets</h1>
-          <p class="text-base-content/70">Named combinations of builds, for example everything that goes onto one server.</p>
-        </div>
+      <bb-page-header heading="Build sets" description="Named combinations of builds, for example everything that goes onto one server.">
         <a class="btn btn-primary" routerLink="/edit-build-set" data-cy-id="build-set-add">
           <span class="material-icons text-[18px]" aria-hidden="true">add</span>New build set
         </a>
-      </header>
+      </bb-page-header>
 
       <div class="flex flex-wrap items-start gap-6">
         <bb-build-set-list class="block min-w-0 grow basis-60"
@@ -31,9 +29,9 @@ import {BuildSetCard} from "../ui/build-sets/build-set.card";
             <bb-build-set-card [buildSet]="(theBuildSet$ | async)!" [summary]="(selectedSummary$ | async)"
                                (deleteBuildSet)="askToDelete($event)"></bb-build-set-card>
           } @else {
-            <p class="rounded-box border border-dashed border-base-300 p-8 text-center text-base-content/70" data-cy-id="build-set-none">
-              Choose a build set to see the builds it resolves to.
-            </p>
+            <bb-empty-state icon="touch_app" framed data-cy-id="build-set-none">
+              <p>Choose a build set to see the builds it resolves to.</p>
+            </bb-empty-state>
           }
         </div>
       </div>
@@ -55,7 +53,7 @@ import {BuildSetCard} from "../ui/build-sets/build-set.card";
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AsyncPipe, RouterLink, BuildSetList, BuildSetCard]
+  imports: [AsyncPipe, RouterLink, BuildSetList, BuildSetCard, PageHeader, EmptyState]
 })
 export class BuildSetsPage {
   private store = inject<Store<Buildz>>(Store);

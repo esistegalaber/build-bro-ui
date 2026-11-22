@@ -3,6 +3,7 @@ import {RouterLink} from '@angular/router'
 import {BuildSetSummary} from '../../build-sets/state/build-sets.model'
 
 /** The build sets with a short summary each, linking to their edit page, and a "New" action. */
+import {Loading} from '../../ui/loading'
 @Component({
   selector: 'bb-home-build-sets',
   template: `
@@ -41,12 +42,12 @@ import {BuildSetSummary} from '../../build-sets/state/build-sets.model'
             }
           </ul>
         } @else {
-          <div class="border-t border-base-300 py-6 text-center"><span class="text-base-content/70">Loading…</span></div>
+          <bb-loading class="border-t border-base-300"></bb-loading>
         }
       </div>
     </section>
   `,
-  imports: [RouterLink],
+  imports: [RouterLink, Loading],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeBuildSets {

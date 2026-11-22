@@ -3,6 +3,7 @@ import {FormsModule} from '@angular/forms'
 import {IServer} from '../../core'
 
 /** Edits the nickname and description of one server; works on its own copy until Save. */
+import {EmptyState} from '../../ui/empty-state'
 @Component({
   selector: 'bb-server-details-form',
   template: `
@@ -31,13 +32,13 @@ import {IServer} from '../../core'
         </div>
       </form>
     } @else {
-      <p class="rounded-box border border-dashed border-base-300 p-8 text-center text-base-content/70" data-cy-id="server-none">
-        Choose a server to give it a nickname or description.
-      </p>
+      <bb-empty-state icon="edit_note" framed data-cy-id="server-none">
+        <p>Choose a server to give it a nickname or description.</p>
+      </bb-empty-state>
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule]
+  imports: [FormsModule, EmptyState]
 })
 export class ServerDetailsForm {
   readonly server = input<IServer | null>(null)

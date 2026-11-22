@@ -8,15 +8,14 @@ import {BuildSearchForm} from "./ui/build-search.form";
 import {BuildsAccordion} from "../ui/builds/builds.accordion";
 import {Paginator} from "../ui/paginator";
 
+import {PageHeader} from '../ui/page-header'
+import {EmptyState} from '../ui/empty-state'
 @Component({
   template: `
     @let pagination = (thePaginationParams$ | async)!;
     @let builds = (theBuilds$ | async)!;
     <div class="flex flex-col gap-6">
-      <header class="flex flex-col gap-1">
-        <h1 class="text-3xl font-extrabold tracking-tight">Builds</h1>
-        <p class="text-base-content/70">Every build Build Bruh knows about, newest first.</p>
-      </header>
+      <bb-page-header heading="Builds" description="Every build Build Bruh knows about, newest first."></bb-page-header>
 
       <bb-build-search-form
         [available]="(availableSearchData$ | async)!"
@@ -35,11 +34,10 @@ import {Paginator} from "../ui/paginator";
         @if (builds?.length) {
           <bb-builds-accordion [builds]="builds"></bb-builds-accordion>
         } @else if (pagination.totalElements === 0) {
-          <div class="flex flex-col items-center gap-3 px-5 py-10 text-center text-base-content/70" data-cy-id="builds-empty">
-            <span class="material-icons text-4xl!" aria-hidden="true">search_off</span>
+          <bb-empty-state icon="search_off" data-cy-id="builds-empty">
             <p>No builds match these filters.</p>
             <button type="button" class="btn btn-sm" (click)="resetSearch()">Reset the filters</button>
-          </div>
+          </bb-empty-state>
         }
         @if (pagination.totalElements > 0) {
           <div class="px-5 py-4 border-t border-base-300">
@@ -55,8 +53,7 @@ import {Paginator} from "../ui/paginator";
     BuildSearchForm,
     BuildsAccordion,
     Paginator,
-    CloningPipe
-  ]
+    CloningPipe, PageHeader, EmptyState]
 })
 export class BuildsPage {
   private store = inject<Store<Buildz>>(Store);

@@ -10,6 +10,7 @@ interface ResolvedRow {
 }
 
 /** Which build each included project resolves to (from the API's verification), with pins and problems marked. */
+import {EmptyState} from '../../ui/empty-state'
 @Component({
   selector: 'bb-resolved-builds',
   template: `
@@ -46,14 +47,14 @@ interface ResolvedRow {
             </div>
           </div>
         } @empty {
-          <p class="rounded-box border border-dashed border-base-300 p-4 text-center text-sm text-base-content/70" data-cy-id="resolved-none">
-            Switch on a project to see which build it resolves to.
-          </p>
+          <bb-empty-state framed compact data-cy-id="resolved-none">
+            <p>Switch on a project to see which build it resolves to.</p>
+          </bb-empty-state>
         }
       </div>
     </section>
   `,
-  imports: [BuildSummaryPipe],
+  imports: [BuildSummaryPipe, EmptyState],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResolvedBuildsPanel {

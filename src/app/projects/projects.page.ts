@@ -7,20 +7,18 @@ import {includeInactiveData, projectsData} from '../core/state/projects/project.
 import {BranchSwitch, ProjectCard} from './ui/project.card'
 import {filterProjects} from './projects.filter'
 
+import {PageHeader} from '../ui/page-header'
+import {EmptyState} from '../ui/empty-state'
 @Component({
   template: `
     <div class="flex flex-col gap-6">
-      <header class="flex flex-wrap items-end justify-between gap-4">
-        <div class="flex flex-col gap-1">
-          <h1 class="text-3xl font-extrabold tracking-tight">Projects</h1>
-          <p class="text-base-content/70">Turn off branches you no longer build, so they stay out of the way.</p>
-        </div>
+      <bb-page-header heading="Projects" description="Turn off branches you no longer build, so they stay out of the way.">
         <label class="flex items-center gap-2 cursor-pointer">
           <input type="checkbox" class="toggle toggle-success" [checked]="inactiveIncluded()"
                  (change)="toggleInactive($event)" data-cy-id="inactive-toggle"/>
           <span class="font-medium">Show inactive</span>
         </label>
-      </header>
+      </bb-page-header>
 
       <div class="flex flex-wrap items-center justify-between gap-3">
         <h2 class="text-lg font-bold" data-cy-id="projects-count">
@@ -40,21 +38,19 @@ import {filterProjects} from './projects.filter'
           }
         </div>
       } @else if (search()) {
-        <div class="flex flex-col items-center gap-3 rounded-box border border-dashed border-base-300 px-5 py-10 text-center text-base-content/70"
-             data-cy-id="projects-empty">
-          <span class="material-icons text-4xl!" aria-hidden="true">search_off</span>
+        <bb-empty-state icon="search_off" framed data-cy-id="projects-empty">
           <p>No project or branch matches “{{ search() }}”.</p>
           <button type="button" class="btn btn-sm btn-soft btn-primary" (click)="search.set('')" data-cy-id="projects-search-clear">Clear search</button>
-        </div>
+        </bb-empty-state>
       } @else {
-        <p class="rounded-box border border-dashed border-base-300 p-8 text-center text-base-content/70" data-cy-id="projects-none">
-          No projects yet. They appear here with their first build.
-        </p>
+        <bb-empty-state icon="folder_off" framed data-cy-id="projects-none">
+          <p>No projects yet. They appear here with their first build.</p>
+        </bb-empty-state>
       }
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ProjectCard]
+  imports: [ProjectCard, PageHeader, EmptyState]
 })
 export class ProjectsPage {
   private store = inject<Store<Buildz>>(Store)

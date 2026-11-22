@@ -12,18 +12,15 @@ import {StatCards} from "./ui/stat-cards";
 import {RecentDeployments} from "./ui/recent-deployments";
 import {HomeBuildSets} from "./ui/home-build-sets";
 
+import {PageHeader} from '../ui/page-header'
 @Component({
   template: `
     <div class="flex flex-col gap-8">
-      <header class="flex flex-wrap items-end justify-between gap-4">
-        <div class="flex flex-col gap-1">
-          <h1 class="text-3xl font-extrabold tracking-tight">Welcome back</h1>
-          <p class="text-base-content/70">Here is what Build Bruh knows about your builds.</p>
-        </div>
+      <bb-page-header heading="Welcome back" description="Here is what Build Bruh knows about your builds.">
         <a class="btn btn-primary" routerLink="/builds" data-cy-id="browse-builds">
           <span class="material-icons text-[18px]" aria-hidden="true">search</span>Browse builds
         </a>
-      </header>
+      </bb-page-header>
 
       <bb-stat-cards [stats]="(stats$ | async)!"></bb-stat-cards>
 
@@ -35,7 +32,7 @@ import {HomeBuildSets} from "./ui/home-build-sets";
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AsyncPipe, RouterLink, StatCards, RecentDeployments, HomeBuildSets]
+  imports: [AsyncPipe, RouterLink, StatCards, RecentDeployments, HomeBuildSets, PageHeader]
 })
 export class HomePage {
   private store = inject<Store<Buildz>>(Store);

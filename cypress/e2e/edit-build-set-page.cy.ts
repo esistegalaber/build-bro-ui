@@ -20,6 +20,17 @@ describe('Edit Build Set Page', () => {
     cy.get('[data-cy-id=build-40]').should('exist')
   })
 
+  it('Reports a build set that does not exist', () => {
+    cy.intercept({method: 'GET', url: '/api/v1/build-sets/no-such-set'}).as('template')
+    cy.visit('/edit-build-set/no-such-set')
+    cy.wait('@template').its('response.statusCode').should('eq', 404)
+    cy.get('[data-cy-id=alert]').should('have.attr', 'role', 'alert')
+    cy.get('[data-cy-id=alert-heading]').should('have.text', 'No such data')
+    cy.get('[data-cy-id=alert-message]').should('contain.text', "name='no-such-set'")
+    cy.get('[data-cy-id=alert-ok]').click()
+    cy.get('[data-cy-id=alert]').should('not.exist')
+  })
+
   it('Sends a label filter with the verification', () => {
     cy.intercept({method: 'POST', url: '/api/v1/build-sets/verify'}).as('verify')
     cy.visit('/edit-build-set/main')
