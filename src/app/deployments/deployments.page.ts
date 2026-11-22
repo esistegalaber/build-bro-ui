@@ -22,7 +22,7 @@ import {BuildSetAccordion} from "../ui/deployments/depoyment.accordion";
       </bb-deployments-search-form>
       <div class="mx-auto">
         <bb-paginator
-          [maxSize]="10" [paginationParams]="(thePaginationParams$|async)!"
+          [paginationParams]="(thePaginationParams$|async)!"
           (toPage)="toPage($event)"
         ></bb-paginator>
       </div>

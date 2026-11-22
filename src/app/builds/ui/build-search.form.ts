@@ -6,96 +6,85 @@ import {FormsModule} from "@angular/forms";
 @Component({
   selector: 'bb-build-search-form',
   template: `
-      <div class="container p-1">
-        <form novalidate (submit)="updateSearch.emit(theSearch)" #searchForm="ngForm">
-          <div class="grid grid-cols-12 gap-2">
-            <select class="select select-sm w-full max-w-xs col-span-4"
-              data-cy-id="project-select"
-              name="project"
-              [(ngModel)]="theSearch.project"
-              (ngModelChange)="updateSearch.emit(theSearch)"
-              >
-              <option value="">All</option>
+    <form novalidate (submit)="updateSearch.emit(theSearch)" #searchForm="ngForm" aria-label="Filters"
+          class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body gap-4 p-5">
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] items-end gap-3">
+          <label class="flex flex-col gap-1 text-xs font-semibold text-base-content/70">Project
+            <select class="select select-sm w-full" name="project" data-cy-id="project-select"
+                    [(ngModel)]="theSearch.project" (ngModelChange)="updateSearch.emit(theSearch)">
+              <option value="">All projects</option>
               @for (project of available.projectNames; track project) {
-                <option [value]="project">{{project}}</option>
+                <option [value]="project">{{ project }}</option>
               }
             </select>
-      
-            <input type="text" placeholder="Min BuildNumber" class="input input-sm w-full max-w-xs col-span-2"
-              name="minBuildNumber" data-cy-id="min-build-number-input"
-              [(ngModel)]="theSearch.minBuildNumber"
-              (keyup)="updateSearch.emit(theSearch)"/>
-      
-            <div class="col-span-6">
-              <div class="flex justify-around">
-                <button type="button" class="btn btn-sm btn-accent" (click)="resetSearch.emit()" data-cy-id="search-reset">
-                  <span class="material-icons">restart_alt</span>
-                  Reset
-                </button>
-      
-                <select class="select select-sm"
-                  name="pageSize"
-                  [(ngModel)]="theSearch.pageSize"
-                  (ngModelChange)="updateSearch.emit(theSearch)"
-                  >
-                  <option [value]="10">10 / Page</option>
-                  <option [value]="25">25 / Page</option>
-                  <option [value]="50">50 / Page</option>
-                </select>
-                <button type="submit" class="btn btn-sm btn-primary" data-cy-id="search-reload">
-                  <span class="material-icons">search</span>
-                  (Re-)Load
-                </button>
-      
-              </div>
-            </div>
-      
-            <select class="select select-sm w-full max-w-xs col-span-4"
-              data-cy-id="branch-select"
-              name="branch"
-              [(ngModel)]="theSearch.branch"
-              (ngModelChange)="updateSearch.emit(theSearch)"
-              >
-              <option value="">All</option>
+          </label>
+          <label class="flex flex-col gap-1 text-xs font-semibold text-base-content/70">Branch
+            <select class="select select-sm w-full" name="branch" data-cy-id="branch-select"
+                    [(ngModel)]="theSearch.branch" (ngModelChange)="updateSearch.emit(theSearch)">
+              <option value="">All branches</option>
               @for (branch of available.projectBranches[theSearch.project]; track branch) {
-                <option [value]="branch">{{branch}}</option>
+                <option [value]="branch">{{ branch }}</option>
               }
             </select>
-      
-            <input type="text" placeholder="Max BuildNumber" class="input input-sm w-full max-w-xs col-span-2"
-              name="maxBuildNumber"
-              [(ngModel)]="theSearch.maxBuildNumber"
-              (keyup)="updateSearch.emit(theSearch)"/>
-            <div class="col-span-6">
-              <div class="grid grid-cols-12">
-                <div class="col-span-4">
-                  <input class="input input-sm" type="text" placeholder="Key" name="newLabelKey" data-cy-id="label-key-input"
-                    [(ngModel)]="newLabelKey"
-                    >
-                </div>
-                <div class="col-span-4">
-                  <input class="input input-sm" type="text" placeholder="Value" name="newLabelVal" data-cy-id="label-value-input"
-                    [(ngModel)]="newLabelVal">
-                </div>
-                <div class="col-span-4">
-                  <button type="button" [disabled]="newLabelVal.length==0 || newLabelVal.length==0 " class="btn btn-sm btn-neutral" (click)="addSearchLabel()" data-cy-id="label-add">
-                    <span class="material-icons">add</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form>
-        @for (label of theSearch.labels | keyvalue; track label.key) {
-          <div class="grid grid-cols-12 gap-2" data-cy-id="search-label">
-            <input type="text" value="{{label.key}}" class="input input-sm col-span-5" readonly>
-            <input type="text" value="{{label.value}}" class="input input-sm col-span-5" readonly>
-            <button class="btn btn-sm btn-secondary" (click)="removeSearchLabel(label.key)" data-cy-id="search-label-remove">
-              <span class="material-icons">remove</span>
+          </label>
+          <label class="flex flex-col gap-1 text-xs font-semibold text-base-content/70">Build number from
+            <input type="text" inputmode="numeric" placeholder="min" class="input input-sm w-full" name="minBuildNumber"
+                   data-cy-id="min-build-number-input" [(ngModel)]="theSearch.minBuildNumber" (keyup)="updateSearch.emit(theSearch)"/>
+          </label>
+          <label class="flex flex-col gap-1 text-xs font-semibold text-base-content/70">to
+            <input type="text" inputmode="numeric" placeholder="max" class="input input-sm w-full" name="maxBuildNumber"
+                   data-cy-id="max-build-number-input" [(ngModel)]="theSearch.maxBuildNumber" (keyup)="updateSearch.emit(theSearch)"/>
+          </label>
+          <label class="flex flex-col gap-1 text-xs font-semibold text-base-content/70">Per page
+            <select class="select select-sm w-full" name="pageSize" data-cy-id="page-size-select"
+                    [(ngModel)]="theSearch.pageSize" (ngModelChange)="updateSearch.emit(theSearch)">
+              <option [value]="10">10</option>
+              <option [value]="25">25</option>
+              <option [value]="50">50</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="flex flex-wrap items-end gap-3">
+          <label class="flex grow basis-40 flex-col gap-1 text-xs font-semibold text-base-content/70">Label
+            <input class="input input-sm w-full" type="text" placeholder="key, e.g. integration-test" name="newLabelKey"
+                   data-cy-id="label-key-input" [(ngModel)]="newLabelKey">
+          </label>
+          <label class="flex grow basis-40 flex-col gap-1 text-xs font-semibold text-base-content/70">Value
+            <input class="input input-sm w-full" type="text" placeholder="value" name="newLabelVal"
+                   data-cy-id="label-value-input" [(ngModel)]="newLabelVal">
+          </label>
+          <button type="button" class="btn btn-sm btn-soft btn-primary" [disabled]="!canAddLabel" (click)="addSearchLabel()"
+                  data-cy-id="label-add">
+            <span class="material-icons text-[18px]" aria-hidden="true">add</span>Add label
+          </button>
+          <div class="ms-auto flex gap-2">
+            <button type="button" class="btn btn-sm btn-ghost" (click)="resetSearch.emit()" data-cy-id="search-reset">
+              <span class="material-icons text-[18px]" aria-hidden="true">restart_alt</span>Reset
             </button>
+            <button type="submit" class="btn btn-sm btn-primary" data-cy-id="search-reload">
+              <span class="material-icons text-[18px]" aria-hidden="true">refresh</span>Reload
+            </button>
+          </div>
+        </div>
+
+        @if (hasLabels) {
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs font-semibold text-base-content/70">Label filters</span>
+            @for (label of theSearch.labels | keyvalue; track label.key) {
+              <span class="badge badge-soft badge-primary h-auto gap-1 py-1 ps-3 pe-1" data-cy-id="search-label">
+                <span>{{ label.key }} = {{ label.value }}</span>
+                <button type="button" class="btn btn-ghost btn-xs btn-circle" (click)="removeSearchLabel(label.key)"
+                        [attr.aria-label]="'Remove the label filter ' + label.key" data-cy-id="search-label-remove">
+                  <span class="material-icons text-[16px]" aria-hidden="true">close</span>
+                </button>
+              </span>
+            }
           </div>
         }
       </div>
+    </form>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -117,8 +106,17 @@ export class BuildSearchForm {
   newLabelKey = '';
   newLabelVal = '';
 
+  /** A label filter needs both a key and a value. */
+  get canAddLabel(): boolean {
+    return this.newLabelKey.trim().length > 0 && this.newLabelVal.trim().length > 0
+  }
+
+  get hasLabels(): boolean {
+    return Object.keys(this.theSearch.labels ?? {}).length > 0
+  }
+
   addSearchLabel() {
-    this.theSearch.labels[this.newLabelKey] = this.newLabelVal;
+    this.theSearch.labels[this.newLabelKey.trim()] = this.newLabelVal.trim();
     this.newLabelKey = ''
     this.newLabelVal = ''
     this.updateSearch.emit(this.theSearch)
