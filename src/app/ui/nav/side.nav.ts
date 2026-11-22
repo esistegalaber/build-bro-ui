@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from "@angular/core";
+import {ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, viewChild} from "@angular/core";
 import {RouterModule} from "@angular/router";
 import {ISideNav} from "../../core";
 import {Theme} from "../../core/theme.service";
@@ -10,11 +10,11 @@ interface NavItem {
   cyId: string
 }
 
-/** The app's sidebar: logo, main navigation and the theme switch. Collapses to icons only. */
+/** The app's sidebar: logo, main navigation and the theme switch. Collapses to icons only; on phones it is the slide-out menu. */
 @Component({
   selector: 'bz-sidenav',
   template: `
-    <aside class="w-full box-border bg-base-100 border-r border-base-300 flex flex-col gap-6 px-4 py-5">
+    <aside class="w-full min-h-full box-border bg-base-100 border-r border-base-300 flex flex-col gap-6 px-4 py-5">
       <div class="flex items-center gap-2.5" [class.flex-col]="!sideNav.text">
         <a routerLink="/home" class="flex items-center gap-2.5 min-w-0 text-base-content no-underline" aria-label="Build Bruh home">
           <span class="size-9 shrink-0 rounded-[10px] bg-primary text-primary-content flex items-center justify-center">
@@ -24,16 +24,21 @@ interface NavItem {
             <span class="font-display font-extrabold text-lg tracking-tight">Build Bruh</span>
           }
         </a>
-        <button type="button" class="btn btn-ghost btn-square btn-sm" [class.ml-auto]="sideNav.text"
+        <!-- wide screens: collapse to icons; phones: close the slide-out menu -->
+        <button type="button" class="btn btn-ghost btn-square btn-sm hidden md:inline-flex" [class.ml-auto]="sideNav.text"
                 (click)="toggleLabels.emit()" [attr.aria-label]="sideNav.text ? 'Collapse the menu' : 'Expand the menu'"
                 [attr.aria-expanded]="sideNav.text" data-cy-id="side-nav-toggle">
           <span class="material-icons" aria-hidden="true">{{ sideNav.text ? 'menu_open' : 'menu' }}</span>
+        </button>
+        <button #closeButton type="button" class="btn btn-ghost btn-square btn-sm ml-auto md:hidden"
+                (click)="closeMenu.emit()" aria-label="Close the menu" data-cy-id="drawer-close">
+          <span class="material-icons" aria-hidden="true">close</span>
         </button>
       </div>
 
       <nav aria-label="Main" class="flex flex-col gap-1">
         @for (item of items; track item.path) {
-          <a [routerLink]="item.path" routerLinkActive ariaCurrentWhenActive="page" [attr.data-cy-id]="item.cyId"
+          <a [routerLink]="item.path" routerLinkActive ariaCurrentWhenActive="page" [attr.data-cy-id]="item.cyId" (click)="navigated.emit()"
              [attr.title]="sideNav.text ? null : item.label"
              class="flex items-center gap-3 min-h-11 px-3 rounded-[10px] text-base-content/70 font-medium no-underline
                     hover:bg-base-200 hover:text-base-content
@@ -82,6 +87,19 @@ export class SideNav {
   toggleLabels = new EventEmitter<void>()
   @Output()
   themeSelected = new EventEmitter<Theme>()
+  /** a page was chosen (closes the slide-out menu on phones) */
+  @Output()
+  navigated = new EventEmitter<void>()
+  /** the close button of the slide-out menu on phones */
+  @Output()
+  closeMenu = new EventEmitter<void>()
+
+  private readonly closeButton = viewChild<ElementRef<HTMLButtonElement>>('closeButton')
+
+  /** Moves the focus into the slide-out menu when it opens. */
+  focusClose(): void {
+    this.closeButton()?.nativeElement.focus()
+  }
 
   readonly items: NavItem[] = [
     {path: '/home', label: 'Home', icon: 'home', cyId: 'nav-home'},

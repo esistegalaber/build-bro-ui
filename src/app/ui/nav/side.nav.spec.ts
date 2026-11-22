@@ -73,4 +73,22 @@ describe('SideNav', () => {
     await render(false)
     expect(byCy('theme-dark').getAttribute('aria-label')).toBe('Dark')
   })
+
+  it('reports a chosen page and the close button of the slide-out menu', async () => {
+    await render()
+    let navigated = 0, closed = 0
+    fixture.componentInstance.navigated.subscribe(() => navigated++)
+    fixture.componentInstance.closeMenu.subscribe(() => closed++)
+    byCy('nav-builds').click()
+    byCy('drawer-close').click()
+    expect(navigated).toBe(1)
+    expect(closed).toBe(1)
+    expect(byCy('drawer-close').getAttribute('aria-label')).toBe('Close the menu')
+  })
+
+  it('moves the focus onto its close button', async () => {
+    await render()
+    fixture.componentInstance.focusClose()
+    expect(document.activeElement).toBe(byCy('drawer-close'))
+  })
 })
