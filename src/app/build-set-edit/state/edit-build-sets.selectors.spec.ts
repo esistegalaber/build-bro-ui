@@ -7,7 +7,7 @@ import {
   theTemplate
 } from './edit-build-sets.selectors'
 import {EditBuildSetState, INITIAL_STATE} from './edit-build-sets.reducer'
-import {mapToEditableBuildTemplate} from './utils'
+import {formatLabels, mapToEditableBuildTemplate, parseLabels} from './utils'
 import {build, someProjects} from '../../../testing/data'
 
 describe('edit build set selectors', () => {
@@ -61,6 +61,13 @@ describe('mapToEditableBuildTemplate', () => {
     })
   })
 
+  it('keeps the label filter of the template', () => {
+    const template = {name: 'main', buildTemplates: [{project: 'backend', branch: 'main', buildNumber: null, labels: {a: '1'}}]}
+    const editable = mapToEditableBuildTemplate(backend, template)
+    expect(editable.labels).toEqual({a: '1'})
+    expect(editable.labels).not.toBe(template.buildTemplates[0].labels)
+  })
+
   it('has no branch when the template names a branch the project does not have (any more)', () => {
     const template = {name: 'main', buildTemplates: [{project: 'backend', branch: 'gone', buildNumber: null, labels: {}}]}
     expect(mapToEditableBuildTemplate(backend, template).branch).toBeNull()
@@ -70,5 +77,19 @@ describe('mapToEditableBuildTemplate', () => {
     expect(mapToEditableBuildTemplate(backend, {name: 'new', buildTemplates: []})).toEqual({
       project: backend, branch: null, buildNumber: null, labels: {}, projectSelected: false
     })
+  })
+})
+
+describe('label filter text', () => {
+  it('formats labels as key=value pairs', () => {
+    expect(formatLabels({'integration-test': 'ok', 'release.name': 'Analog-Amoeba'})).toBe('integration-test=ok, release.name=Analog-Amoeba')
+    expect(formatLabels({})).toBe('')
+    expect(formatLabels(null)).toBe('')
+  })
+
+  it('reads key=value pairs, trimming spaces and skipping incomplete parts', () => {
+    expect(parseLabels(' integration-test = ok ,release.name=Analog-Amoeba')).toEqual({'integration-test': 'ok', 'release.name': 'Analog-Amoeba'})
+    expect(parseLabels('no-value=, =no-key, nothing, , a=b=c')).toEqual({a: 'b=c'})
+    expect(parseLabels('')).toEqual({})
   })
 })

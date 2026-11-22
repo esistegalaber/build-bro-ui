@@ -62,6 +62,15 @@ describe('editBuildSetReducer', () => {
     expect(state.theTemplate.buildTemplates[0].branch).toBe('main')
   })
 
+  it('updates the label filter of a project', () => {
+    const state = withMain()
+    const buildTemplate = {project: backend, projectSelected: true, branch: backend.branches[0], buildNumber: null,
+      labels: {'integration-test': 'ok'}}
+    const next = editBuildSetReducer(state, EditActions.buildTemplateUpdated({buildTemplate}))
+    expect(next.theTemplate.buildTemplates[0].labels).toEqual({'integration-test': 'ok'})
+    expect(state.theTemplate.buildTemplates[0].labels).toEqual({})
+  })
+
   it('clears the branch when none is chosen, and ignores projects that are not in the template', () => {
     const state = withMain()
     const noBranch = {project: backend, projectSelected: true, branch: null, buildNumber: null, labels: {}}

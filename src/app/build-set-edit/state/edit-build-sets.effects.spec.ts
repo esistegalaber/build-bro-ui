@@ -38,6 +38,7 @@ describe('EditBuildSetsEffects', () => {
 
   it.each([
     ['a template was loaded', EditActions.buildSetTemplateLoaded({theTemplate: template})],
+    ['a template to clone was loaded', EditActions.buildSetTemplateToCloneLoaded({theTemplate: template})],
     ['a project changed', EditActions.buildTemplateUpdated({
       buildTemplate: {project: someProjects()[0], projectSelected: true, branch: null, buildNumber: null, labels: {}}
     })]
