@@ -1,79 +1,94 @@
-import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
+import {afterNextRender, ChangeDetectionStrategy, Component, ElementRef, inject, Injector, signal, viewChild} from "@angular/core";
 import {select, Store} from "@ngrx/store";
-import {Buildz, IBuildSet, IBuildSetTemplate} from "../core";
-import {theBuildSet, theBuildSetTemplateNames, theSelectedBuildSetName} from "./state/build-sets.selectors";
+import {AsyncPipe} from "@angular/common";
+import {RouterLink} from "@angular/router";
+import {Buildz, IBuildSet} from "../core";
+import {theBuildSet, theBuildSetSummaries, theSelectedBuildSetName, theSelectedSummary} from "./state/build-sets.selectors";
 import {deleteBuildSetTemplate, loadBuildSetOf} from "./state/build-sets.actions";
-import {CommonModule} from "@angular/common";
-import {RouterModule} from "@angular/router";
-import {BuildSetAccordion} from "../ui/build-sets/build-set.accordion";
-import {BuildSetNamesMenu} from "../ui/build-sets/build-set-names.menu";
+import {BuildSetList} from "../ui/build-sets/build-set.list";
+import {BuildSetCard} from "../ui/build-sets/build-set.card";
 
 @Component({
   template: `
-    <div class="flex flex-row gap-2">
-      <div class="basis-1/4 overflow-hidden">
-        <bb-build-set-names-menu
-          [names]="(names$ | async)!"
-          [selectedName]="(theSelectedBuildSetName$|async)!"
-          (buildSetSelected)="onBuildSetTemplateSelected($event)"
-        ></bb-build-set-names-menu>
-      </div>
-
-      <div class="basis-3/4">
-        <div class="flex justify-end">
-          <a class="btn btn-circle btn-neutral" routerLink="/edit-build-set" data-cy-id="build-set-add">
-            <span class="material-icons">add</span>
-          </a>
+    @let selected = (selectedName$ | async);
+    <div class="flex flex-col gap-6">
+      <header class="flex flex-wrap items-end justify-between gap-4">
+        <div class="flex flex-col gap-1">
+          <h1 class="text-3xl font-extrabold tracking-tight">Build sets</h1>
+          <p class="text-base-content/70">Named combinations of builds, for example everything that goes onto one server.</p>
         </div>
-        <bb-build-set-accordion [buildSet]="(theBuildSet$|async)!" (deleteBuildSet)="showDeleteBuildSetConfirmationDialog($event)"></bb-build-set-accordion>
+        <a class="btn btn-primary" routerLink="/edit-build-set" data-cy-id="build-set-add">
+          <span class="material-icons text-[18px]" aria-hidden="true">add</span>New build set
+        </a>
+      </header>
+
+      <div class="flex flex-wrap items-start gap-6">
+        <bb-build-set-list class="block min-w-0 grow basis-60"
+                           [summaries]="(summaries$ | async)!" [selectedName]="selected"
+                           (buildSetSelected)="select($event)"></bb-build-set-list>
+        <div class="min-w-0 grow-[999] basis-[480px]">
+          @if (selected) {
+            <bb-build-set-card [buildSet]="(theBuildSet$ | async)!" [summary]="(selectedSummary$ | async)"
+                               (deleteBuildSet)="askToDelete($event)"></bb-build-set-card>
+          } @else {
+            <p class="rounded-box border border-dashed border-base-300 p-8 text-center text-base-content/70" data-cy-id="build-set-none">
+              Choose a build set to see the builds it resolves to.
+            </p>
+          }
+        </div>
       </div>
     </div>
 
-    <!-- Put this part before </body> tag -->
-    <input type="checkbox" id="delete-confirmation-dialog" class="modal-toggle" [checked]="showDeleteConfirmation"/>
-    <div class="modal" data-cy-id="delete-confirmation-dialog">
-      <div class="modal-box relative">
-        <label for="my-modal-3" class="btn btn-sm btn-circle btn-neutral absolute right-2 top-2" (click)="hideDeleteBuildSetConfirmationDialog()" data-cy-id="delete-cancel">✕</label>
-        <h3 class="text-lg font-bold">Delete BuildSet</h3>
-        <p class="py-4">Are you sure you eant to delete the BuildSet with name='{{toDelete.name}}' ?</p>
-        <div class="modal-action">
-          <a (click)="deleteBuildSetTemplate()" class="btn btn-neutral" data-cy-id="delete-confirm">Delete It!</a>
+    <div class="modal" [class.modal-open]="toDelete() !== null" role="dialog" aria-modal="true"
+         aria-labelledby="delete-dialog-title" (keydown.escape)="cancelDelete()" data-cy-id="delete-confirmation-dialog">
+      @if (toDelete(); as buildSet) {
+        <div class="modal-box">
+          <h3 id="delete-dialog-title" class="text-lg font-bold">Delete {{ buildSet.name }}?</h3>
+          <p class="py-4">The build set <strong>{{ buildSet.name }}</strong> is deleted for good. Its builds and deployments stay.</p>
+          <div class="modal-action">
+            <button #cancelButton type="button" class="btn btn-ghost" (click)="cancelDelete()" data-cy-id="delete-cancel">Cancel</button>
+            <button type="button" class="btn btn-error" (click)="confirmDelete()" data-cy-id="delete-confirm">Delete</button>
+          </div>
         </div>
-      </div>
+        <div class="modal-backdrop" (click)="cancelDelete()"></div>
+      }
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    RouterModule,
-    BuildSetAccordion,
-    BuildSetNamesMenu
-  ]
+  imports: [AsyncPipe, RouterLink, BuildSetList, BuildSetCard]
 })
 export class BuildSetsPage {
   private store = inject<Store<Buildz>>(Store);
+  private injector = inject(Injector);
 
-  names$ = this.store.pipe(select(theBuildSetTemplateNames))
+  summaries$ = this.store.pipe(select(theBuildSetSummaries))
   theBuildSet$ = this.store.pipe(select(theBuildSet))
-  theSelectedBuildSetName$ = this.store.pipe(select(theSelectedBuildSetName))
-  showDeleteConfirmation = false
-  toDelete: IBuildSet = <IBuildSet>{}
+  selectedName$ = this.store.pipe(select(theSelectedBuildSetName))
+  selectedSummary$ = this.store.pipe(select(theSelectedSummary))
 
-  onBuildSetTemplateSelected(templateName: string): void {
+  /** The build set waiting for the delete confirmation, or null when the dialog is closed. */
+  readonly toDelete = signal<IBuildSet | null>(null)
+  private readonly cancelButton = viewChild<ElementRef<HTMLButtonElement>>('cancelButton')
+
+  select(templateName: string): void {
     this.store.dispatch(loadBuildSetOf({templateName}))
   }
 
-  showDeleteBuildSetConfirmationDialog(buildSet: IBuildSet) {
-    this.toDelete = buildSet;
-    this.showDeleteConfirmation = true
+  askToDelete(buildSet: IBuildSet): void {
+    this.toDelete.set(buildSet)
+    // move the focus into the dialog, onto the safe choice
+    afterNextRender(() => this.cancelButton()?.nativeElement.focus(), {injector: this.injector})
   }
 
-  hideDeleteBuildSetConfirmationDialog() {
-    this.showDeleteConfirmation = false
+  cancelDelete(): void {
+    this.toDelete.set(null)
   }
 
-  deleteBuildSetTemplate() {
-    this.store.dispatch(deleteBuildSetTemplate({name: this.toDelete?.name}))
-    this.showDeleteConfirmation = false
+  confirmDelete(): void {
+    const buildSet = this.toDelete()
+    if (buildSet) {
+      this.store.dispatch(deleteBuildSetTemplate({name: buildSet.name}))
+    }
+    this.toDelete.set(null)
   }
 }

@@ -3,9 +3,9 @@
 describe('Build Sets Page', () => {
 
   beforeEach(() => {
-    cy.intercept({method: 'GET', url: '/api/v1/build-sets/names'}).as('names')
+    cy.intercept({method: 'GET', pathname: '/api/v1/build-sets'}).as('build-sets')
     cy.visit('/build-sets')
-    cy.wait('@names')
+    cy.wait('@build-sets')
   })
 
   it('Lists the build set templates', () => {
@@ -13,6 +13,18 @@ describe('Build Sets Page', () => {
     cy.get('[data-cy-id="build-set-name-feature-test-stage-1"]').should('be.visible')
     cy.get('[data-cy-id="build-set-name-Environment of StageServer"]').should('be.visible')
     cy.get('[data-cy-id=build-set-card]').should('not.exist')
+    cy.get('[data-cy-id=build-set-none]').should('be.visible')
+  })
+
+  it('Summarizes each build set', () => {
+    cy.get('[data-cy-id="build-set-name-main"]').should('contain.text', '2 projects · 1 pinned')
+    cy.get('[data-cy-id="build-set-name-feature-test-stage-1"]').should('contain.text', 'No projects yet')
+  })
+
+  it('Shows an empty state for a build set without builds', () => {
+    cy.get('[data-cy-id="build-set-name-feature-test-stage-1"]').click()
+    cy.get('[data-cy-id=build-set-card]').should('contain.text', 'Builds of feature-test-stage-1')
+    cy.get('[data-cy-id=build-set-empty]').should('be.visible')
   })
 
   it('Shows the builds of a selected build set', () => {
@@ -48,10 +60,18 @@ describe('Build Sets Page', () => {
   it('Cancels the delete confirmation', () => {
     cy.get('[data-cy-id="build-set-name-main"]').click()
     cy.get('[data-cy-id=build-set-delete]').click()
-    cy.get('#delete-confirmation-dialog').should('be.checked')
+    cy.get('[data-cy-id=delete-confirmation-dialog]').should('have.class', 'modal-open').and('contain.text', 'Delete main?')
+    cy.focused().should('have.attr', 'data-cy-id', 'delete-cancel')
     cy.get('[data-cy-id=delete-cancel]').click()
-    cy.get('#delete-confirmation-dialog').should('not.be.checked')
+    cy.get('[data-cy-id=delete-confirmation-dialog]').should('not.have.class', 'modal-open')
     cy.get('[data-cy-id="build-set-name-main"]').should('exist')
+  })
+
+  it('Closes the delete confirmation with Escape', () => {
+    cy.get('[data-cy-id="build-set-name-main"]').click()
+    cy.get('[data-cy-id=build-set-delete]').click()
+    cy.get('[data-cy-id=delete-cancel]').should('be.focused').type('{esc}')
+    cy.get('[data-cy-id=delete-confirmation-dialog]').should('not.have.class', 'modal-open')
   })
 
   it('Opens the new build set form', () => {

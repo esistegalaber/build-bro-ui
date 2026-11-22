@@ -108,9 +108,9 @@ describe('Edit Build Set Page', () => {
     cy.get('[data-cy-id=alert]').should('not.exist')
 
     // it now shows up on the build sets page; delete it from there
-    cy.intercept({method: 'GET', url: '/api/v1/build-sets/names'}).as('names')
+    cy.intercept({method: 'GET', pathname: '/api/v1/build-sets'}).as('build-sets')
     cy.get('[data-cy-id=nav-build-sets]').click()
-    cy.wait('@names')
+    cy.wait('@build-sets')
     cy.get(`[data-cy-id="build-set-name-${name}"]`).click()
     cy.get('[data-cy-id=build-set-card]').should('contain.text', `Builds of ${name}`)
 
@@ -119,7 +119,7 @@ describe('Edit Build Set Page', () => {
     cy.get('[data-cy-id=delete-confirmation-dialog]').should('be.visible').and('contain.text', name)
     cy.get('[data-cy-id=delete-confirm]').click()
     cy.wait('@delete')
-    cy.wait('@names')
     cy.get(`[data-cy-id="build-set-name-${name}"]`).should('not.exist')
+    cy.get('[data-cy-id=build-set-card]').should('not.exist')
   })
 })

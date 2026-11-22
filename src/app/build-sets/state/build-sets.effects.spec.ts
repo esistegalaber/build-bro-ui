@@ -1,4 +1,3 @@
-import {provideRouter} from '@angular/router'
 import {BuildSetsEffects} from './build-sets.effects'
 import * as BuildSetActions from './build-sets.actions'
 import {backendErrorOccurred} from '../../core/state/alerts/alert.actions'
@@ -6,36 +5,37 @@ import {API_ERROR, collect, setUpEffects} from '../../../testing/effects'
 import {build} from '../../../testing/data'
 
 describe('BuildSetsEffects', () => {
-  const setUp = () => setUpEffects(BuildSetsEffects, {providers: [provideRouter([])]})
+  const setUp = () => setUpEffects(BuildSetsEffects)
 
-  it('loads the build set names', () => {
+  it('loads all build sets with their projects', () => {
     const {effects, actions$, http} = setUp()
-    const emitted = collect(effects.loadKnownTemplateNames)
-    actions$.next(BuildSetActions.loadBuildSetNames())
-    http.expectOne({method: 'GET', url: '/api/v1/build-sets/names'}).flush(['main'])
-    expect(emitted).toEqual([BuildSetActions.buildSetNamesLoaded({names: ['main']})])
+    const emitted = collect(effects.loadTemplates$)
+    actions$.next(BuildSetActions.loadBuildSetTemplates())
+    const templates = [{id: 1, name: 'main', buildTemplates: []}]
+    http.expectOne({method: 'GET', url: '/api/v1/build-sets'}).flush(templates)
+    expect(emitted).toEqual([BuildSetActions.buildSetTemplatesLoaded({templates})])
     http.verify()
   })
 
-  it('loads the builds a build set resolves to', () => {
+  it('loads the builds a build set resolves to, with the name encoded', () => {
     const {effects, actions$, http} = setUp()
     const emitted = collect(effects.buildsOf$)
     actions$.next(BuildSetActions.loadBuildSetOf({templateName: 'Environment of StageServer'}))
     const buildSet = {name: 'Environment of StageServer', builds: {backend: build(9, 'backend', 'main', 9)}}
-    http.expectOne({method: 'GET', url: '/api/v1/build-sets/of/Environment of StageServer'}).flush(buildSet)
+    http.expectOne({method: 'GET', url: '/api/v1/build-sets/of/Environment%20of%20StageServer'}).flush(buildSet)
     expect(emitted).toEqual([BuildSetActions.buildSetLoaded({buildSet})])
   })
 
-  it('deletes a build set and reloads the names', () => {
+  it('deletes a build set and reports which one', () => {
     const {effects, actions$, http} = setUp()
     const emitted = collect(effects.delete$)
     actions$.next(BuildSetActions.deleteBuildSetTemplate({name: 'main'}))
     http.expectOne({method: 'DELETE', url: '/api/v1/build-sets/main'}).flush(null)
-    expect(emitted).toEqual([BuildSetActions.loadBuildSetNames()])
+    expect(emitted).toEqual([BuildSetActions.buildSetTemplateDeleted({name: 'main'})])
   })
 
   it.each([
-    ['loading the names', 'loadKnownTemplateNames', BuildSetActions.loadBuildSetNames(), '/api/v1/build-sets/names'],
+    ['loading the build sets', 'loadTemplates$', BuildSetActions.loadBuildSetTemplates(), '/api/v1/build-sets'],
     ['loading a build set', 'buildsOf$', BuildSetActions.loadBuildSetOf({templateName: 'x'}), '/api/v1/build-sets/of/x'],
     ['deleting a build set', 'delete$', BuildSetActions.deleteBuildSetTemplate({name: 'x'}), '/api/v1/build-sets/x']
   ] as const)('reports a failure when %s', (_, effect, trigger, url) => {
