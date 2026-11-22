@@ -14,6 +14,7 @@ interface DeploymentRow {
 }
 
 /** The newest deployments: server, when, and which builds (summarized when there are many). */
+import {Loading} from '../../ui/loading'
 @Component({
   selector: 'bb-recent-deployments',
   template: `
@@ -52,12 +53,12 @@ interface DeploymentRow {
             <p class="border-t border-base-300 py-6 text-center text-base-content/70" data-cy-id="home-deployments-none">No deployments yet.</p>
           }
         } @else {
-          <div class="border-t border-base-300 py-6 text-center"><span class="text-base-content/70">Loading…</span></div>
+          <bb-loading class="border-t border-base-300"></bb-loading>
         }
       </div>
     </section>
   `,
-  imports: [RouterLink, DateFnsModule],
+  imports: [RouterLink, DateFnsModule, Loading],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecentDeployments {

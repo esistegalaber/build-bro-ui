@@ -1,34 +1,39 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core'
+import {ChangeDetectionStrategy, Component, computed, input, output} from '@angular/core'
 import {IAlert} from '../core'
-import {CommonModule} from "@angular/common";
 
+const LOOKS: Record<string, { icon: string, classes: string }> = {
+  'alert-error': {icon: 'error', classes: 'alert-error'},
+  'alert-info': {icon: 'info', classes: 'alert-info'}
+}
+
+/** The current message (an error or an info) above the page, until it is dismissed. */
 @Component({
   selector: 'bz-alert-panel',
+  host: {class: 'contents'},
   template: `
-    @if (alert.message.length>0) {
-      <div role="alert" class="alert alert-horizontal shadow-lg m-2" [ngClass]="alert.type" data-cy-id="alert">
-        <span class="material-icons">close</span>
-        <div>
-          <h3 class="font-bold">{{alert.heading}}</h3>
-          <div class="text-xs">{{alert.message}}</div>
+    @if (alert().message.length > 0) {
+      <div class="alert alert-soft alert-horizontal items-start border" [class]="look().classes"
+           [attr.role]="isError() ? 'alert' : 'status'" data-cy-id="alert">
+        <span class="material-icons" aria-hidden="true">{{ look().icon }}</span>
+        <div class="min-w-0">
+          @if (alert().heading) {
+            <h2 class="font-bold" data-cy-id="alert-heading">{{ alert().heading }}</h2>
+          }
+          <p class="text-sm wrap-anywhere" data-cy-id="alert-message">{{ alert().message }}</p>
         </div>
-        <button class="btn btn-sm btn-neutral" (click)="clearAlert.emit()" data-cy-id="alert-ok">OK</button>
+        <button type="button" class="btn btn-sm btn-ghost btn-square" aria-label="Dismiss"
+                (click)="clearAlert.emit()" data-cy-id="alert-ok">
+          <span class="material-icons text-[20px]" aria-hidden="true">close</span>
+        </button>
       </div>
     }
-    <!--      <div [class]="'alert alert-dismissible alert-'+ alert.type" role="alert">-->
-    <!--        <h5 class="alert-heading" [innerHTML]="alert.heading">_</h5>-->
-    <!--        <p [innerHTML]="alert.message">_</p>-->
-    <!--        <button type="button" class="btn-close" (click)="clearAlert.emit()">-->
-    <!--          <span aria-hidden="true">&times;</span>-->
-    <!--        </button>-->
-    <!--      </div>-->
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule]
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AlertPanel {
-  @Input()
-  alert!: IAlert
-  @Output()
-  clearAlert = new EventEmitter<void>()
+  readonly alert = input.required<IAlert>()
+  readonly clearAlert = output<void>()
+
+  readonly look = computed(() => LOOKS[this.alert().type] ?? LOOKS['alert-info'])
+  readonly isError = computed(() => this.alert().type === 'alert-error')
 }

@@ -7,13 +7,11 @@ import * as CoreActions from '../core/actions'
 import {ServerList} from './ui/server.list'
 import {ServerDetailsForm} from './ui/server-details.form'
 
+import {PageHeader} from '../ui/page-header'
 @Component({
   template: `
     <div class="flex flex-col gap-6">
-      <header class="flex flex-col gap-1">
-        <h1 class="text-3xl font-extrabold tracking-tight">Servers</h1>
-        <p class="text-base-content/70">Where builds get deployed. A nickname makes them easier to tell apart.</p>
-      </header>
+      <bb-page-header heading="Servers" description="Where builds get deployed. A nickname makes them easier to tell apart."></bb-page-header>
 
       <div class="flex flex-wrap items-start gap-6">
         <bb-server-list class="block min-w-0 grow-[999] basis-[420px]"
@@ -26,7 +24,7 @@ import {ServerDetailsForm} from './ui/server-details.form'
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AsyncPipe, ServerList, ServerDetailsForm]
+  imports: [AsyncPipe, ServerList, ServerDetailsForm, PageHeader]
 })
 export class ServersPage {
   private store = inject<Store<Buildz>>(Store)

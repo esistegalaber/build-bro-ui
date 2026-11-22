@@ -10,15 +10,14 @@ import {Observable} from "rxjs";
 import {Paginator} from "../ui/paginator";
 import {DeploymentList} from "../ui/deployments/deployment.list";
 
+import {PageHeader} from '../ui/page-header'
+import {EmptyState} from '../ui/empty-state'
 @Component({
   template: `
     @let pagination = (thePaginationParams$ | async)!;
     @let deployments = (theDeployments$ | async)!;
     <div class="flex flex-col gap-6">
-      <header class="flex flex-col gap-1">
-        <h1 class="text-3xl font-extrabold tracking-tight">Deployments</h1>
-        <p class="text-base-content/70">What was deployed where, newest first.</p>
-      </header>
+      <bb-page-header heading="Deployments" description="What was deployed where, newest first."></bb-page-header>
 
       <bb-deployments-search-form
         [servers]="(servers$ | async)!"
@@ -37,11 +36,10 @@ import {DeploymentList} from "../ui/deployments/deployment.list";
         @if (deployments?.length) {
           <bb-deployment-list [deployments]="deployments" [servers]="(servers$ | async) ?? []"></bb-deployment-list>
         } @else if (pagination.totalElements === 0) {
-          <div class="flex flex-col items-center gap-3 px-5 py-10 text-center text-base-content/70" data-cy-id="deployments-empty">
-            <span class="material-icons text-4xl!" aria-hidden="true">rocket_launch</span>
+          <bb-empty-state icon="rocket_launch" data-cy-id="deployments-empty">
             <p>No deployments match these filters.</p>
             <button type="button" class="btn btn-sm" (click)="resetDeploymentsSearch()">Reset the filters</button>
-          </div>
+          </bb-empty-state>
         }
         @if (pagination.totalElements > 0) {
           <div class="px-5 py-4 border-t border-base-300">
@@ -57,8 +55,7 @@ import {DeploymentList} from "../ui/deployments/deployment.list";
     DeploymentsSearchForm,
     CloningPipe,
     Paginator,
-    DeploymentList
-  ]
+    DeploymentList, PageHeader, EmptyState]
 })
 export class DeploymentsPage {
   private store = inject<Store<Buildz>>(Store);

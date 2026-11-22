@@ -23,7 +23,8 @@ import {Theme, ThemeService} from "./core/theme.service";
       <main class="grow-[999] basis-[560px] min-w-0 box-border px-6 py-8 lg:px-10">
         <div class="max-w-[1120px] mx-auto flex flex-col gap-6">
           <bz-alert-panel (clearAlert)="clearAlert()" [alert]="(alert | async)!"></bz-alert-panel>
-          <router-outlet></router-outlet>
+          <!-- hidden: the empty outlet would add a gap of its own above the page -->
+          <router-outlet class="hidden"></router-outlet>
         </div>
       </main>
     </div>

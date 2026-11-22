@@ -5,6 +5,7 @@ import {BuildSetSummary} from "../../build-sets/state/build-sets.model";
 import {BuildsAccordion} from "../builds/builds.accordion";
 
 /** The selected build set: its summary, the actions Edit, Clone and Delete, and the builds it resolves to. */
+import {EmptyState} from '../empty-state'
 @Component({
   selector: 'bb-build-set-card',
   template: `
@@ -37,16 +38,15 @@ import {BuildsAccordion} from "../builds/builds.accordion";
       @if (builds().length > 0) {
         <bb-builds-accordion [builds]="builds()"></bb-builds-accordion>
       } @else {
-        <div class="flex flex-col items-center gap-3 px-5 py-10 text-center text-base-content/70" data-cy-id="build-set-empty">
-          <span class="material-icons text-4xl!" aria-hidden="true">layers_clear</span>
+        <bb-empty-state icon="layers_clear" data-cy-id="build-set-empty">
           <p>This build set has no builds yet: it has no projects, or none of them has a matching build.</p>
           <a class="btn btn-sm" [routerLink]="['/edit-build-set', buildSet().name]">Add projects</a>
-        </div>
+        </bb-empty-state>
       }
     </section>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, BuildsAccordion]
+  imports: [RouterLink, BuildsAccordion, EmptyState]
 })
 export class BuildSetCard {
   readonly buildSet = input.required<IBuildSet>()
