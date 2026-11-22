@@ -16,6 +16,12 @@ describe('Deployments Page', () => {
   it('Shows the first page of deployments', () => {
     cy.get('[data-cy-id^=deployment-]').should('have.length', 10)
     cy.get('[data-cy-id=paginator]').should('be.visible')
+    cy.get('[data-cy-id=deployments-count]').should('contain.text', '11 deployments')
+    // the newest deployment: testserver with 3 builds and two labels
+    cy.get('[data-cy-id=row-of-deployment]').first()
+      .should('contain.text', 'testserver · Tester')
+      .and('contain.text', '3 builds')
+      .find('[data-cy-id=labels-of-deployment]').should('contain.text', 'part-of-build-set = feature')
   })
 
   it('Pages through the deployments', () => {
@@ -27,7 +33,7 @@ describe('Deployments Page', () => {
 
   it('Changes the page size', () => {
     cy.intercept(deploymentsSearchRequest).as('page-size')
-    cy.get('[data-cy-id=page-size-select]').select('25 / Page')
+    cy.get('[data-cy-id=page-size-select]').select('25')
     cy.wait('@page-size').its('request.body').should('deep.include', {pageSize: '25'})
     cy.get('[data-cy-id^=deployment-]').should('have.length', 11)
   })
@@ -44,14 +50,14 @@ describe('Deployments Page', () => {
     cy.intercept(deploymentsSearchRequest).as('search')
     cy.get('[data-cy-id=server-select]').select('staging')
     cy.wait('@search').its('request.body').should('deep.include', {serverName: 'staging'})
-    cy.get('[data-cy-id=page-size-select]').select('25 / Page')
+    cy.get('[data-cy-id=page-size-select]').select('25')
     cy.wait('@search').its('request.body').should('deep.include', {serverName: 'staging', pageSize: '25'})
 
     cy.get('[data-cy-id=search-reset]').click()
     cy.wait('@search').its('request.body')
       .should('deep.include', {serverName: '', page: 0, pageSize: 10})
     cy.get('[data-cy-id=server-select]').should('have.value', '')
-    cy.get('[data-cy-id=page-size-select]').find('option:selected').should('have.text', '10 / Page')
+    cy.get('[data-cy-id=page-size-select]').find('option:selected').should('have.text', '10')
     cy.get('[data-cy-id^=deployment-]').should('have.length', 10)
   })
 
