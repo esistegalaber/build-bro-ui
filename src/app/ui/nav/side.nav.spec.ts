@@ -27,9 +27,9 @@ describe('SideNav', () => {
   it('shows the logo text and a label for every page', async () => {
     await render(true)
     expect(el().textContent).toContain('Build Bruh')
-    const labels = ['nav-home', 'nav-build-sets', 'nav-builds', 'nav-deployments', 'nav-servers', 'nav-projects']
+    const labels = ['nav-home', 'nav-build-sets', 'nav-builds', 'nav-deployments', 'nav-servers', 'nav-projects', 'nav-labels']
       .map((id) => byCy(id).querySelector('span:last-child')?.textContent?.trim())
-    expect(labels).toEqual(['Home', 'Build Sets', 'Builds', 'Deployments', 'Servers', 'Projects'])
+    expect(labels).toEqual(['Home', 'Build Sets', 'Builds', 'Deployments', 'Servers', 'Projects', 'Labels'])
     expect(el().querySelectorAll('.sr-only')).toHaveLength(0)
   })
 

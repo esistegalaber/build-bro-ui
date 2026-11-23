@@ -22,10 +22,14 @@ import type {
   IDeployment,
   IDeploymentSearch,
   ILabelDefinition,
+  ILabelDefinitionChange,
+  ILabelSettings,
+  ILabelViolation,
   IProject,
   ISearchData,
   IServer
 } from '../../src/app/core/state/model'
+import {violationOf} from '../../src/app/core/labels/label-values'
 
 interface ApiDb {
   stats: IBuildStats
@@ -168,6 +172,41 @@ function setProjectActive(db: ApiDb, projectId: number, active: boolean): IProje
   return project
 }
 
+function sameKey(a: string, b: string): boolean {
+  return a.toLowerCase() === b.toLowerCase()
+}
+
+/** Like the API's conformance report: per key and value (ignoring case) for wrong values, per key for wrong entities. */
+function violationsOf(db: ApiDb, definitions: ILabelDefinition[]): ILabelViolation[] {
+  const counts = new Map<string, { violation: ILabelViolation, ids: Set<number> }>()
+  const check = (target: 'BUILD' | 'DEPLOYMENT', id: number, labels: { key: string, value: string }[]) => {
+    for (const label of labels) {
+      const definition = definitions.find((d) => sameKey(d.key, label.key))
+      const reason = definition ? violationOf(definition, target, label.value) : null
+      if (!definition || !reason) continue
+      const value = reason === 'WRONG_TARGET' ? null : label.value
+      const id_ = `${definition.key}|${target}|${reason}|${value?.toLowerCase()}`
+      const entry = counts.get(id_) ?? {violation: {key: definition.key, value, target, reason, count: 0}, ids: new Set<number>()}
+      entry.ids.add(id)
+      counts.set(id_, entry)
+    }
+  }
+  db.builds.forEach((build) => check('BUILD', build.id, build.labels))
+  db.deployments.forEach((deployment) => check('DEPLOYMENT', deployment.id, deployment.labels))
+  return [...counts.values()]
+    .map(({violation, ids}) => ({...violation, count: ids.size}))
+    .sort((a, b) => compare(a.key.toLowerCase(), b.key.toLowerCase()) || compare(a.target, b.target) || compare(a.value ?? '', b.value ?? ''))
+}
+
+/** The API's consistency checks of a definition, or null when it is fine. */
+function definitionProblem(definition: ILabelDefinition): string | null {
+  if (definition.type === 'ENUM' && definition.allowedValues.length === 0) return 'type ENUM needs allowedValues'
+  if (definition.type !== 'ENUM' && definition.allowedValues.length > 0) return 'allowedValues are only allowed for type ENUM'
+  if (definition.type === 'REGEX' && !definition.pattern) return 'type REGEX needs a pattern'
+  if (definition.type !== 'REGEX' && definition.pattern) return 'a pattern is only allowed for type REGEX'
+  return null
+}
+
 export function installFakeApi(): void {
   cy.fixture('api-db.json').then((snapshot: ApiDb) => {
     const db: ApiDb = JSON.parse(JSON.stringify(snapshot))
@@ -182,7 +221,41 @@ export function installFakeApi(): void {
 
     cy.intercept({method: 'GET', url: path('/stats')}, (req) => req.reply(db.stats))
     cy.intercept({method: 'GET', url: path('/search-data')}, (req) => req.reply(db.searchData))
+
+    // label definitions (build-bro-api#7)
+    let labelSettings: ILabelSettings = {labelValidation: 'OFF'}
     cy.intercept({method: 'GET', url: path('/label-definitions')}, (req) => req.reply(db.labelDefinitions))
+    cy.intercept({method: 'PUT', url: path('/label-definitions/[^/]+')}, (req) => {
+      const key = lastSegment(req.url).trim()
+      const sent: ILabelDefinition = req.body
+      const definition: ILabelDefinition = {
+        ...sent, key,
+        appliesTo: sent.appliesTo?.length ? sent.appliesTo : ['BUILD', 'DEPLOYMENT'],
+        type: sent.type ?? 'STRING', allowedValues: sent.allowedValues ?? [], valueStyles: sent.valueStyles ?? {}
+      }
+      const problem = definitionProblem(definition)
+      if (problem) {
+        req.reply({statusCode: 400, body: {key: 'invalid-request', description: 'Your request was not valid.', message: `Label definition '${key}': ${problem}`}})
+        return
+      }
+      if (!/[?&]dryRun=true/.test(req.url)) {
+        db.labelDefinitions = [...db.labelDefinitions.filter((d) => !sameKey(d.key, key)), definition]
+          .sort((a, b) => compare(a.key, b.key))
+      }
+      const change: ILabelDefinitionChange = {definition, violations: violationsOf(db, [definition])}
+      req.reply(change)
+    })
+    cy.intercept({method: 'DELETE', url: path('/label-definitions/[^/]+')}, (req) => {
+      const key = lastSegment(req.url)
+      db.labelDefinitions = db.labelDefinitions.filter((d) => !sameKey(d.key, key))
+      req.reply({statusCode: 200})
+    })
+    cy.intercept({method: 'GET', url: path('/label-violations')}, (req) => req.reply(violationsOf(db, db.labelDefinitions)))
+    cy.intercept({method: 'GET', url: path('/label-settings')}, (req) => req.reply(labelSettings))
+    cy.intercept({method: 'PUT', url: path('/label-settings')}, (req) => {
+      labelSettings = {labelValidation: req.body.labelValidation}
+      req.reply(labelSettings)
+    })
 
     // builds
     cy.intercept({method: 'POST', url: path('/builds/search')}, (req) => req.reply(searchBuilds(db, req.body)))
