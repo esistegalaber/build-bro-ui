@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Snapshots the data of a running Build Bro API into cypress/fixtures/api-db.json,
+// Snapshots the data of a running Build Bruh API into cypress/fixtures/api-db.json,
 // which the fake API in cypress/support/fake-api.ts serves when the e2e tests run stubbed.
 //
 // Usage (API on :8080 with testdata.sql freshly loaded):
