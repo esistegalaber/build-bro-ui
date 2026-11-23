@@ -15,7 +15,7 @@ export interface paths {
         put?: never;
         /**
          * Register a build
-         * @description Records a finished build. Project and branch are created on the fly the first time a build for them arrives. The id in the request is ignored. Fails if a build with the same project, branch and build number already exists.
+         * @description Records a finished build. Project and branch are created on the fly the first time a build for them arrives. The id in the request is ignored. Fails if a build with the same project, branch and build number already exists. When label validation is `STRICT`, fails if a label does not fit its label definition.
          */
         post: operations["createBuild"];
         delete?: never;
@@ -55,7 +55,7 @@ export interface paths {
         put?: never;
         /**
          * Add labels to a build
-         * @description Attaches additional key/value labels to an existing build, e.g. once it has passed further testing.
+         * @description Attaches additional key/value labels to an existing build, e.g. once it has passed further testing. When label validation is `STRICT`, fails if a label does not fit its label definition.
          */
         post: operations["addBuildLabels"];
         delete?: never;
@@ -278,8 +278,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Known projects, branches and label keys
-         * @description Active projects with their branch names, plus every label key used on any build.
+         * Known projects, branches, label keys and label definitions
+         * @description Active projects with their branch names, every label key used on any build, and all label definitions, e.g. to offer typed label filters.
          */
         get: operations["getSearchData"];
         put?: never;
@@ -302,7 +302,7 @@ export interface paths {
         put?: never;
         /**
          * Create or update a build-set template
-         * @description Without an `id` a new template is created; its name must be unique. With an `id` the existing template is updated and its build templates are replaced by the ones sent.
+         * @description Without an `id` a new template is created; its name must be unique. With an `id` the existing template is updated and its build templates are replaced by the ones sent. When label validation is `STRICT`, fails if a template's label does not fit its label definition (a build could never carry it).
          */
         post: operations["saveBuildSet"];
         delete?: never;
@@ -400,7 +400,7 @@ export interface paths {
         put?: never;
         /**
          * Record a deployment
-         * @description Records that the given builds (referenced by `id`; other build fields are ignored) were deployed to `serverName` now. The server is created if it is not known yet. Build ids that do not exist are skipped.
+         * @description Records that the given builds (referenced by `id`; other build fields are ignored) were deployed to `serverName` now. The server is created if it is not known yet. Build ids that do not exist are skipped. When label validation is `STRICT`, fails if a label does not fit its label definition.
          */
         post: operations["createDeployment"];
         delete?: never;
@@ -440,7 +440,7 @@ export interface paths {
         put?: never;
         /**
          * Label all builds of a deployment
-         * @description Adds the labels to every build of the deployment, e.g. `qa=passed` after tests ran against it.
+         * @description Adds the labels to every build of the deployment, e.g. `qa=passed` after tests ran against it. When label validation is `STRICT`, fails if a label does not fit its label definition.
          */
         post: operations["addLabelsToDeployedBuilds"];
         delete?: never;
@@ -469,6 +469,95 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/label-definitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List label definitions
+         * @description All label definitions, ordered by key.
+         */
+        get: operations["listLabelDefinitions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/label-definitions/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a label definition
+         * @description Keys are compared ignoring case.
+         */
+        get: operations["getLabelDefinition"];
+        /**
+         * Create or replace a label definition
+         * @description Creates the definition of the label key, or replaces it if one exists (keys are compared ignoring case). The key is taken from the path; a `key` in the body is ignored. Fails if the definition is inconsistent, e.g. an `ENUM` without `allowedValues`, an invalid `pattern`, or a `valueStyles` entry for a value the definition does not allow. Existing labels are never changed; the response lists the stored labels that do not fit the new definition. With `dryRun` nothing is saved, so the effect of a change can be checked first.
+         */
+        put: operations["saveLabelDefinition"];
+        post?: never;
+        /**
+         * Delete a label definition
+         * @description Removes the definition only; labels with that key stay as they are. Does nothing if no definition exists for the key.
+         */
+        delete: operations["deleteLabelDefinition"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/label-violations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Stored labels that do not fit their definition
+         * @description Conformance report over all label definitions: every stored build and deployment label whose key has a definition but whose value does not fit it, or that sits on an entity the definition is not meant for. Values that differ only in case are counted together. Labels without a definition are never listed. Use it before switching label validation to `STRICT`.
+         */
+        get: operations["listLabelViolations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/label-settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get the label settings */
+        get: operations["getLabelSettings"];
+        /**
+         * Change the label settings
+         * @description Switching to `STRICT` does not touch stored labels; check `label-violations` first.
+         */
+        put: operations["saveLabelSettings"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -477,7 +566,7 @@ export interface components {
         IBuild: {
             /**
              * Format: int64
-             * @description Build id, assigned by Build Bro. Ignored when registering a build; used to reference builds in deployments.
+             * @description Build id, assigned by Build Bruh. Ignored when registering a build; used to reference builds in deployments.
              * @example 42
              */
             id?: number;
@@ -504,7 +593,7 @@ export interface components {
         IBuildLabel: {
             /**
              * Format: int64
-             * @description Label id, assigned by Build Bro
+             * @description Label id, assigned by Build Bruh
              * @example 7
              */
             readonly id?: number;
@@ -648,7 +737,7 @@ export interface components {
         IServer: {
             /**
              * Format: int64
-             * @description Server id, assigned by Build Bro
+             * @description Server id, assigned by Build Bruh
              * @example 1
              */
             id?: number;
@@ -762,6 +851,8 @@ export interface components {
             };
             /** @description Every label key used on any build */
             labelKeys?: string[];
+            /** @description All label definitions, ordered by key, for builds and deployments alike (see `appliesTo`). Keys may have a definition without being used yet, and used keys need not have one. */
+            labelDefinitions?: components["schemas"]["ILabelDefinition"][];
         };
         /** @description A named set of build templates, e.g. describing an environment. */
         IBuildSetTemplate: {
@@ -783,7 +874,7 @@ export interface components {
         IBuildTemplate: {
             /**
              * Format: int64
-             * @description Template id, assigned by Build Bro
+             * @description Template id, assigned by Build Bruh
              */
             readonly id?: number;
             /**
@@ -828,7 +919,7 @@ export interface components {
         IDeployment: {
             /**
              * Format: int64
-             * @description Deployment id, assigned by Build Bro
+             * @description Deployment id, assigned by Build Bruh
              * @example 5
              */
             readonly id?: number;
@@ -839,7 +930,7 @@ export interface components {
             serverName?: string;
             /**
              * Format: date-time
-             * @description When the deployment was recorded (UTC), set by Build Bro
+             * @description When the deployment was recorded (UTC), set by Build Bruh
              */
             readonly deployedAt?: string;
             /** @description Deployed builds. When recording a deployment only their `id` is used. */
@@ -851,7 +942,7 @@ export interface components {
         IDeploymentLabel: {
             /**
              * Format: int64
-             * @description Label id, assigned by Build Bro
+             * @description Label id, assigned by Build Bruh
              * @example 3
              */
             readonly id?: number;
@@ -932,6 +1023,116 @@ export interface components {
              */
             hasPrevious?: boolean;
         };
+        /** @description The definition of a label key: which entities it is meant for, what values it takes and how the UI shows it. Values are compared leniently: ignoring case, and for `BOOLEAN`, `INTEGER` and `URL` ignoring surrounding whitespace. */
+        ILabelDefinition: {
+            /**
+             * @description The label key this definition describes. Unique, ignoring case.
+             * @example qa
+             */
+            key?: string;
+            /**
+             * @description Optional display name for the UI
+             * @example QA result
+             */
+            displayName?: string;
+            /**
+             * @description Optional free text
+             * @example Outcome of the QA test suite
+             */
+            description?: string;
+            /**
+             * @description Entities the label is meant for. Empty means both; duplicates are ignored.
+             * @example [
+             *       "BUILD"
+             *     ]
+             */
+            appliesTo?: components["schemas"]["LabelTarget"][];
+            type?: components["schemas"]["LabelType"];
+            /**
+             * @description For `ENUM` only, and required there: the allowed values, in display order. Unique, ignoring case.
+             * @example [
+             *       "passed",
+             *       "pending",
+             *       "failed"
+             *     ]
+             */
+            allowedValues?: string[];
+            /**
+             * @description For `REGEX` only, and required there: a Java regular expression a value must match completely.
+             * @example [0-9a-f]{7,40}
+             */
+            pattern?: string;
+            style?: components["schemas"]["LabelStyle"];
+            /**
+             * @description Optional style per value, overriding `style`. Each value must be allowed by the definition; values are unique, ignoring case.
+             * @example {
+             *       "passed": "SUCCESS",
+             *       "pending": "WARNING",
+             *       "failed": "ERROR"
+             *     }
+             */
+            valueStyles?: {
+                [key: string]: components["schemas"]["LabelStyle"];
+            };
+        };
+        /** @description Result of saving a label definition. */
+        ILabelDefinitionChange: {
+            definition?: components["schemas"]["ILabelDefinition"];
+            /** @description Stored labels with this key that do not fit the (new) definition */
+            violations?: components["schemas"]["ILabelViolation"][];
+        };
+        /** @description Stored labels that do not fit their label definition: one entry per key and value for `INVALID_VALUE`, one per key for `WRONG_TARGET`. */
+        ILabelViolation: {
+            /**
+             * @description Label key
+             * @example qa
+             */
+            key?: string;
+            /**
+             * @description The offending value; empty for `WRONG_TARGET`
+             * @example pass
+             */
+            value?: string;
+            target?: components["schemas"]["LabelTarget"];
+            reason?: components["schemas"]["LabelViolationReason"];
+            /**
+             * Format: int64
+             * @description Number of builds or deployments carrying this label
+             * @example 3
+             */
+            count?: number;
+        };
+        /**
+         * @description Why a label does not fit: `INVALID_VALUE` (the value is not allowed by the definition) or `WRONG_TARGET` (the label sits on an entity its definition does not apply to).
+         * @enum {string}
+         */
+        LabelViolationReason: "INVALID_VALUE" | "WRONG_TARGET";
+        /** @description Instance-wide label settings. */
+        ILabelSettings: {
+            labelValidation?: components["schemas"]["LabelValidation"];
+        };
+        /**
+         * @description `OFF`: label definitions are only used for display and the conformance report. `STRICT`: a label whose key has a definition is rejected (400) when its value does not fit or the definition does not apply to the entity. Labels without a definition are always accepted. Accepted in any case on input.
+         * @default OFF
+         * @enum {string}
+         */
+        LabelValidation: "OFF" | "STRICT";
+        /**
+         * @description An entity that carries labels. Accepted in any case on input.
+         * @enum {string}
+         */
+        LabelTarget: "BUILD" | "DEPLOYMENT";
+        /**
+         * @description Type of a label's values. `STRING` takes anything, `BOOLEAN` `true`/`false`, `INTEGER` a whole number, `URL` an absolute http(s) URL, `ENUM` one of `allowedValues`, `REGEX` a value matching `pattern`. Accepted in any case on input.
+         * @default STRING
+         * @enum {string}
+         */
+        LabelType: "STRING" | "BOOLEAN" | "INTEGER" | "URL" | "ENUM" | "REGEX";
+        /**
+         * @description Semantic display style of a label; the UI maps it to its theme. No style means neutral. Accepted in any case on input.
+         * @enum {string}
+         */
+        LabelStyle: "INFO" | "SUCCESS" | "WARNING" | "ERROR";
         /** @description Error response body. */
         IExceptionInfo: {
             /**
@@ -1008,6 +1209,11 @@ export interface components {
          * @example staging
          */
         BuildSetName: string;
+        /**
+         * @description Label key, compared ignoring case
+         * @example qa
+         */
+        LabelKey: string;
     };
     requestBodies: never;
     headers: never;
@@ -1104,6 +1310,7 @@ export interface operations {
                     "application/json": components["schemas"]["IBuild"];
                 };
             };
+            400: components["responses"]["InvalidRequest"];
             404: components["responses"]["NotFound"];
         };
     };
@@ -1612,6 +1819,7 @@ export interface operations {
                     "application/json": components["schemas"]["IDeployment"];
                 };
             };
+            400: components["responses"]["InvalidRequest"];
         };
     };
     currentDeployment: {
@@ -1678,6 +1886,7 @@ export interface operations {
                     "application/json": components["schemas"]["IDeployment"];
                 };
             };
+            400: components["responses"]["InvalidRequest"];
             404: components["responses"]["NotFound"];
         };
     };
@@ -1701,6 +1910,175 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["IDeploymentSearchResult"];
+                };
+            };
+        };
+    };
+    listLabelDefinitions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ILabelDefinition"][];
+                };
+            };
+        };
+    };
+    getLabelDefinition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Label key, compared ignoring case
+                 * @example qa
+                 */
+                key: components["parameters"]["LabelKey"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ILabelDefinition"];
+                };
+            };
+            404: components["responses"]["NotFound"];
+        };
+    };
+    saveLabelDefinition: {
+        parameters: {
+            query?: {
+                /** @description Only validate and report; do not save */
+                dryRun?: boolean;
+            };
+            header?: never;
+            path: {
+                /**
+                 * @description Label key, compared ignoring case
+                 * @example qa
+                 */
+                key: components["parameters"]["LabelKey"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ILabelDefinition"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ILabelDefinitionChange"];
+                };
+            };
+            400: components["responses"]["InvalidRequest"];
+        };
+    };
+    deleteLabelDefinition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /**
+                 * @description Label key, compared ignoring case
+                 * @example qa
+                 */
+                key: components["parameters"]["LabelKey"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    listLabelViolations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK, ordered by key, target and value */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ILabelViolation"][];
+                };
+            };
+        };
+    };
+    getLabelSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ILabelSettings"];
+                };
+            };
+        };
+    };
+    saveLabelSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ILabelSettings"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ILabelSettings"];
                 };
             };
         };
