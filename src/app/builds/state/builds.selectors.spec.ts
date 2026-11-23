@@ -24,7 +24,8 @@ describe('builds selectors', () => {
     expect(searchData.projector({includeInactiveProjects: false, projects: someProjects()})).toEqual({
       projectNames: ['backend', 'frontend'],
       projectBranches: {backend: ['main', 'next'], frontend: ['main']},
-      labelKeys: []
+      labelKeys: [],
+      labelDefinitions: []
     })
   })
 })

@@ -10,7 +10,8 @@ describe('BuildSearchForm', () => {
   const available: ISearchData = {
     projectNames: ['backend', 'frontend'],
     projectBranches: {backend: ['main', 'next'], frontend: ['main']},
-    labelKeys: []
+    labelKeys: [],
+    labelDefinitions: []
   }
   let fixture: ComponentFixture<BuildSearchForm>
   let updates: IBuildSearchParams[]

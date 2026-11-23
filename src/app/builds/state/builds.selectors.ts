@@ -38,7 +38,8 @@ export const searchData = createSelector(
     })
     const projectNames = theProjects.map(p => p.name)
     const labelKeys: string[] = []
-    return {projectNames, projectBranches, labelKeys}
+    const labelDefinitions: ISearchData['labelDefinitions'] = []
+    return {projectNames, projectBranches, labelKeys, labelDefinitions}
   }
 )
 
