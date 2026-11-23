@@ -18,7 +18,7 @@ describe('Home Page', () => {
   })
 
   it('Shows the three newest deployments', () => {
-    cy.get('@deployments').its('request.body').should('deep.include', {page: 0, pageSize: 3, sortDirection: 'desc'})
+    cy.get('@deployments').its('request.body').should('deep.include', {page: 0, pageSize: 3, sortDirection: 'DESC'})
     cy.get('[data-cy-id^=home-deployment-]').should('have.length', 3)
     cy.get('[data-cy-id=home-deployment-1]').should('contain.text', 'testserver · Tester').and('contain.text', 'backend #10')
     cy.get('[data-cy-id=home-all-deployments]').click()

@@ -9,7 +9,7 @@ import * as HomeActions from './home.actions'
 
 /** The newest deployments of all servers, as many as the home page shows. */
 export const RECENT_DEPLOYMENTS_SEARCH: IDeploymentSearch = {
-  serverName: '', page: 0, pageSize: 3, sortAttribute: 'deployedAt', sortDirection: 'desc'
+  serverName: '', page: 0, pageSize: 3, sortAttribute: 'deployedAt', sortDirection: 'DESC'
 }
 
 @Injectable()

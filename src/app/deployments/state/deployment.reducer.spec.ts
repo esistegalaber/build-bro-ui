@@ -1,7 +1,7 @@
 import {deploymentsReducer, DeploymentsState, INITIAL_DEPLOYMENTS_STATE} from './deployment.reducer'
 import {theDeploymentSearch, theDeploymentSearchPaginationParams, theDeployments} from './deployment.selectors'
 import * as DeploymentActions from './deployment.actions'
-import {IDeploymentSearchResult} from '../../core'
+import {IDeploymentSearch, IDeploymentSearchResult} from '../../core'
 
 describe('deploymentsReducer', () => {
   const onPage = (page: number): DeploymentsState =>
@@ -9,7 +9,7 @@ describe('deploymentsReducer', () => {
 
   it('starts with the newest deployments of all servers, 10 per page', () => {
     expect(deploymentsReducer(undefined, {type: '@@init'}).search).toEqual({
-      serverName: '', pageSize: 10, page: 0, sortAttribute: 'deployedAt', sortDirection: 'desc'
+      serverName: '', pageSize: 10, page: 0, sortAttribute: 'deployedAt', sortDirection: 'DESC'
     })
   })
 
@@ -29,7 +29,7 @@ describe('deploymentsReducer', () => {
 
   it('keeps the page for other changes', () => {
     const state = onPage(1)
-    const search = {...state.search, sortDirection: 'asc'}
+    const search: IDeploymentSearch = {...state.search, sortDirection: 'ASC'}
     expect(deploymentsReducer(state, DeploymentActions.updateDeploymentsSearch({search})).search.page).toBe(1)
   })
 

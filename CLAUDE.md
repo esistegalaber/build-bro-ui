@@ -20,6 +20,8 @@ npm run cypress:run:live   # same specs against the real API on :8080 (needs tes
 npm run cypress:open       # interactive Cypress
 npx cypress run --spec cypress/e2e/builds-page.cy.ts   # single e2e spec
 npm run cypress:snapshot-api   # regenerate cypress/fixtures/api-db.json from a running API
+npm run api:update     # fetch the API contract from build-bro-api (main) and regenerate the API types
+npm run api:check      # fail if the contract copy or the generated types are out of date (runs in CI)
 ```
 
 No linter is configured (there is no `ng lint` target and no ESLint). There are no Cypress component specs, even though `cypress.config.ts` has a `component` section. Cypress (16) is pinned to an exact version in `devDependencies` and needs Node 22, 24 or 26+. npm 12 (bundled with Node 26) blocks dependency install scripts unless `package.json` → `allowScripts` approves them. Cypress's binary download is approved there, pinned to its exact version, so **after bumping `cypress`, run `npm approve-scripts cypress`** to move the pin, or `npm ci` skips the download (then `npx cypress install` fetches it by hand; `npx cypress verify` shows whether the binary is there). The other blocked scripts (esbuild, lmdb, msgpackr-extract, @parcel/watcher, fsevents) aren't needed, since they ship prebuilt binaries. The `cypress:run*` scripts run in **Chrome** (`--browser chrome`; Cypress 16 deprecates Electron), so Chrome must be installed wherever the tests run. There are two kinds of tests:
@@ -60,7 +62,10 @@ CI runs on GitHub Actions (`.github/workflows/build.yml`, on pushes to `main` an
   - Button groups are `join` + `join-item`, and the selected menu entry is `menu-active`.
   - `form-control` and `label-text` no longer exist (use `flex flex-col` and `text-sm`).
   - Tailwind 4's `border` uses the current text color, so give borders a theme color such as `border-base-content/20`. Components use `OnPush` change detection (the default since Angular 22; the two components that never set a strategy were given `ChangeDetectionStrategy.Eager`, the pre-22 default).
-- Model interfaces in `core/state/model.ts` mirror the API DTOs (`IBuild`, `IBuildSearchResult`, …). Keep them in sync with `build-bro-api`'s `api.model` package.
+- **API types come from the API contract.** `api/build-bro-api.yaml` is a copy of build-bro-api's OpenAPI contract (`src/main/resources/openapi/build-bro-api.yaml`, the source of the API surface). `openapi-typescript` generates `src/app/core/api/build-bro-api.ts` from it; never edit either file by hand, run `npm run api:update` (`scripts/api-contract.mjs`; `API_CONTRACT_REF=<branch>` fetches from an unmerged API branch). `npm run api:check` runs in CI and fails when the copy differs from build-bro-api's `main` or the generated file is stale, so **merge an API contract change before the UI change that needs it**. `openapi-typescript` declares `typescript ^5.x` as peer; `package.json` → `overrides` points it at the project's TypeScript 6.
+  - `core/state/model.ts` turns the generated schemas into the app's model types under the existing names (`IBuild`, `IBuildSearchParams` = `IBuildSearch`, `IBuildStats` = `IBuildBroStats`, …) and defines the UI-only types. The contract marks hardly any property as required, so the generated types are mostly optional; until that is decided in the contract, `model.ts` keeps the UI's assumptions explicitly: `Present<…>` (every property there), `WithOptional` and `WithNull` (the fields the UI sends as `null`). A renamed, removed or retyped property in the contract therefore fails the type check.
+  - Enum values are the contract's, e.g. `sortDirection: 'ASC' | 'DESC'` (the API accepts any case, the types don't).
+  - `cypress/support/fake-api.ts` is typed with the same models.
 
 ## Deployment
 

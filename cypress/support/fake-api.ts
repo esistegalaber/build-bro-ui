@@ -9,17 +9,35 @@
 // Spec-level `cy.intercept(...).as(...)` calls without a handler still work: newer intercepts
 // run first and, when they don't reply, hand the request on to these stubs.
 
-type Json = any
+// Typed with the API models, which come from the build-bro-api contract (see src/app/core/state/model.ts), so a
+// stub that answers in a shape the contract doesn't allow fails to compile.
+import type {
+  IBranch,
+  IBuild,
+  IBuildSearchParams,
+  IBuildSet,
+  IBuildSetTemplate,
+  IBuildStats,
+  IBuildTemplate,
+  IDeployment,
+  IDeploymentSearch,
+  IProject,
+  ISearchData,
+  IServer
+} from '../../src/app/core/state/model'
 
 interface ApiDb {
-  stats: Json
-  searchData: Json
-  projects: Json[]
-  servers: Json[]
-  builds: Json[]
-  deployments: Json[]
-  buildSetTemplates: Json[]
+  stats: IBuildStats
+  searchData: ISearchData
+  projects: IProject[]
+  servers: IServer[]
+  builds: IBuild[]
+  deployments: IDeployment[]
+  buildSetTemplates: IBuildSetTemplate[]
 }
+
+/** The paging and sorting fields of a search request, as sent: any of them may be missing. */
+type PagedSearch = Partial<Pick<IBuildSearchParams, 'page' | 'pageSize' | 'sortAttribute'>> & { sortDirection?: string }
 
 const API = '/api/v1'
 
@@ -37,19 +55,19 @@ function notFound(message: string) {
   return {statusCode: 404, body: {key: 'not-found', description: 'No such data', message}}
 }
 
-function compare(a: Json, b: Json): number {
+function compare(a: unknown, b: unknown): number {
   if (a === b) {
     return 0
   }
-  return a < b ? -1 : 1
+  return (a as number | string) < (b as number | string) ? -1 : 1
 }
 
 /** Sorts by the requested attribute, ties by ascending id (what the real API does), then pages. */
-function searchResult(items: Json[], search: Json, defaultSort: string) {
+function searchResult<T extends { id: number }>(items: T[], search: PagedSearch, defaultSort: string) {
   const sortAttribute = search.sortAttribute || defaultSort
   const direction = String(search.sortDirection || 'DESC').toUpperCase() === 'ASC' ? 1 : -1
   const sorted = [...items].sort((a, b) =>
-    direction * compare(a[sortAttribute], b[sortAttribute]) || compare(a.id, b.id))
+    direction * compare(a[sortAttribute as keyof T], b[sortAttribute as keyof T]) || compare(a.id, b.id))
 
   const pageSize = Number(search.pageSize) || 10
   const page = Number(search.page) || 0
@@ -65,14 +83,19 @@ function searchResult(items: Json[], search: Json, defaultSort: string) {
   }
 }
 
-function hasLabels(build: Json, labels: { [key: string]: string }): boolean {
+function hasLabels(build: IBuild, labels: { [key: string]: string } | undefined): boolean {
   return Object.keys(labels || {}).every((key) =>
-    build.labels.some((label: Json) => label.key === key && label.value === labels[key]))
+    build.labels.some((label) => label.key === key && label.value === labels![key]))
 }
 
-function searchBuilds(db: ApiDb, search: Json) {
-  const min = search.minBuildNumber === null || search.minBuildNumber === '' ? null : Number(search.minBuildNumber)
-  const max = search.maxBuildNumber === null || search.maxBuildNumber === '' ? null : Number(search.maxBuildNumber)
+/** A number from the request: the UI sends `null` for "no limit", typed input may arrive as text. */
+function numberOrNull(value: unknown): number | null {
+  return value === null || value === undefined || value === '' ? null : Number(value)
+}
+
+function searchBuilds(db: ApiDb, search: Partial<IBuildSearchParams>) {
+  const min = numberOrNull(search.minBuildNumber)
+  const max = numberOrNull(search.maxBuildNumber)
   const matching = db.builds.filter((build) =>
     (!search.project || build.project === search.project)
     && (!search.branch || build.branch === search.branch)
@@ -83,8 +106,8 @@ function searchBuilds(db: ApiDb, search: Json) {
 }
 
 /** The build a build template resolves to: the highest matching build number. */
-function resolveBuildTemplates(db: ApiDb, name: string, buildTemplates: Json[]) {
-  const builds: { [project: string]: Json } = {}
+function resolveBuildTemplates(db: ApiDb, name: string, buildTemplates: IBuildTemplate[]): IBuildSet {
+  const builds: { [project: string]: IBuild } = {}
   buildTemplates.forEach((template) => {
     const candidates = db.builds.filter((build) =>
       build.project === template.project
@@ -98,21 +121,21 @@ function resolveBuildTemplates(db: ApiDb, name: string, buildTemplates: Json[]) 
   return {name, builds}
 }
 
-function findTemplate(db: ApiDb, name: string): Json | undefined {
+function findTemplate(db: ApiDb, name: string): IBuildSetTemplate | undefined {
   return db.buildSetTemplates.find((template) => template.name === name)
 }
 
-function nextId(items: Json[]): number {
+function nextId(items: { id?: number | null }[]): number {
   return items.reduce((max, item) => Math.max(max, item.id || 0), 0) + 1
 }
 
-function saveTemplate(db: ApiDb, template: Json): Json {
+function saveTemplate(db: ApiDb, template: IBuildSetTemplate): IBuildSetTemplate {
   const existing = findTemplate(db, template.name)
-  let templateIds = nextId(db.buildSetTemplates.reduce((all: Json[], t: Json) => all.concat(t.buildTemplates), []))
-  const saved = {
+  let templateIds = nextId(db.buildSetTemplates.flatMap((t) => t.buildTemplates))
+  const saved: IBuildSetTemplate = {
     id: existing ? existing.id : nextId(db.buildSetTemplates),
     name: template.name,
-    buildTemplates: (template.buildTemplates || []).map((buildTemplate: Json) => ({
+    buildTemplates: (template.buildTemplates || []).map((buildTemplate) => ({
       id: templateIds++,
       project: buildTemplate.project,
       branch: buildTemplate.branch,
@@ -124,9 +147,9 @@ function saveTemplate(db: ApiDb, template: Json): Json {
   return saved
 }
 
-function setBranchActive(db: ApiDb, branchId: number, active: boolean): Json | undefined {
+function setBranchActive(db: ApiDb, branchId: number, active: boolean): IBranch | undefined {
   for (const project of db.projects) {
-    const branch = project.branches.find((b: Json) => b.id === branchId)
+    const branch = project.branches.find((b) => b.id === branchId)
     if (branch) {
       branch.active = active
       return branch
@@ -135,7 +158,7 @@ function setBranchActive(db: ApiDb, branchId: number, active: boolean): Json | u
   return undefined
 }
 
-function setProjectActive(db: ApiDb, projectId: number, active: boolean): Json | undefined {
+function setProjectActive(db: ApiDb, projectId: number, active: boolean): IProject | undefined {
   const project = db.projects.find((p) => p.id === projectId)
   if (project) {
     project.active = active
@@ -163,7 +186,7 @@ export function installFakeApi(): void {
 
     // deployments
     cy.intercept({method: 'POST', url: path('/deployments/search')}, (req) => {
-      const search = req.body
+      const search: Partial<IDeploymentSearch> = req.body
       const matching = db.deployments.filter((deployment) => !search.serverName || deployment.serverName === search.serverName)
       req.reply(searchResult(matching, search, 'deployedAt'))
     })
@@ -171,7 +194,7 @@ export function installFakeApi(): void {
     // servers
     cy.intercept({method: 'GET', url: path('/servers')}, (req) => req.reply(db.servers))
     cy.intercept({method: 'POST', url: path('/servers')}, (req) => {
-      const server = req.body
+      const server: IServer = req.body
       const index = db.servers.findIndex((s) => s.id === server.id)
       if (index < 0) {
         req.reply(notFound(`No Server found with id=${server.id}`))

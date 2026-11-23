@@ -15,7 +15,7 @@ export const INITIAL_DEPLOYMENTS_STATE: DeploymentsState = {
     pageSize: 10,
     page: 0,
     sortAttribute: 'deployedAt',
-    sortDirection: 'desc'
+    sortDirection: 'DESC'
   },
   result: {} as IDeploymentSearchResult
 }

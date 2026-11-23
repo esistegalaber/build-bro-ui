@@ -52,7 +52,7 @@ describe('HomeEffects', () => {
     actions$.next(HomeActions.loadHome())
     const req = http.expectOne({method: 'POST', url: '/api/v1/deployments/search'})
     expect(req.request.body).toEqual(RECENT_DEPLOYMENTS_SEARCH)
-    expect(RECENT_DEPLOYMENTS_SEARCH).toMatchObject({serverName: '', page: 0, pageSize: 3, sortAttribute: 'deployedAt', sortDirection: 'desc'})
+    expect(RECENT_DEPLOYMENTS_SEARCH).toMatchObject({serverName: '', page: 0, pageSize: 3, sortAttribute: 'deployedAt', sortDirection: 'DESC'})
     req.flush({page: 0, totalElements: 11, totalPages: 4, hasNext: true, hasPrevious: false, data: [deployment(1)]})
     expect(emitted).toEqual([HomeActions.recentDeploymentsLoaded({deployments: [deployment(1)]})])
   })
