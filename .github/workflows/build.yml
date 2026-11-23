@@ -1,4 +1,4 @@
-name: Build Build Bruh UI
+name: Build UI
 
 on:
   push:
