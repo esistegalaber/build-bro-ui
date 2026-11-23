@@ -1,3 +1,5 @@
 export * from './state/model'
 export * from './state/selectors'
 export * from './state/projects/project.selectors'
+export * from './state/labels/label.selectors'
+export * from './labels/label-view'

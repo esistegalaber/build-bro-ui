@@ -2,7 +2,7 @@ import {afterNextRender, ChangeDetectionStrategy, Component, ElementRef, inject,
 import {select, Store} from "@ngrx/store";
 import {AsyncPipe} from "@angular/common";
 import {RouterLink} from "@angular/router";
-import {Buildz, IBuildSet} from "../core";
+import {Buildz, IBuildSet, theLabelDefinitions} from "../core";
 import {theBuildSet, theBuildSetSummaries, theSelectedBuildSetName, theSelectedSummary} from "./state/build-sets.selectors";
 import {deleteBuildSetTemplate, loadBuildSetOf} from "./state/build-sets.actions";
 import {BuildSetList} from "../ui/build-sets/build-set.list";
@@ -27,6 +27,7 @@ import {EmptyState} from '../ui/empty-state'
         <div class="min-w-0 grow-[999] basis-[480px]">
           @if (selected) {
             <bb-build-set-card [buildSet]="(theBuildSet$ | async)!" [summary]="(selectedSummary$ | async)"
+                               [labelDefinitions]="(labelDefinitions$ | async) ?? []"
                                (deleteBuildSet)="askToDelete($event)"></bb-build-set-card>
           } @else {
             <bb-empty-state icon="touch_app" framed data-cy-id="build-set-none">
@@ -63,6 +64,7 @@ export class BuildSetsPage {
   theBuildSet$ = this.store.pipe(select(theBuildSet))
   selectedName$ = this.store.pipe(select(theSelectedBuildSetName))
   selectedSummary$ = this.store.pipe(select(theSelectedSummary))
+  labelDefinitions$ = this.store.pipe(select(theLabelDefinitions))
 
   /** The build set waiting for the delete confirmation, or null when the dialog is closed. */
   readonly toDelete = signal<IBuildSet | null>(null)

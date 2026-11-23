@@ -27,7 +27,7 @@ type WithNull<T, K extends keyof T> = Omit<T, K> & { [P in K]: T[P] | null }
 
 export type SortDirection = Schemas['SortDirection']
 
-export type ISearchData = Present<Schemas['ISearchData']>
+export type ISearchData = Omit<Present<Schemas['ISearchData']>, 'labelDefinitions'> & { labelDefinitions: ILabelDefinition[] }
 export type IBuildLabel = Present<Schemas['IBuildLabel']>
 export type IBuild = Present<Schemas['IBuild']>
 export type IBuildSearchParams = WithNull<Present<Schemas['IBuildSearch']>, 'minBuildNumber' | 'maxBuildNumber'>
@@ -46,6 +46,11 @@ export type IDeployment = Present<Schemas['IDeployment']>
 export type IDeploymentLabel = Present<Schemas['IDeploymentLabel']>
 export type IDeploymentSearch = Present<Schemas['IDeploymentSearch']>
 export type IDeploymentSearchResult = Present<Schemas['IDeploymentSearchResult']>
+/** The optional parts of a definition may be missing, and the API sends them as `null`. */
+type LabelDefinitionOptionals = 'displayName' | 'description' | 'pattern' | 'style'
+export type ILabelDefinition = WithOptional<WithNull<Present<Schemas['ILabelDefinition']>, LabelDefinitionOptionals>, LabelDefinitionOptionals>
+export type LabelType = Schemas['LabelType']
+export type LabelStyle = Schemas['LabelStyle']
 
 /** Paging fields of every search result. */
 export type IBaseSearchResult = Omit<IBuildSearchResult, 'data'>
@@ -60,6 +65,7 @@ export type IDeployBuild = Omit<IBuild, 'labels'>
 export interface Buildz {
   projects: ProjectsState
   servers: ServersState
+  labels: LabelsState
   stats: IBuildStats
   nav: INavState
 }
@@ -137,6 +143,11 @@ export interface IAlertMessage {
  */
 export interface ServersState {
   servers: IServer[]
+}
+
+/** The label definitions (build-bro-api#7), for showing labels by their type and style. */
+export interface LabelsState {
+  definitions: ILabelDefinition[]
 }
 
 // Interfaces related to Reservation(s)

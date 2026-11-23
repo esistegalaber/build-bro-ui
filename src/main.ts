@@ -16,6 +16,8 @@ import {provideHttpClient, withXhr} from "@angular/common/http";
 import {provideStoreDevtools} from "@ngrx/store-devtools";
 import {serversReducer} from "./app/core/state/servers/server.reducer";
 import {ServerEffects} from "./app/core/state/servers/server.effects";
+import {labelsReducer} from "./app/core/state/labels/label.reducer";
+import {LabelEffects} from "./app/core/state/labels/label.effects";
 
 if (environment.production) {
   enableProdMode();
@@ -28,9 +30,10 @@ bootstrapApplication(AppComponent, {
       'stats': statsReducer,
       'nav': navReducer,
       'projects': projectsReducer,
-      'servers': serversReducer
+      'servers': serversReducer,
+      'labels': labelsReducer
     }),
-    provideEffects(StatsEffects, ProjectEffects, ServerEffects),
+    provideEffects(StatsEffects, ProjectEffects, ServerEffects, LabelEffects),
     provideStoreDevtools({maxAge: 25, logOnly: environment.production}),
     provideRouter(appRoutes),
     provideHttpClient(withXhr())

@@ -4,6 +4,7 @@ import {TYPING_PAUSE_MS} from '../../ui/forms/store-draft'
 import {INITIAL_BUILD_SEARCH} from '../state/builds.reducer'
 import {IBuildSearchParams, ISearchData} from '../../core'
 import {deepFreeze} from '../../../testing/freeze'
+import {someLabelDefinitions} from '../../../testing/data'
 
 
 describe('BuildSearchForm', () => {
@@ -11,7 +12,7 @@ describe('BuildSearchForm', () => {
     projectNames: ['backend', 'frontend'],
     projectBranches: {backend: ['main', 'next'], frontend: ['main']},
     labelKeys: [],
-    labelDefinitions: []
+    labelDefinitions: someLabelDefinitions()
   }
   let fixture: ComponentFixture<BuildSearchForm>
   let updates: IBuildSearchParams[]
@@ -108,9 +109,10 @@ describe('BuildSearchForm', () => {
     expect(byCy<HTMLInputElement>('label-value-input').value).toBe('')
   })
 
-  it('shows the label filters as chips and removes one', async () => {
+  it('shows the label filters as chips, by their definition, and removes one', async () => {
     await render({labels: {'integration-test': 'ok', 'smoke': 'ok'}})
-    expect(byCy('search-label').textContent).toContain('integration-test = ok')
+    expect(byCy('search-label').textContent).toContain('Integration test = ok')
+    expect(byCy('label-chip').classList).toContain('badge-success')
     byCy('search-label-remove').click()
     await fixture.whenStable()
     expect(updates.at(-1)?.labels).toEqual({'smoke': 'ok'})

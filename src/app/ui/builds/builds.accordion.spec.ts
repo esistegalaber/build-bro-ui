@@ -1,7 +1,8 @@
 import {TestBed} from '@angular/core/testing'
 import {BuildsAccordion} from './builds.accordion'
 import {summarizeBuild} from './build-summary.pipe'
-import {IBuild} from '../../core'
+import {IBuild, ILabelDefinition} from '../../core'
+import {someLabelDefinitions} from '../../../testing/data'
 
 function buildWith(id: number, labels: [string, string][]): IBuild {
   return {
@@ -22,9 +23,10 @@ describe('summarizeBuild', () => {
 })
 
 describe('BuildsAccordion', () => {
-  async function render(builds: IBuild[]) {
+  async function render(builds: IBuild[], labelDefinitions: ILabelDefinition[] = []) {
     const fixture = TestBed.createComponent(BuildsAccordion)
     fixture.componentRef.setInput('builds', builds)
+    fixture.componentRef.setInput('labelDefinitions', labelDefinitions)
     await fixture.whenStable()
     const el = fixture.nativeElement as HTMLElement
     return {el, rows: () => Array.from(el.querySelectorAll('[data-cy-id=build-row]')) as HTMLElement[]}
@@ -62,5 +64,18 @@ describe('BuildsAccordion', () => {
   it('labels the expand checkbox for screen readers', async () => {
     const {el} = await render([buildWith(10, [])])
     expect(el.querySelector('[data-cy-id=build-10]')?.getAttribute('aria-label')).toBe('Show the labels of backend main #10')
+  })
+
+  it('shows defined labels by display name, with their style and type', async () => {
+    const {rows} = await render([buildWith(10, [['integration-test', 'broken'], ['jenkins-build', 'http://j/1'], ['part-of-build-set', 'main']])],
+      someLabelDefinitions())
+    const terms = Array.from(rows()[0].querySelectorAll('dt'))
+    expect(terms.map((dt) => dt.textContent?.trim())).toEqual(['Build Bruh ID', 'part-of-build-set', 'Jenkins build', 'Integration test'])
+    expect(terms[3].getAttribute('title')).toBe('integration-test')
+    expect(terms[1].getAttribute('title')).toBeNull()
+    const chips = Array.from(rows()[0].querySelectorAll('dd [data-cy-id=label-chip]')) as HTMLElement[]
+    expect(chips[0].className).toBe('')
+    expect(chips[1].querySelector('[data-cy-id=label-link]')?.getAttribute('href')).toBe('http://j/1')
+    expect(chips[2].classList).toContain('badge-error')
   })
 })

@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {select, Store} from "@ngrx/store";
-import {Buildz, IBuildSearchParams} from "../core";
+import {Buildz, IBuildSearchParams, theLabelDefinitions} from "../core";
 import * as SearchActions from "./state/builds.actions";
 import {searchData, theBuilds, theBuildSearchPaginationParams, theBuildSearchParams} from "./state/builds.selectors";
 import {CommonModule} from "@angular/common";
@@ -32,7 +32,7 @@ import {EmptyState} from '../ui/empty-state'
           <span class="text-sm text-base-content/70">Sorted by build number, newest first</span>
         </div>
         @if (builds?.length) {
-          <bb-builds-accordion [builds]="builds"></bb-builds-accordion>
+          <bb-builds-accordion [builds]="builds" [labelDefinitions]="(labelDefinitions$ | async) ?? []"></bb-builds-accordion>
         } @else if (pagination.totalElements === 0) {
           <bb-empty-state icon="search_off" data-cy-id="builds-empty">
             <p>No builds match these filters.</p>
@@ -62,6 +62,7 @@ export class BuildsPage {
   theSearch$ = this.store.pipe(select(theBuildSearchParams))
   theBuilds$ = this.store.pipe(select(theBuilds))
   thePaginationParams$ = this.store.pipe(select(theBuildSearchPaginationParams))
+  labelDefinitions$ = this.store.pipe(select(theLabelDefinitions))
 
   updateSearch(search: IBuildSearchParams): void {
     this.store.dispatch(SearchActions.updateSearchParams({search}))

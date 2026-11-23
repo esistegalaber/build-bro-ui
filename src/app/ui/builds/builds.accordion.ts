@@ -1,7 +1,8 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core'
-import {IBuild} from '../../core'
+import {definitionOf, IBuild, ILabelDefinition} from '../../core'
 import {SortedLabelsPipe} from "../../core/pipes/sort-label.pipe";
 import {BuildSummaryPipe} from "./build-summary.pipe";
+import {LabelChip} from "../labels/label-chip";
 
 /**
  * A list of builds, one row each: project, branch, test status, short revision and build number.
@@ -39,18 +40,29 @@ import {BuildSummaryPipe} from "./build-summary.pipe";
             <dt class="pt-2 sm:pb-2 text-base-content/70">Build Bruh ID</dt>
             <dd class="pb-2 sm:pt-2 font-mono">{{ build.id }}</dd>
             @for (label of build.labels | sortedLabels; track label.id) {
-              <dt class="pt-2 sm:pb-2 border-t border-base-300 text-base-content/70">{{ label.key }}</dt>
-              <dd class="pb-2 sm:pt-2 sm:border-t border-base-300 font-mono break-all">{{ label.value }}</dd>
+              @let definition = definitionOf(label.key);
+              <dt class="pt-2 sm:pb-2 border-t border-base-300 text-base-content/70"
+                  [attr.title]="definition?.displayName ? label.key : null">{{ definition?.displayName || label.key }}</dt>
+              <dd class="pb-2 sm:pt-2 sm:border-t border-base-300 font-mono break-all">
+                <bb-label-chip mode="value" [labelKey]="label.key" [value]="label.value" [definition]="definition"></bb-label-chip>
+              </dd>
             }
           </dl>
         </div>
       </div>
     }
   `,
-  imports: [SortedLabelsPipe, BuildSummaryPipe],
+  imports: [SortedLabelsPipe, BuildSummaryPipe, LabelChip],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BuildsAccordion {
   @Input()
   builds: IBuild[] = []
+  /** Label definitions, to show labels by their type and style */
+  @Input()
+  labelDefinitions: ILabelDefinition[] = []
+
+  definitionOf(key: string): ILabelDefinition | undefined {
+    return definitionOf(key, this.labelDefinitions)
+  }
 }

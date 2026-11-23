@@ -5,6 +5,7 @@ import {BuildSetsPage} from './build-sets.page'
 import * as BuildSetActions from './state/build-sets.actions'
 import {theBuildSet, theBuildSetSummaries, theSelectedBuildSetName, theSelectedSummary} from './state/build-sets.selectors'
 import {build} from '../../testing/data'
+import {theLabelDefinitions} from '../core'
 
 describe('BuildSetsPage', () => {
   const summaries = [{name: 'main', projects: 2, pinned: 1}, {name: 'feature-test-stage-1', projects: 0, pinned: 0}]
@@ -17,6 +18,7 @@ describe('BuildSetsPage', () => {
         provideMockStore({
           selectors: [
             {selector: theBuildSetSummaries, value: summaries},
+            {selector: theLabelDefinitions, value: []},
             {selector: theSelectedBuildSetName, value: selected},
             {selector: theSelectedSummary, value: summaries.find((s) => s.name === selected) ?? null},
             {selector: theBuildSet, value: selected ? {name: selected, builds: {backend: build(9, 'backend', 'main', 9)}} : {name: '', builds: {}}}

@@ -28,11 +28,12 @@ describe('AppComponent', () => {
     return {fixture, dispatched, byCy}
   }
 
-  it('loads the stats, projects and servers on start', () => {
+  it('loads the stats, projects, servers and label definitions on start', () => {
     const {dispatched} = render()
     expect(dispatched).toHaveBeenCalledWith(loadBuildStats())
     expect(dispatched).toHaveBeenCalledWith(CoreActions.loadProjects())
     expect(dispatched).toHaveBeenCalledWith(CoreActions.loadServers())
+    expect(dispatched).toHaveBeenCalledWith(CoreActions.loadLabelDefinitions())
   })
 
   it('shows the side nav with the labels from the store', () => {

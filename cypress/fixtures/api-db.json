@@ -39,6 +39,53 @@
       "release.name",
       "release.version",
       "revision"
+    ],
+    "labelDefinitions": [
+      {
+        "key": "integration-test",
+        "displayName": "Integration test",
+        "description": "Outcome of the integration test suite",
+        "appliesTo": [
+          "BUILD"
+        ],
+        "type": "ENUM",
+        "allowedValues": [
+          "ok",
+          "broken"
+        ],
+        "pattern": null,
+        "style": null,
+        "valueStyles": {
+          "broken": "ERROR",
+          "ok": "SUCCESS"
+        }
+      },
+      {
+        "key": "jenkins-build",
+        "displayName": "Jenkins build",
+        "description": "The Jenkins job run that produced the build",
+        "appliesTo": [
+          "BUILD"
+        ],
+        "type": "URL",
+        "allowedValues": [],
+        "pattern": null,
+        "style": "INFO",
+        "valueStyles": {}
+      },
+      {
+        "key": "revision",
+        "displayName": "Revision",
+        "description": "Commit hash the build was made from",
+        "appliesTo": [
+          "BUILD"
+        ],
+        "type": "REGEX",
+        "allowedValues": [],
+        "pattern": "[0-9a-f]{64}",
+        "style": null,
+        "valueStyles": {}
+      }
     ]
   },
   "projects": [
@@ -2266,7 +2313,7 @@
     {
       "id": 1,
       "serverName": "testserver",
-      "deployedAt": "2026-11-19T08:42:34",
+      "deployedAt": "2026-11-22T19:42:48",
       "builds": [
         {
           "id": 70,
@@ -2369,7 +2416,7 @@
     {
       "id": 2,
       "serverName": "testserver",
-      "deployedAt": "2026-11-18T08:42:34",
+      "deployedAt": "2026-11-21T19:42:48",
       "builds": [
         {
           "id": 9,
@@ -2446,7 +2493,7 @@
     {
       "id": 3,
       "serverName": "testserver",
-      "deployedAt": "2026-11-17T08:42:34",
+      "deployedAt": "2026-11-20T19:42:48",
       "builds": [
         {
           "id": 8,
@@ -2523,7 +2570,7 @@
     {
       "id": 4,
       "serverName": "testserver",
-      "deployedAt": "2026-11-16T08:42:34",
+      "deployedAt": "2026-11-19T19:42:48",
       "builds": [
         {
           "id": 37,
@@ -2600,7 +2647,7 @@
     {
       "id": 5,
       "serverName": "staging",
-      "deployedAt": "2026-11-15T08:42:34",
+      "deployedAt": "2026-11-18T19:42:48",
       "builds": [
         {
           "id": 36,
@@ -2677,7 +2724,7 @@
     {
       "id": 6,
       "serverName": "testserver",
-      "deployedAt": "2026-11-14T08:42:34",
+      "deployedAt": "2026-11-17T19:42:48",
       "builds": [
         {
           "id": 90,
@@ -2754,7 +2801,7 @@
     {
       "id": 7,
       "serverName": "testserver",
-      "deployedAt": "2026-11-13T08:42:34",
+      "deployedAt": "2026-11-16T19:42:48",
       "builds": [
         {
           "id": 80,
@@ -2831,7 +2878,7 @@
     {
       "id": 8,
       "serverName": "testserver",
-      "deployedAt": "2026-11-12T08:42:34",
+      "deployedAt": "2026-11-15T19:42:48",
       "builds": [
         {
           "id": 81,
@@ -2908,7 +2955,7 @@
     {
       "id": 9,
       "serverName": "testserver",
-      "deployedAt": "2026-11-11T08:42:34",
+      "deployedAt": "2026-11-14T19:42:48",
       "builds": [
         {
           "id": 22,
@@ -2985,7 +3032,7 @@
     {
       "id": 10,
       "serverName": "testserver",
-      "deployedAt": "2026-11-10T08:42:34",
+      "deployedAt": "2026-11-13T19:42:48",
       "builds": [
         {
           "id": 23,
@@ -3062,7 +3109,7 @@
     {
       "id": 11,
       "serverName": "testserver",
-      "deployedAt": "2026-11-09T08:42:34",
+      "deployedAt": "2026-11-12T19:42:48",
       "builds": [
         {
           "id": 24,
@@ -3167,6 +3214,53 @@
       "id": 3,
       "name": "Environment of StageServer",
       "buildTemplates": []
+    }
+  ],
+  "labelDefinitions": [
+    {
+      "key": "integration-test",
+      "displayName": "Integration test",
+      "description": "Outcome of the integration test suite",
+      "appliesTo": [
+        "BUILD"
+      ],
+      "type": "ENUM",
+      "allowedValues": [
+        "ok",
+        "broken"
+      ],
+      "pattern": null,
+      "style": null,
+      "valueStyles": {
+        "broken": "ERROR",
+        "ok": "SUCCESS"
+      }
+    },
+    {
+      "key": "jenkins-build",
+      "displayName": "Jenkins build",
+      "description": "The Jenkins job run that produced the build",
+      "appliesTo": [
+        "BUILD"
+      ],
+      "type": "URL",
+      "allowedValues": [],
+      "pattern": null,
+      "style": "INFO",
+      "valueStyles": {}
+    },
+    {
+      "key": "revision",
+      "displayName": "Revision",
+      "description": "Commit hash the build was made from",
+      "appliesTo": [
+        "BUILD"
+      ],
+      "type": "REGEX",
+      "allowedValues": [],
+      "pattern": "[0-9a-f]{64}",
+      "style": null,
+      "valueStyles": {}
     }
   ]
 }

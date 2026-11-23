@@ -21,6 +21,7 @@ import type {
   IBuildTemplate,
   IDeployment,
   IDeploymentSearch,
+  ILabelDefinition,
   IProject,
   ISearchData,
   IServer
@@ -34,6 +35,7 @@ interface ApiDb {
   builds: IBuild[]
   deployments: IDeployment[]
   buildSetTemplates: IBuildSetTemplate[]
+  labelDefinitions: ILabelDefinition[]
 }
 
 /** The paging and sorting fields of a search request, as sent: any of them may be missing. */
@@ -180,6 +182,7 @@ export function installFakeApi(): void {
 
     cy.intercept({method: 'GET', url: path('/stats')}, (req) => req.reply(db.stats))
     cy.intercept({method: 'GET', url: path('/search-data')}, (req) => req.reply(db.searchData))
+    cy.intercept({method: 'GET', url: path('/label-definitions')}, (req) => req.reply(db.labelDefinitions))
 
     // builds
     cy.intercept({method: 'POST', url: path('/builds/search')}, (req) => req.reply(searchBuilds(db, req.body)))
