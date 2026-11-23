@@ -1,3 +1,62 @@
+import type {components} from '../api/build-bro-api'
+
+// API models
+// ----------
+// The API DTOs come from the build-bro-api contract (api/build-bro-api.yaml), generated into
+// core/api/build-bro-api.ts by `npm run api:types`. Never define them by hand here.
+//
+// The contract marks hardly any property as required, so the generated types are mostly optional. Until that is
+// decided in the contract (see build-bro-ui#65), the UI keeps its earlier assumptions, stated below:
+// every property is present (`Present`), except the ones listed with `WithOptional`, and a few may be `null`
+// (`WithNull`), because the UI sends or keeps `null` there.
+
+type Schemas = components['schemas']
+
+/** Every property present (deeply), and not readonly: what the UI assumed of the API's responses so far. */
+type Present<T> = T extends (infer U)[]
+  ? Present<U>[]
+  : T extends object
+    ? { -readonly [K in keyof T]-?: Present<T[K]> }
+    : T
+
+/** Properties that may be missing. */
+type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+
+/** Properties the UI sets to `null`, which the contract doesn't (yet) declare as nullable. */
+type WithNull<T, K extends keyof T> = Omit<T, K> & { [P in K]: T[P] | null }
+
+export type SortDirection = Schemas['SortDirection']
+
+export type ISearchData = Present<Schemas['ISearchData']>
+export type IBuildLabel = Present<Schemas['IBuildLabel']>
+export type IBuild = Present<Schemas['IBuild']>
+export type IBuildSearchParams = WithNull<Present<Schemas['IBuildSearch']>, 'minBuildNumber' | 'maxBuildNumber'>
+export type IBuildSearchResult = Present<Schemas['IBuildSearchResult']>
+export type IProject = Present<Schemas['IProject']>
+export type IBranch = Present<Schemas['IBranch']>
+export type IBuildStats = Present<Schemas['IBuildBroStats']>
+export type IBuildTemplate = WithOptional<WithNull<Present<Schemas['IBuildTemplate']>, 'branch' | 'buildNumber'>, 'id'>
+export type IBuildSetTemplate = WithOptional<
+  WithNull<Omit<Present<Schemas['IBuildSetTemplate']>, 'buildTemplates'> & { buildTemplates: IBuildTemplate[] }, 'id'>,
+  'id'>
+export type IBuildSet = Present<Schemas['IBuildSet']>
+/** `reservation` is UI-only: the API has no reservations (yet). */
+export type IServer = WithOptional<Present<Schemas['IServer']>, 'nickName' | 'description'> & { reservation?: IReservation }
+export type IDeployment = Present<Schemas['IDeployment']>
+export type IDeploymentLabel = Present<Schemas['IDeploymentLabel']>
+export type IDeploymentSearch = Present<Schemas['IDeploymentSearch']>
+export type IDeploymentSearchResult = Present<Schemas['IDeploymentSearchResult']>
+
+/** Paging fields of every search result. */
+export type IBaseSearchResult = Omit<IBuildSearchResult, 'data'>
+/** Paging and sorting fields of every search request. */
+export type IBaseSearchParams = Pick<IBuildSearchParams, 'pageSize' | 'page' | 'sortAttribute' | 'sortDirection'>
+/** A build as part of a deployment, without its labels. */
+export type IDeployBuild = Omit<IBuild, 'labels'>
+
+// UI state and view models
+// ------------------------
+
 export interface Buildz {
   projects: ProjectsState
   servers: ServersState
@@ -5,62 +64,10 @@ export interface Buildz {
   nav: INavState
 }
 
-// Base interfaces
-/**
- * An interface that includes all
- * information that every "Search Result"
- * object should have
- */
-export interface IBaseSearchResult {
-  page: number
-  totalElements: number
-  totalPages: number
-  hasNext: boolean
-  hasPrevious: boolean
-}
-
-/**
- * An interface that includes all
- * information that should be included
- * in every "Search Parameters" object
- */
-export interface IBaseSearchParams {
-  pageSize: number
-  page: number
-  sortAttribute: string
-  sortDirection: string
-}
-
-// Build related interfaces
 export interface IBuildsState {
   search: IBuildSearchParams
   result: IBuildSearchResult
   available: ISearchData
-}
-
-export interface ISearchData {
-  projectNames: string[];
-  projectBranches: { [key: string]: string[] }
-  labelKeys: string[];
-}
-
-export interface IBuildSearchParams extends IBaseSearchParams {
-  project: string
-  branch: string
-  minBuildNumber: number | null
-  maxBuildNumber: number | null
-  labels: { [key: string]: string }
-
-}
-
-export interface IBuildSearchResult extends IBaseSearchResult {
-  data: IBuild[]
-}
-
-export interface IBuildLabel {
-  id: number
-  key: string
-  value: string
 }
 
 export interface IPaginationParams {
@@ -70,14 +77,6 @@ export interface IPaginationParams {
   currentPage: number
   hasNext: boolean
   hasPrevious: boolean
-}
-
-export interface IBuild {
-  id: number
-  project: string
-  branch: string
-  buildNumber: number
-  labels: IBuildLabel[]
 }
 
 export interface IBuildDataTreeNode {
@@ -90,20 +89,6 @@ export interface IBuildDataTreeNode {
 export interface ProjectsState {
   includeInactiveProjects: boolean
   projects: IProject[]
-}
-
-export interface IProject {
-  id: number
-  name: string
-  active: boolean
-  branches: IBranch[]
-}
-
-export interface IBranch {
-  id: number
-  name: string
-  active: boolean
-  projectId: number
 }
 
 export interface IProjectBranch {
@@ -128,38 +113,11 @@ export interface ISelectedProjectAndBranch {
   branch: IBranch
 }
 
-export interface IBuildStats {
-  numberOfBuilds: number
-  numberOfLabels: number
-  numberOfDeploys: number
-  numberOfProjects: number
-  numberOfBranches: number
-}
-
 export interface IBuildSetState {
   names: string[]
   currentBuildSetName: string
   currentTemplate: IBuildSetTemplate
   buildSet: IBuildSet
-}
-
-export interface IBuildSetTemplate {
-  id?: number | null
-  name: string
-  buildTemplates: IBuildTemplate[]
-}
-
-export interface IBuildTemplate {
-  id?: number,
-  project: string
-  branch: string | null,
-  labels: { [key: string]: string }
-  buildNumber: number | null
-}
-
-export interface IBuildSet {
-  name: string
-  builds: { [key: string]: IBuild }
 }
 
 export interface IAlert {
@@ -181,17 +139,6 @@ export interface ServersState {
   servers: IServer[]
 }
 
-/**
- * A view interface that represents a specific Server
- */
-export interface IServer {
-  id: number
-  name: string
-  reservation?: IReservation
-  nickName?: string
-  description?: string
-}
-
 // Interfaces related to Reservation(s)
 /**
  * A view interface that represents a specific Server Reservation
@@ -200,7 +147,6 @@ export interface IReservation {
   by: string
   note: string
 }
-
 
 /**
  * An event interface that contains all data needed to reserve a server
@@ -213,46 +159,6 @@ export interface ICreateReservationEvent {
   }
 }
 
-// Interfaces related to Deploy(s)
-/**
- * A view interface that represents a specific Deploy
- */
-export interface IDeployment {
-  id: number
-  deployedAt: string
-  serverName: string
-  builds: IBuild[]
-  labels: IDeploymentLabel[]
-}
-
-export interface IDeploymentLabel {
-  id: number
-  key: string
-  value: string
-}
-
-/**
- * A view interface that represents a Build related to a Deploy
- */
-export interface IDeployBuild {
-  id: number
-  project: string
-  branch: string
-  buildNumber: number
-}
-
-export interface IDeploymentSearch extends IBaseSearchParams {
-  serverName: string
-}
-
-/**
- * A Search Result interface that encapsulates all info related
- * to the results of a Deploy search
- */
-export interface IDeploymentSearchResult extends IBaseSearchResult {
-  data: IDeployment[]
-}
-
 export interface INavState {
   sidenav: ISideNav
 }
@@ -260,7 +166,6 @@ export interface INavState {
 export interface ISideNav {
   text: boolean
 }
-
 
 /**
  * Defines the data needed to edit a BuildSetTemplate.

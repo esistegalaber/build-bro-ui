@@ -30,6 +30,10 @@ jobs:
       - name: Install
         run: npm ci --ignore-scripts
 
+      # The copy of the API contract must match build-bro-api's main, and the generated types must match the copy
+      - name: API contract up to date
+        run: npm run api:check
+
       # Vitest with coverage; writes coverage/build-bro-ui/lcov.info
       - name: Unit tests
         run: npm test -- --watch=false --coverage
