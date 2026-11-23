@@ -56,4 +56,10 @@ describe('buildReducer', () => {
     const state = {...onPage(2), search: {...onPage(2).search, project: 'backend', pageSize: 50, minBuildNumber: 5}}
     expect(buildReducer(state, BuildActions.resetSearchParams()).search).toEqual(INITIAL_BUILD_SEARCH.search)
   })
+
+  it('keeps the label keys of the search data', () => {
+    const available = {projectNames: [], projectBranches: {}, labelKeys: ['integration-test'], labelDefinitions: []}
+    expect(buildReducer(INITIAL_BUILD_SEARCH, BuildActions.availableBuildSearchDataLoaded({available})).labelKeys)
+      .toEqual(['integration-test'])
+  })
 })

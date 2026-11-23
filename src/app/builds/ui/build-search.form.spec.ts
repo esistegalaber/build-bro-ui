@@ -11,7 +11,7 @@ describe('BuildSearchForm', () => {
   const available: ISearchData = {
     projectNames: ['backend', 'frontend'],
     projectBranches: {backend: ['main', 'next'], frontend: ['main']},
-    labelKeys: [],
+    labelKeys: ['part-of-build-set', 'Revision', 'release.name'],
     labelDefinitions: someLabelDefinitions()
   }
   let fixture: ComponentFixture<BuildSearchForm>
@@ -98,13 +98,14 @@ describe('BuildSearchForm', () => {
     await render()
     const add = () => byCy<HTMLButtonElement>('label-add')
     expect(add().disabled).toBe(true)
-    await type('label-key-input', 'integration-test')
+    // a key without a definition takes any text
+    await type('label-key-input', 'release.name')
     expect(add().disabled).toBe(true)
-    await type('label-value-input', ' ok ')
+    await type('label-value-input', ' Analog-Amoeba ')
     expect(add().disabled).toBe(false)
     add().click()
     await fixture.whenStable()
-    expect(updates.at(-1)?.labels).toEqual({'integration-test': 'ok'})
+    expect(updates.at(-1)?.labels).toEqual({'release.name': 'Analog-Amoeba'})
     expect(byCy<HTMLInputElement>('label-key-input').value).toBe('')
     expect(byCy<HTMLInputElement>('label-value-input').value).toBe('')
   })
@@ -218,5 +219,46 @@ describe('BuildSearchForm', () => {
       await vi.advanceTimersByTimeAsync(TYPING_PAUSE_MS)
       expect(updates).toHaveLength(0)
     })
+  })
+
+  it('suggests the keys in use and the defined ones, once each', async () => {
+    await render()
+    const options = Array.from(byCy('label-key-suggestions').querySelectorAll('option')).map((o) => o.value)
+    expect(options).toEqual(['integration-test', 'jenkins-build', 'part-of-build-set', 'release.name', 'revision'])
+    expect(byCy('label-key-input').getAttribute('list')).toBe('bb-label-keys')
+  })
+
+  it('offers the values of an enum key to choose from, with a hint', async () => {
+    await render()
+    await type('label-key-input', 'Integration-Test')
+    const values = Array.from(byCy<HTMLSelectElement>('label-value-input').options).map((o) => o.value)
+    expect(values).toEqual(['', 'ok', 'broken'])
+    expect(byCy('label-value-hint').textContent).toBe('Integration test: one of ok, broken')
+    const select = byCy<HTMLSelectElement>('label-value-input')
+    select.value = 'broken'
+    select.dispatchEvent(new Event('input'))
+    select.dispatchEvent(new Event('change'))
+    await fixture.whenStable()
+    byCy<HTMLButtonElement>('label-add').click()
+    await fixture.whenStable()
+    expect(updates.at(-1)?.labels).toEqual({'Integration-Test': 'broken'})
+  })
+
+  it('marks a value that can\'t match a defined key, and doesn\'t add it', async () => {
+    await render()
+    await type('label-key-input', 'revision')
+    expect(byCy('label-value-hint').classList).not.toContain('text-error')
+    await type('label-value-input', 'abc')
+    expect(byCy('label-value-hint').textContent).toBe('Revision: a value matching [0-9a-f]{64}')
+    expect(byCy('label-value-hint').classList).toContain('text-error')
+    expect(byCy<HTMLButtonElement>('label-add').disabled).toBe(true)
+  })
+
+  it('takes any value for a key without a definition, without a hint', async () => {
+    await render()
+    await type('label-key-input', 'part-of-build-set')
+    await type('label-value-input', 'main')
+    expect(byCy('label-value-hint')).toBeNull()
+    expect(byCy<HTMLButtonElement>('label-add').disabled).toBe(false)
   })
 })

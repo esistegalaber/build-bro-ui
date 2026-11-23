@@ -7,6 +7,8 @@ export const FEATURE_BUILDS = 'builds'
 export interface BuildsState {
   search: IBuildSearchParams
   result: IBuildSearchResult
+  /** Every label key used on any build, from the API's search data, for suggestions */
+  labelKeys: string[]
 }
 
 export const INITIAL_BUILD_SEARCH: BuildsState = {
@@ -22,6 +24,7 @@ export const INITIAL_BUILD_SEARCH: BuildsState = {
     maxBuildNumber: null
   },
   result: {} as IBuildSearchResult,
+  labelKeys: []
 }
 
 
@@ -31,7 +34,7 @@ export const buildReducer = createReducer(
     return {...state, result}
   }),
   on(availableBuildSearchDataLoaded, (state: BuildsState, {available}) => {
-    return {...state, available}
+    return {...state, labelKeys: available.labelKeys}
   }),
   on(updateSearchParams, (state: BuildsState, {search}) => {
     let newSearch = {...search}

@@ -5,7 +5,7 @@ import {EditBuildSetPage} from './edit-build-set.page'
 import * as EditActions from './state/edit-build-sets.actions'
 import {theBuilds, theEditableBuildTemplates, theEditableTemplate, theTemplate} from './state/edit-build-sets.selectors'
 import {build, someProjects} from '../../testing/data'
-import {EditableBuildTemplate, IBuildSetTemplate} from '../core'
+import {EditableBuildTemplate, IBuildSetTemplate, theLabelDefinitions} from '../core'
 
 describe('EditBuildSetPage', () => {
   const [backend, frontend] = someProjects()
@@ -24,7 +24,8 @@ describe('EditBuildSetPage', () => {
             {selector: theTemplate, value: saved},
             {selector: theEditableTemplate, value: {name: saved.name, projects: [backend]}},
             {selector: theEditableBuildTemplates, value: editable},
-            {selector: theBuilds, value: [build(9, 'backend', 'main', 9)]}
+            {selector: theBuilds, value: [build(9, 'backend', 'main', 9)]},
+            {selector: theLabelDefinitions, value: []}
           ]
         })
       ]

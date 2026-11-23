@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, input, output} from '@angular/core'
 import {debounce, form, FormField, min} from '@angular/forms/signals'
-import {EditableBuildTemplate, IProject} from '../../core'
+import {EditableBuildTemplate, ILabelDefinition, IProject, labelProblems} from '../../core'
 import {storeDraft, TYPING_PAUSE_MS} from '../../ui/forms/store-draft'
 import {formatLabels, parseLabels} from '../state/utils'
 
@@ -50,6 +50,16 @@ interface RowFields {
         <input class="input input-sm w-36 grow sm:grow-0" type="text" placeholder="key=value" data-cy-id="template-labels"
                [attr.aria-label]="'Label filter of ' + row.project.name + ', as key=value, key=value'"
                [formField]="rowForm.labels">
+        @if (labelHints().length > 0) {
+          <!-- the API rejects such a template when label validation is strict, and no build could match it anyway -->
+          <ul class="basis-full text-xs text-base-content/80 sm:ps-12" role="status" data-cy-id="template-label-hints">
+            @for (hint of labelHints(); track hint) {
+              <li class="flex items-center gap-1">
+                <span class="material-icons text-[14px] text-warning" aria-hidden="true">warning</span>{{ hint }}
+              </li>
+            }
+          </ul>
+        }
       } @else {
         <span class="w-[25.5rem] max-w-full text-sm">Not included</span>
       }
@@ -60,9 +70,14 @@ interface RowFields {
 })
 export class BuildTemplateForm {
   readonly template = input.required<EditableBuildTemplate>()
+  /** Label definitions, to point out label filters that no build could match */
+  readonly labelDefinitions = input<ILabelDefinition[]>([])
   readonly templateUpdated = output<EditableBuildTemplate>()
   readonly projectAdded = output<IProject>()
   readonly projectRemoved = output<IProject>()
+
+  /** The label filters that don't fit their definition, e.g. "integration-test=passed: expected one of ok, broken" */
+  readonly labelHints = computed(() => labelProblems(this.template().labels, this.labelDefinitions(), 'BUILD'))
 
   private readonly fieldsFromStore = computed((): RowFields => {
     const row = this.template()

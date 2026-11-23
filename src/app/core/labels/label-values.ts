@@ -49,3 +49,36 @@ function matchesWhole(pattern: string, value: string): boolean {
     return false
   }
 }
+
+/** What a value of `definition` must look like, for hints (like the API's error messages). */
+export function expectedValue(definition: ILabelDefinition): string {
+  switch (definition.type) {
+    case 'BOOLEAN':
+      return 'true or false'
+    case 'INTEGER':
+      return 'a whole number'
+    case 'URL':
+      return 'an absolute http(s) URL'
+    case 'ENUM':
+      return `one of ${definition.allowedValues.join(', ')}`
+    case 'REGEX':
+      return `a value matching ${definition.pattern}`
+    default:
+      return 'any value'
+  }
+}
+
+/**
+ * The labels that don't fit their definition on `target`, as messages like the API's, e.g.
+ * "integration-test=passed: expected one of ok, broken". Labels without a definition always fit.
+ */
+export function labelProblems(labels: Record<string, string>, definitions: readonly ILabelDefinition[], target: LabelTarget): string[] {
+  return Object.entries(labels).flatMap(([key, value]) => {
+    const definition = definitions.find((d) => d.key.toLowerCase() === key.toLowerCase())
+    const violation = definition ? violationOf(definition, target, value) : null
+    if (!definition || !violation) return []
+    return violation === 'WRONG_TARGET'
+      ? [`${key}: not meant for ${target === 'BUILD' ? 'builds' : 'deployments'}`]
+      : [`${key}=${value}: expected ${expectedValue(definition)}`]
+  })
+}

@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, computed, input, output, signal} from '@angular/core'
 import {KeyValuePipe} from '@angular/common'
 import {debounce, form, FormField, FormRoot, min} from '@angular/forms/signals'
-import {definitionOf, IBuildSearchParams, ILabelDefinition, ISearchData} from '../../core'
+import {definitionOf, expectedValue, fitsDefinition, IBuildSearchParams, ILabelDefinition, ISearchData} from '../../core'
 import {LabelChip} from '../../ui/labels/label-chip'
 import {storeDraft, TYPING_PAUSE_MS} from '../../ui/forms/store-draft'
 
@@ -51,17 +51,37 @@ import {storeDraft, TYPING_PAUSE_MS} from '../../ui/forms/store-draft'
 
         <div class="flex flex-wrap items-end gap-3">
           <label class="flex grow basis-40 flex-col gap-1 text-xs font-semibold text-base-content/70">Label
-            <input class="input input-sm w-full" type="text" placeholder="key, e.g. integration-test"
-                   data-cy-id="label-key-input" [formField]="labelForm.key">
+            <input class="input input-sm w-full" type="text" placeholder="key, e.g. integration-test" list="bb-label-keys"
+                   autocomplete="off" data-cy-id="label-key-input" [formField]="labelForm.key">
+            <datalist id="bb-label-keys" data-cy-id="label-key-suggestions">
+              @for (key of keySuggestions(); track key) {
+                <option [value]="key"></option>
+              }
+            </datalist>
           </label>
+          @let typed = labelDefinition();
           <label class="flex grow basis-40 flex-col gap-1 text-xs font-semibold text-base-content/70">Value
-            <input class="input input-sm w-full" type="text" placeholder="value"
-                   data-cy-id="label-value-input" [formField]="labelForm.value">
+            <!-- a defined key: the value input follows its type -->
+            @if (typed?.type === 'ENUM' || typed?.type === 'BOOLEAN') {
+              <select class="select select-sm w-full" data-cy-id="label-value-input" [formField]="labelForm.value">
+                <option value="">Choose a value</option>
+                @for (value of choices(); track value) {
+                  <option [value]="value">{{ value }}</option>
+                }
+              </select>
+            } @else {
+              <input class="input input-sm w-full" type="text" placeholder="value" data-cy-id="label-value-input"
+                     [attr.inputmode]="typed?.type === 'INTEGER' ? 'numeric' : null" [formField]="labelForm.value">
+            }
           </label>
           <button type="button" class="btn btn-sm btn-soft btn-primary" [disabled]="!canAddLabel()" (click)="addSearchLabel()"
                   data-cy-id="label-add">
             <span class="material-icons text-[18px]" aria-hidden="true">add</span>Add label
           </button>
+          @if (valueHint(); as hint) {
+            <p class="basis-full text-xs" [class.text-error]="hint.wrong" [class.text-base-content/70]="!hint.wrong"
+               role="status" data-cy-id="label-value-hint">{{ hint.text }}</p>
+          }
           <div class="ms-auto flex gap-2">
             <button type="button" class="btn btn-sm btn-ghost" (click)="reset()" data-cy-id="search-reset">
               <span class="material-icons text-[18px]" aria-hidden="true">restart_alt</span>Reset
@@ -116,9 +136,33 @@ export class BuildSearchForm {
   })
 
   readonly labelForm = form(signal({key: '', value: ''}))
+  /** The definition of the key being typed, if it has one */
+  readonly labelDefinition = computed(() => definitionOf(this.labelForm().value().key.trim(), this.available().labelDefinitions))
+  /** The values to choose from for an enum or a boolean */
+  readonly choices = computed((): string[] => {
+    const definition = this.labelDefinition()
+    return definition?.type === 'ENUM' ? definition.allowedValues : ['true', 'false']
+  })
+  /** Known keys: those in use and those with a definition for builds, once each, ignoring case */
+  readonly keySuggestions = computed((): string[] => {
+    const keys = new Map<string, string>()
+    const defined = this.available().labelDefinitions.filter((d) => d.appliesTo.includes('BUILD')).map((d) => d.key)
+    for (const key of [...defined, ...this.available().labelKeys]) {
+      if (!keys.has(key.toLowerCase())) keys.set(key.toLowerCase(), key)
+    }
+    return [...keys.values()].sort((a, b) => a.localeCompare(b))
+  })
+  /** What a defined key's value must look like; marked wrong once a typed value can't match any build */
+  readonly valueHint = computed((): { text: string, wrong: boolean } | null => {
+    const definition = this.labelDefinition()
+    if (!definition || definition.type === 'STRING') return null
+    const value = this.labelForm().value().value.trim()
+    const wrong = value !== '' && !fitsDefinition(definition, value)
+    return {text: `${definition.displayName || definition.key}: ${expectedValue(definition)}`, wrong}
+  })
   readonly canAddLabel = computed(() => {
     const {key, value} = this.labelForm().value()
-    return key.trim().length > 0 && value.trim().length > 0
+    return key.trim().length > 0 && value.trim().length > 0 && !this.valueHint()?.wrong
   })
   readonly hasLabels = computed(() => Object.keys(this.model().labels ?? {}).length > 0)
 

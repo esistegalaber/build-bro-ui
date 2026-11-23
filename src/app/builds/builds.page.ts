@@ -78,5 +78,7 @@ export class BuildsPage {
 
   constructor() {
     this.store.dispatch(SearchActions.doBuildSearch())
+    // the label keys in use, for the label filter's suggestions
+    this.store.dispatch(SearchActions.loadAvailableBuildSearchData())
   }
 }

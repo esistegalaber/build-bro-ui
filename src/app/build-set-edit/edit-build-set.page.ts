@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {select, Store} from "@ngrx/store";
-import {allActiveProjects, Buildz, EditableBuildSetTemplate, EditableBuildTemplate, IProject} from "../core";
+import {allActiveProjects, Buildz, EditableBuildSetTemplate, EditableBuildTemplate, IProject, theLabelDefinitions} from "../core";
 import {CommonModule} from "@angular/common";
 import {theBuilds, theEditableBuildTemplates, theEditableTemplate, theTemplate} from "./state/edit-build-sets.selectors";
 import * as EditBuildSetActions from "./state/edit-build-sets.actions";
@@ -22,7 +22,7 @@ import {ResolvedBuildsPanel} from "./ui/resolved-builds.panel";
       ></bb-build-set-name-form>
       <div class="flex flex-wrap items-start gap-6">
         <bb-build-template-list class="block min-w-0 grow-[999] basis-[560px]"
-                                [templates]="templates"
+                                [templates]="templates" [labelDefinitions]="(labelDefinitions$ | async) ?? []"
                                 (projectAdded)="projectAdded($event)"
                                 (projectRemoved)="projectRemoved($event)"
                                 (templateUpdated)="buildTemplateUpdated($event)"></bb-build-template-list>
@@ -47,6 +47,7 @@ export class EditBuildSetPage {
   EditableBuildTemplates$ = this.store.pipe(select(theEditableBuildTemplates))
   projects$ = this.store.pipe(select(allActiveProjects))
   theBuilds$ = this.store.pipe(select(theBuilds))
+  labelDefinitions$ = this.store.pipe(select(theLabelDefinitions))
   visible = {
     projectSelector: false,
     branchSelector: false,

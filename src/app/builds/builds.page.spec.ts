@@ -34,9 +34,10 @@ describe('BuildsPage', () => {
     return {fixture, dispatched, byCy}
   }
 
-  it('searches when it opens', async () => {
+  it('searches when it opens, and loads the label keys for the filter', async () => {
     const {dispatched} = await render([], 0)
     expect(dispatched).toHaveBeenCalledWith(BuildActions.doBuildSearch())
+    expect(dispatched).toHaveBeenCalledWith(BuildActions.loadAvailableBuildSearchData())
   })
 
   it('shows the number of builds, the rows and the paginator', async () => {

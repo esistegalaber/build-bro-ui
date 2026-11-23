@@ -43,6 +43,17 @@ describe('Edit Build Set Page', () => {
     cy.get('[data-cy-id=resolved-backend]').should('contain.text', '#9')
   })
 
+  it('Points out a label filter that no build could match', () => {
+    cy.intercept({method: 'POST', url: '/api/v1/build-sets/verify'}).as('verify')
+    cy.visit('/edit-build-set/main')
+    cy.wait('@verify')
+    cy.get('[data-cy-id=build-template-backend] [data-cy-id=template-labels]').type('integration-test=passed').blur()
+    cy.get('[data-cy-id=build-template-backend] [data-cy-id=template-label-hints]')
+      .should('contain.text', 'integration-test=passed: expected one of ok, broken')
+    cy.get('[data-cy-id=build-template-backend] [data-cy-id=template-labels]').clear().type('integration-test=ok').blur()
+    cy.get('[data-cy-id=build-template-backend] [data-cy-id=template-label-hints]').should('not.exist')
+  })
+
   it('Prefills the clone form with a CLONE-OF name', () => {
     cy.intercept({method: 'GET', url: '/api/v1/build-sets/main'}).as('template')
     cy.visit('/edit-build-set/clone/main')
