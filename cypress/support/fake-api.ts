@@ -1,4 +1,4 @@
-// An in-memory fake of the Build Bro REST API, served through cy.intercept.
+// An in-memory fake of the Build Bruh REST API, served through cy.intercept.
 //
 // It is installed before every test (see ./e2e.ts) unless the tests run in live mode
 // (CYPRESS_LIVE=true). Its data comes from fixtures/api-db.json, a snapshot of the real API

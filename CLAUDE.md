@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Build Bro UI is an Angular 22 single-page app with NgRx 22, TypeScript 6, Tailwind CSS 4 and daisyUI 5, built with the esbuild-based `application` builder (`ng serve` runs on Vite). The Angular 22 CLI needs Node ^22.22.3, ^24.15 or >=26. Builds and tests are verified on Node 26. It is the frontend for the Build Bro REST API (the sibling repo `../build-bro-api`, Spring Boot on port 8080). It browses builds, build sets, projects, servers and deployments.
+Build Bruh UI is an Angular 22 single-page app with NgRx 22, TypeScript 6, Tailwind CSS 4 and daisyUI 5, built with the esbuild-based `application` builder (`ng serve` runs on Vite). The Angular 22 CLI needs Node ^22.22.3, ^24.15 or >=26. Builds and tests are verified on Node 26. It is the frontend for the Build Bruh REST API (the sibling repo `../build-bro-api`, Spring Boot on port 8080). It browses builds, build sets, projects, servers and deployments.
 
 ## Commands
 
