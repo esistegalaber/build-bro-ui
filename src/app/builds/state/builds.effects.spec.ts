@@ -54,4 +54,21 @@ describe('BuildsEffects', () => {
     expect(emitted).toEqual([BuildActions.buildSearchLoaded({result: newest})])
     http.verify()
   })
+
+  it('loads the search data', () => {
+    const {effects, actions$, http} = setUp()
+    const emitted = collect(effects.loadAvailable$)
+    const available = {projectNames: ['backend'], projectBranches: {backend: ['main']}, labelKeys: ['revision'], labelDefinitions: []}
+    actions$.next(BuildActions.loadAvailableBuildSearchData())
+    http.expectOne({method: 'GET', url: '/api/v1/search-data'}).flush(available)
+    expect(emitted).toEqual([BuildActions.availableBuildSearchDataLoaded({available})])
+  })
+
+  it('reports failed search data', () => {
+    const {effects, actions$, http} = setUp()
+    const emitted = collect(effects.loadAvailable$)
+    actions$.next(BuildActions.loadAvailableBuildSearchData())
+    http.expectOne('/api/v1/search-data').flush(API_ERROR, {status: 500, statusText: 'Server Error'})
+    expect(emitted.map((a) => a.type)).toEqual([backendErrorOccurred.type])
+  })
 })

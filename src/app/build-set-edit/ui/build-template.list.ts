@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, computed, input, output, signal} from "@angular/core";
-import {EditableBuildTemplate, IProject} from "../../core";
+import {EditableBuildTemplate, ILabelDefinition, IProject} from "../../core";
 import {BuildTemplateForm} from "./build-template.form";
 
 type Show = 'all' | 'included' | 'excluded'
@@ -37,7 +37,7 @@ type Show = 'all' | 'included' | 'excluded'
         <span class="w-36">Label filter</span>
       </div>
       @for (template of visibleTemplates(); track template.project.id) {
-        <bb-build-template-form [template]="template"
+        <bb-build-template-form [template]="template" [labelDefinitions]="labelDefinitions()"
                                 (projectAdded)="projectAdded.emit($event)"
                                 (projectRemoved)="projectRemoved.emit($event)"
                                 (templateUpdated)="templateUpdated.emit($event)"></bb-build-template-form>
@@ -51,6 +51,8 @@ type Show = 'all' | 'included' | 'excluded'
 })
 export class BuildTemplateList {
   readonly templates = input.required<EditableBuildTemplate[]>()
+  /** Label definitions, handed on to the rows */
+  readonly labelDefinitions = input<ILabelDefinition[]>([])
   readonly projectAdded = output<IProject>()
   readonly projectRemoved = output<IProject>()
   readonly templateUpdated = output<EditableBuildTemplate>()

@@ -1,7 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing'
 import {BuildTemplateForm} from './build-template.form'
 import {EditableBuildTemplate, IProject} from '../../core'
-import {someProjects} from '../../../testing/data'
+import {someLabelDefinitions, someProjects} from '../../../testing/data'
 import {deepFreeze} from '../../../testing/freeze'
 import {TYPING_PAUSE_MS} from '../../ui/forms/store-draft'
 
@@ -111,5 +111,14 @@ describe('BuildTemplateForm', () => {
     expect(byCy<HTMLSelectElement>('template-branch-select').value).toBe('next')
     expect(byCy<HTMLInputElement>('template-build-number').value).toBe('3')
     expect(updated).toHaveLength(0)
+  })
+
+  it('points out label filters that don\'t fit their definition', async () => {
+    await render({labels: {'integration-test': 'passed', 'part-of-build-set': 'main'}})
+    expect(byCy('template-label-hints')).toBeNull()
+    fixture.componentRef.setInput('labelDefinitions', someLabelDefinitions())
+    await fixture.whenStable()
+    expect(byCy('template-label-hints').textContent?.trim()).toContain('integration-test=passed: expected one of ok, broken')
+    expect(byCy('template-label-hints').querySelectorAll('li')).toHaveLength(1)
   })
 })

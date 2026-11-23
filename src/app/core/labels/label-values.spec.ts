@@ -1,4 +1,4 @@
-import {fitsDefinition, violationOf} from './label-values'
+import {expectedValue, fitsDefinition, labelProblems, violationOf} from './label-values'
 import {ILabelDefinition, LabelType} from '../state/model'
 
 const definition = (type: LabelType, extra: Partial<ILabelDefinition> = {}): ILabelDefinition =>
@@ -32,5 +32,31 @@ describe('violationOf', () => {
     expect(violationOf(qa, 'DEPLOYMENT', 'nope')).toBe('WRONG_TARGET')
     expect(violationOf(qa, 'BUILD', 'nope')).toBe('INVALID_VALUE')
     expect(violationOf(qa, 'BUILD', 'Passed')).toBeNull()
+  })
+})
+
+describe('expectedValue', () => {
+  it.each([
+    ['STRING', {}, 'any value'],
+    ['BOOLEAN', {}, 'true or false'],
+    ['INTEGER', {}, 'a whole number'],
+    ['URL', {}, 'an absolute http(s) URL'],
+    ['ENUM', {allowedValues: ['ok', 'broken']}, 'one of ok, broken'],
+    ['REGEX', {pattern: '\\d+'}, 'a value matching \\d+']
+  ] as [LabelType, Partial<ILabelDefinition>, string][])('%s: %s', (type, extra, expected) => {
+    expect(expectedValue(definition(type, extra))).toBe(expected)
+  })
+})
+
+describe('labelProblems', () => {
+  const definitions = [
+    definition('ENUM', {key: 'integration-test', allowedValues: ['ok', 'broken']}),
+    definition('BOOLEAN', {key: 'released', appliesTo: ['DEPLOYMENT']})
+  ]
+
+  it('names the labels that don\'t fit, like the API, ignoring keys without a definition', () => {
+    expect(labelProblems({'Integration-Test': 'passed', released: 'true', 'part-of-build-set': 'main'}, definitions, 'BUILD'))
+      .toEqual(['Integration-Test=passed: expected one of ok, broken', 'released: not meant for builds'])
+    expect(labelProblems({'integration-test': 'OK'}, definitions, 'BUILD')).toEqual([])
   })
 })

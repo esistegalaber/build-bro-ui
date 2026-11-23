@@ -5,7 +5,8 @@ import {build, someLabelDefinitions, someProjects} from '../../../testing/data'
 describe('builds selectors', () => {
   const state: BuildsState = {
     search: {...INITIAL_BUILD_SEARCH.search, page: 2, pageSize: 25},
-    result: {page: 2, totalElements: 90, totalPages: 4, hasNext: true, hasPrevious: true, data: [build(1, 'backend', 'main', 1)]}
+    result: {page: 2, totalElements: 90, totalPages: 4, hasNext: true, hasPrevious: true, data: [build(1, 'backend', 'main', 1)]},
+    labelKeys: ['integration-test', 'revision']
   }
 
   it('select the search, the result and its builds', () => {
@@ -20,11 +21,11 @@ describe('builds selectors', () => {
     })
   })
 
-  it('offer the active projects and their active branches as search choices', () => {
-    expect(searchData.projector({includeInactiveProjects: false, projects: someProjects()}, someLabelDefinitions())).toEqual({
+  it('offer the active projects and their active branches, the label keys and definitions as search choices', () => {
+    expect(searchData.projector({includeInactiveProjects: false, projects: someProjects()}, state, someLabelDefinitions())).toEqual({
       projectNames: ['backend', 'frontend'],
       projectBranches: {backend: ['main', 'next'], frontend: ['main']},
-      labelKeys: [],
+      labelKeys: ['integration-test', 'revision'],
       labelDefinitions: someLabelDefinitions()
     })
   })

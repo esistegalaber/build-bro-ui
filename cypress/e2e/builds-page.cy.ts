@@ -12,6 +12,16 @@ describe('Builds Page', () => {
     selectMainBranch()
   })
 
+  it('Suggests label keys and only takes values a build could have', () => {
+    loadBuildPage()
+    cy.get('[data-cy-id=label-key-suggestions] option').should('have.length.at.least', 4)
+      .then((options) => expect([...options].map((o) => (o as HTMLOptionElement).value)).to.include.members(['integration-test', 'release.name']))
+    cy.get('[data-cy-id=label-key-input]').type('revision')
+    cy.get('[data-cy-id=label-value-input]').type('abc')
+    cy.get('[data-cy-id=label-value-hint]').should('have.class', 'text-error').and('contain.text', 'a value matching')
+    cy.get('[data-cy-id=label-add]').should('be.disabled')
+  })
+
   it('Shows the labels of a build by their definitions', () => {
     loadBuildPage()
     cy.get('[data-cy-id=build-row]').first().find('input[type=checkbox]').check({force: true})
@@ -45,7 +55,9 @@ describe('Builds Page', () => {
     cy.intercept(buildsSearchRequest).as('label-search')
     cy.get('[data-cy-id=label-key-input]').type('integration-test')
     cy.get('[data-cy-id=label-add]').should('be.disabled')
-    cy.get('[data-cy-id=label-value-input]').type('ok')
+    // a defined enum key: its values to choose from, and what is expected
+    cy.get('[data-cy-id=label-value-hint]').should('have.text', 'Integration test: one of ok, broken')
+    cy.get('[data-cy-id=label-value-input]').select('ok')
     cy.get('[data-cy-id=label-add]').should('be.enabled').click()
     cy.wait('@label-search').its('request.body.labels').should('deep.equal', {'integration-test': 'ok'})
     // the chip shows the label by its definition: display name, and the value's style

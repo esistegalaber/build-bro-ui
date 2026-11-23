@@ -29,15 +29,17 @@ export const theBuildSearchPaginationParams = createSelector(buildsState,
   }
 )
 
+/** The choices of the build search: active projects and branches, the label keys in use and the label definitions. */
 export const searchData = createSelector(
-  theProjectsState, theLabelDefinitions, (state: Model.ProjectsState, labelDefinitions: Model.ILabelDefinition[]): ISearchData => {
+  theProjectsState, buildsState, theLabelDefinitions,
+  (state: Model.ProjectsState, builds: BuildsState, labelDefinitions: Model.ILabelDefinition[]): ISearchData => {
     const projectBranches: { [key: string]: string[] } = {}
     const theProjects = state.projects.filter(p => p.active)
     theProjects.forEach(project => {
       projectBranches[project.name] = project.branches.filter(b => b.active).map(b => b.name)
     })
     const projectNames = theProjects.map(p => p.name)
-    const labelKeys: string[] = []
+    const labelKeys = builds.labelKeys
     return {projectNames, projectBranches, labelKeys, labelDefinitions}
   }
 )
