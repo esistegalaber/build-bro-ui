@@ -6,6 +6,7 @@ describe('Navigation', () => {
     {nav: 'nav-servers', path: '/servers', request: null},
     {nav: 'nav-deployments', path: '/deployments', request: {method: 'POST', url: '/api/v1/deployments/search'}},
     {nav: 'nav-projects', path: '/projects', request: null},
+    {nav: 'nav-labels', path: '/labels', request: {method: 'GET', pathname: '/api/v1/label-violations'}},
   ]
 
   it('Switches the theme and keeps it after a reload', () => {

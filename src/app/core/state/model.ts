@@ -51,6 +51,12 @@ type LabelDefinitionOptionals = 'displayName' | 'description' | 'pattern' | 'sty
 export type ILabelDefinition = WithOptional<WithNull<Present<Schemas['ILabelDefinition']>, LabelDefinitionOptionals>, LabelDefinitionOptionals>
 export type LabelType = Schemas['LabelType']
 export type LabelStyle = Schemas['LabelStyle']
+export type LabelTarget = Schemas['LabelTarget']
+export type LabelValidation = Schemas['LabelValidation']
+/** `value` is `null` for a label on the wrong kind of entity (`WRONG_TARGET`). */
+export type ILabelViolation = WithNull<Present<Schemas['ILabelViolation']>, 'value'>
+export type ILabelDefinitionChange = { definition: ILabelDefinition, violations: ILabelViolation[] }
+export type ILabelSettings = Present<Schemas['ILabelSettings']>
 
 /** Paging fields of every search result. */
 export type IBaseSearchResult = Omit<IBuildSearchResult, 'data'>

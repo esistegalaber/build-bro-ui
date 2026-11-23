@@ -108,6 +108,7 @@ export class SideNav {
     {path: '/deployments', label: 'Deployments', icon: 'rocket_launch', cyId: 'nav-deployments'},
     {path: '/servers', label: 'Servers', icon: 'dns', cyId: 'nav-servers'},
     {path: '/projects', label: 'Projects', icon: 'folder', cyId: 'nav-projects'},
+    {path: '/labels', label: 'Labels', icon: 'sell', cyId: 'nav-labels'},
   ]
 
   readonly themes: { name: Theme, label: string, icon: string }[] = [
