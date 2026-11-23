@@ -7,6 +7,7 @@ import {INITIAL_DEPLOYMENTS_STATE} from './state/deployment.reducer'
 import {allServers} from '../core/state/servers/server.selectors'
 import {build, someServers} from '../../testing/data'
 import {IDeployment, IPaginationParams} from '../core'
+import {theLabelDefinitions} from '../core'
 
 describe('DeploymentsPage', () => {
   const pagination = (totalElements: number): IPaginationParams => ({
@@ -23,6 +24,7 @@ describe('DeploymentsPage', () => {
       providers: [provideMockStore({
         selectors: [
           {selector: allServers, value: someServers()},
+          {selector: theLabelDefinitions, value: []},
           {selector: theDeploymentSearch, value: INITIAL_DEPLOYMENTS_STATE.search},
           {selector: theDeployments, value: deployments},
           {selector: theDeploymentSearchPaginationParams, value: pagination(total)}

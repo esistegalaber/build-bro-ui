@@ -8,7 +8,8 @@ describe('core selectors', () => {
     stats: EMPTY_BUILD_STATS,
     nav: {sidenav: {text: true}},
     projects: {includeInactiveProjects: false, projects: []},
-    servers: {servers: []}
+    servers: {servers: []},
+    labels: {definitions: []}
   }
 
   it('select the alert', () => {

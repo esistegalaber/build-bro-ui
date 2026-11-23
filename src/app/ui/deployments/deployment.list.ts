@@ -1,7 +1,8 @@
 import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core'
 import {DateFnsModule} from 'ngx-date-fns'
-import {IDeployment, IServer} from '../../core'
+import {definitionOf, IDeployment, ILabelDefinition, IServer} from '../../core'
 import {BuildsAccordion} from '../builds/builds.accordion'
+import {LabelChip} from '../labels/label-chip'
 
 interface DeploymentRow {
   deployment: IDeployment
@@ -37,7 +38,8 @@ interface DeploymentRow {
           @if (row.deployment.labels.length > 0) {
             <span class="flex flex-wrap gap-1.5" data-cy-id="labels-of-deployment">
               @for (label of row.deployment.labels; track label.id) {
-                <span class="badge badge-soft badge-primary">{{ label.key }} = {{ label.value }}</span>
+                <bb-label-chip [labelKey]="label.key" [value]="label.value"
+                               [definition]="definitionOf(label.key)"></bb-label-chip>
               }
             </span>
           }
@@ -47,21 +49,27 @@ interface DeploymentRow {
         </div>
         <div class="collapse-content">
           <div class="overflow-hidden rounded-box border border-base-300">
-            <bb-builds-accordion [builds]="row.deployment.builds"></bb-builds-accordion>
+            <bb-builds-accordion [builds]="row.deployment.builds" [labelDefinitions]="labelDefinitions()"></bb-builds-accordion>
           </div>
         </div>
       </div>
     }
   `,
-  imports: [DateFnsModule, BuildsAccordion],
+  imports: [DateFnsModule, BuildsAccordion, LabelChip],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DeploymentList {
   readonly deployments = input.required<IDeployment[]>()
   readonly servers = input<IServer[]>([])
+  /** Label definitions, to show labels by their type and style */
+  readonly labelDefinitions = input<ILabelDefinition[]>([])
 
   readonly rows = computed((): DeploymentRow[] => this.deployments().map((deployment) => ({
     deployment,
     nickName: this.servers().find((s) => s.name === deployment.serverName)?.nickName ?? null
   })))
+
+  definitionOf(key: string): ILabelDefinition | undefined {
+    return definitionOf(key, this.labelDefinitions())
+  }
 }

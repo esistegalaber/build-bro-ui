@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {select, Store} from "@ngrx/store";
-import {Buildz, IDeployment, IDeploymentSearch} from "../core";
+import {Buildz, IDeployment, IDeploymentSearch, theLabelDefinitions} from "../core";
 import * as DeploymentActions from "./state/deployment.actions";
 import {theDeployments, theDeploymentSearch, theDeploymentSearchPaginationParams} from "./state/deployment.selectors";
 import {allServers} from "../core/state/servers/server.selectors";
@@ -34,7 +34,8 @@ import {EmptyState} from '../ui/empty-state'
           <span class="text-sm text-base-content/70">Newest first</span>
         </div>
         @if (deployments?.length) {
-          <bb-deployment-list [deployments]="deployments" [servers]="(servers$ | async) ?? []"></bb-deployment-list>
+          <bb-deployment-list [deployments]="deployments" [servers]="(servers$ | async) ?? []"
+                              [labelDefinitions]="(labelDefinitions$ | async) ?? []"></bb-deployment-list>
         } @else if (pagination.totalElements === 0) {
           <bb-empty-state icon="rocket_launch" data-cy-id="deployments-empty">
             <p>No deployments match these filters.</p>
@@ -60,6 +61,7 @@ export class DeploymentsPage {
   private store = inject<Store<Buildz>>(Store);
 
   servers$ = this.store.pipe(select(allServers))
+  labelDefinitions$ = this.store.pipe(select(theLabelDefinitions))
   theDeploymentsSearch$ = this.store.pipe(select(theDeploymentSearch))
   thePaginationParams$ = this.store.pipe(select(theDeploymentSearchPaginationParams))
 

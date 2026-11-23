@@ -1,7 +1,7 @@
 import {TestBed} from '@angular/core/testing'
 import {DeploymentList} from './deployment.list'
-import {IDeployment} from '../../core'
-import {build, someServers} from '../../../testing/data'
+import {IDeployment, ILabelDefinition} from '../../core'
+import {aBooleanDefinition, build, someServers} from '../../../testing/data'
 
 describe('DeploymentList', () => {
   const deployment = (id: number, serverName: string, builds: number, labels: [string, string][] = []): IDeployment => ({
@@ -10,10 +10,11 @@ describe('DeploymentList', () => {
     labels: labels.map(([key, value], i) => ({id: i, key, value}))
   })
 
-  async function render(deployments: IDeployment[]) {
+  async function render(deployments: IDeployment[], labelDefinitions: ILabelDefinition[] = []) {
     const fixture = TestBed.createComponent(DeploymentList)
     fixture.componentRef.setInput('deployments', deployments)
     fixture.componentRef.setInput('servers', someServers())
+    fixture.componentRef.setInput('labelDefinitions', labelDefinitions)
     await fixture.whenStable()
     const el = fixture.nativeElement as HTMLElement
     return {el, rows: () => Array.from(el.querySelectorAll('[data-cy-id=row-of-deployment]')) as HTMLElement[]}
@@ -43,5 +44,17 @@ describe('DeploymentList', () => {
     const {el, rows} = await render([deployment(1, 'testserver', 1)])
     expect(rows()[0].querySelector('[data-cy-id=labels-of-deployment]')).toBeNull()
     expect(el.querySelector('[data-cy-id=deployment-1]')?.getAttribute('aria-label')).toBe('Show the builds of the deployment to testserver')
+  })
+
+  it('shows deployment labels by their definition, and hands the definitions on to the builds', async () => {
+    const d = deployment(1, 'testserver', 1, [['Released', 'true'], ['part-of-build-set', 'main']])
+    d.builds[0].labels = [{id: 1, key: 'released', value: 'false'}]
+    const {rows} = await render([d], [aBooleanDefinition()])
+    const chips = Array.from(rows()[0].querySelectorAll('[data-cy-id=labels-of-deployment] [data-cy-id=label-chip]')) as HTMLElement[]
+    expect(chips[0].classList).toContain('badge-success')
+    expect(chips[0].querySelector('.material-icons')?.textContent).toBe('check_circle')
+    expect(chips[1].classList).toContain('badge-primary')
+    const buildLabel = rows()[0].querySelector('.collapse-content dd [data-cy-id=label-chip]') as HTMLElement
+    expect(buildLabel.querySelector('.material-icons')?.textContent).toBe('cancel')
   })
 })

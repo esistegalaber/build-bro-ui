@@ -1,4 +1,4 @@
-import {IBranch, IBuild, IProject, IServer} from '../app/core'
+import {IBranch, IBuild, ILabelDefinition, IProject, IServer} from '../app/core'
 
 export function branch(id: number, name: string, projectId: number, active = true): IBranch {
   return {id, name, projectId, active}
@@ -26,4 +26,27 @@ export function someServers(): IServer[] {
     {id: 1, name: 'testserver', nickName: 'Tester', description: 'Main Testing Server'},
     {id: 2, name: 'staging', nickName: 'Company Staging', description: 'Main Staging Server'}
   ]
+}
+
+/** The label definitions of testdata.sql: an enum with value styles, a URL with a style, a regex without one. */
+export function someLabelDefinitions(): ILabelDefinition[] {
+  return [
+    {
+      key: 'integration-test', displayName: 'Integration test', description: 'Outcome of the integration test suite',
+      appliesTo: ['BUILD'], type: 'ENUM', allowedValues: ['ok', 'broken'], valueStyles: {ok: 'SUCCESS', broken: 'ERROR'}
+    },
+    {
+      key: 'jenkins-build', displayName: 'Jenkins build', description: 'The Jenkins job run that produced the build',
+      appliesTo: ['BUILD'], type: 'URL', allowedValues: [], style: 'INFO', valueStyles: {}
+    },
+    {
+      key: 'revision', displayName: 'Revision', description: 'Commit hash the build was made from',
+      appliesTo: ['BUILD'], type: 'REGEX', allowedValues: [], pattern: '[0-9a-f]{64}', valueStyles: {}
+    }
+  ]
+}
+
+/** A boolean label definition without display name or description. */
+export function aBooleanDefinition(key = 'released'): ILabelDefinition {
+  return {key, appliesTo: ['BUILD', 'DEPLOYMENT'], type: 'BOOLEAN', allowedValues: [], valueStyles: {true: 'SUCCESS'}}
 }

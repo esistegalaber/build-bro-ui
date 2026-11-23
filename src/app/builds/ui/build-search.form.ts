@@ -1,7 +1,8 @@
 import {ChangeDetectionStrategy, Component, computed, input, output, signal} from '@angular/core'
 import {KeyValuePipe} from '@angular/common'
 import {debounce, form, FormField, FormRoot, min} from '@angular/forms/signals'
-import {IBuildSearchParams, ISearchData} from '../../core'
+import {definitionOf, IBuildSearchParams, ILabelDefinition, ISearchData} from '../../core'
+import {LabelChip} from '../../ui/labels/label-chip'
 import {storeDraft, TYPING_PAUSE_MS} from '../../ui/forms/store-draft'
 
 /**
@@ -75,13 +76,13 @@ import {storeDraft, TYPING_PAUSE_MS} from '../../ui/forms/store-draft'
           <div class="flex flex-wrap items-center gap-2">
             <span class="text-xs font-semibold text-base-content/70">Label filters</span>
             @for (label of model().labels | keyvalue; track label.key) {
-              <span class="badge badge-soft badge-primary h-auto gap-1 py-1 ps-3 pe-1" data-cy-id="search-label">
-                <span>{{ label.key }} = {{ label.value }}</span>
+              <bb-label-chip [labelKey]="label.key" [value]="label.value" [definition]="definitionOf(label.key)"
+                             data-cy-id="search-label">
                 <button type="button" class="btn btn-ghost btn-xs btn-circle" (click)="removeSearchLabel(label.key)"
                         [attr.aria-label]="'Remove the label filter ' + label.key" data-cy-id="search-label-remove">
                   <span class="material-icons text-[16px]" aria-hidden="true">close</span>
                 </button>
-              </span>
+              </bb-label-chip>
             }
           </div>
         }
@@ -89,7 +90,7 @@ import {storeDraft, TYPING_PAUSE_MS} from '../../ui/forms/store-draft'
     </form>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [KeyValuePipe, FormRoot, FormField]
+  imports: [KeyValuePipe, FormRoot, FormField, LabelChip]
 })
 export class BuildSearchForm {
   readonly available = input.required<ISearchData>()
@@ -125,6 +126,10 @@ export class BuildSearchForm {
     // drop a number still waiting for typing to pause, or it would come back after the reset
     this.searchForm().reset()
     this.resetSearch.emit()
+  }
+
+  definitionOf(key: string): ILabelDefinition | undefined {
+    return definitionOf(key, this.available().labelDefinitions)
   }
 
   addSearchLabel(): void {

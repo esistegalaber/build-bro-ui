@@ -1,7 +1,7 @@
 import {createFeatureSelector, createSelector} from "@ngrx/store";
 import * as Model from "../../core/";
 import {ISearchData} from "../../core/";
-import {theProjectsState} from "../../core";
+import {theLabelDefinitions, theProjectsState} from "../../core";
 import {BuildsState, FEATURE_BUILDS} from "./builds.reducer";
 
 
@@ -30,7 +30,7 @@ export const theBuildSearchPaginationParams = createSelector(buildsState,
 )
 
 export const searchData = createSelector(
-  theProjectsState, (state: Model.ProjectsState): ISearchData => {
+  theProjectsState, theLabelDefinitions, (state: Model.ProjectsState, labelDefinitions: Model.ILabelDefinition[]): ISearchData => {
     const projectBranches: { [key: string]: string[] } = {}
     const theProjects = state.projects.filter(p => p.active)
     theProjects.forEach(project => {
@@ -38,7 +38,6 @@ export const searchData = createSelector(
     })
     const projectNames = theProjects.map(p => p.name)
     const labelKeys: string[] = []
-    const labelDefinitions: ISearchData['labelDefinitions'] = []
     return {projectNames, projectBranches, labelKeys, labelDefinitions}
   }
 )

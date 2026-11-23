@@ -12,6 +12,21 @@ describe('Builds Page', () => {
     selectMainBranch()
   })
 
+  it('Shows the labels of a build by their definitions', () => {
+    loadBuildPage()
+    cy.get('[data-cy-id=build-row]').first().find('input[type=checkbox]').check({force: true})
+    cy.get('[data-cy-id=build-row]').first().find('.collapse-content').within(() => {
+      // display names instead of keys, the key as tooltip
+      cy.contains('dt', 'Integration test').should('have.attr', 'title', 'integration-test')
+      cy.contains('dt', 'Jenkins build')
+      // the URL is a link that opens in a new tab
+      cy.get('[data-cy-id=label-link]').should('have.attr', 'href').and('match', /^http:\/\/my-jenkins\//)
+      cy.get('[data-cy-id=label-link]').should('have.attr', 'target', '_blank')
+      // the test result is styled by its value
+      cy.get('[data-label-style=SUCCESS], [data-label-style=ERROR]').should('have.length', 1)
+    })
+  })
+
   it('Pages through the results with first / previous / next / last', () => {
     loadBuildPage()
     cy.get('[data-cy-id=paginator-current]').should('contain.text', '1 / 9')
@@ -33,8 +48,10 @@ describe('Builds Page', () => {
     cy.get('[data-cy-id=label-value-input]').type('ok')
     cy.get('[data-cy-id=label-add]').should('be.enabled').click()
     cy.wait('@label-search').its('request.body.labels').should('deep.equal', {'integration-test': 'ok'})
+    // the chip shows the label by its definition: display name, and the value's style
     cy.get('[data-cy-id=search-label]').should('have.length', 1)
-      .and('contain.text', 'integration-test = ok')
+      .and('contain.text', 'Integration test = ok')
+      .find('[data-cy-id=label-chip]').should('have.class', 'badge-success')
 
     cy.get('[data-cy-id=search-label-remove]').click()
     cy.wait('@label-search').its('request.body.labels').should('deep.equal', {})

@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, input, output} from "@angular/core";
 import {RouterLink} from "@angular/router";
-import {IBuild, IBuildSet} from "../../core";
+import {IBuild, IBuildSet, ILabelDefinition} from "../../core";
 import {BuildSetSummary} from "../../build-sets/state/build-sets.model";
 import {BuildsAccordion} from "../builds/builds.accordion";
 
@@ -36,7 +36,7 @@ import {EmptyState} from '../empty-state'
         </div>
       </div>
       @if (builds().length > 0) {
-        <bb-builds-accordion [builds]="builds()"></bb-builds-accordion>
+        <bb-builds-accordion [builds]="builds()" [labelDefinitions]="labelDefinitions()"></bb-builds-accordion>
       } @else {
         <bb-empty-state icon="layers_clear" data-cy-id="build-set-empty">
           <p>This build set has no builds yet: it has no projects, or none of them has a matching build.</p>
@@ -51,6 +51,8 @@ import {EmptyState} from '../empty-state'
 export class BuildSetCard {
   readonly buildSet = input.required<IBuildSet>()
   readonly summary = input<BuildSetSummary | null>(null)
+  /** Label definitions, to show labels by their type and style */
+  readonly labelDefinitions = input<ILabelDefinition[]>([])
   readonly deleteBuildSet = output<IBuildSet>()
 
   readonly builds = computed((): IBuild[] => Object.values(this.buildSet().builds))

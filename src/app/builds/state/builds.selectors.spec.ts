@@ -1,6 +1,6 @@
 import {searchData, theBuildSearchPaginationParams, theBuilds, theBuildSearchParams, theBuildSearchResult} from './builds.selectors'
 import {BuildsState, INITIAL_BUILD_SEARCH} from './builds.reducer'
-import {build, someProjects} from '../../../testing/data'
+import {build, someLabelDefinitions, someProjects} from '../../../testing/data'
 
 describe('builds selectors', () => {
   const state: BuildsState = {
@@ -21,11 +21,11 @@ describe('builds selectors', () => {
   })
 
   it('offer the active projects and their active branches as search choices', () => {
-    expect(searchData.projector({includeInactiveProjects: false, projects: someProjects()})).toEqual({
+    expect(searchData.projector({includeInactiveProjects: false, projects: someProjects()}, someLabelDefinitions())).toEqual({
       projectNames: ['backend', 'frontend'],
       projectBranches: {backend: ['main', 'next'], frontend: ['main']},
       labelKeys: [],
-      labelDefinitions: []
+      labelDefinitions: someLabelDefinitions()
     })
   })
 })

@@ -93,6 +93,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.store.dispatch(CoreActions.loadProjects())
     this.store.dispatch(CoreActions.loadServers())
+    this.store.dispatch(CoreActions.loadLabelDefinitions())
   }
 
   openMenu(): void {

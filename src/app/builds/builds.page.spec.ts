@@ -6,6 +6,7 @@ import {searchData, theBuilds, theBuildSearchPaginationParams, theBuildSearchPar
 import {INITIAL_BUILD_SEARCH} from './state/builds.reducer'
 import {build} from '../../testing/data'
 import {IBuild, IPaginationParams} from '../core'
+import {theLabelDefinitions} from '../core'
 
 describe('BuildsPage', () => {
   const pagination = (totalElements: number): IPaginationParams => ({
@@ -18,7 +19,8 @@ describe('BuildsPage', () => {
       imports: [BuildsPage],
       providers: [provideMockStore({
         selectors: [
-          {selector: searchData, value: {projectNames: ['backend'], projectBranches: {backend: ['main']}, labelKeys: []}},
+          {selector: searchData, value: {projectNames: ['backend'], projectBranches: {backend: ['main']}, labelKeys: [], labelDefinitions: []}},
+          {selector: theLabelDefinitions, value: []},
           {selector: theBuildSearchParams, value: INITIAL_BUILD_SEARCH.search},
           {selector: theBuilds, value: builds},
           {selector: theBuildSearchPaginationParams, value: pagination(total)}

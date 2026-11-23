@@ -43,9 +43,11 @@ const db = {
   servers: await call('/servers'),
   builds: allBuilds.data,
   deployments: allDeployments.data,
-  buildSetTemplates
+  buildSetTemplates,
+  labelDefinitions: await call('/label-definitions')
 }
 
 writeFileSync(out, JSON.stringify(db, null, 2) + '\n')
 console.log(`Wrote ${out}: ${db.builds.length} builds, ${db.deployments.length} deployments, ` +
-  `${db.buildSetTemplates.length} build set templates, ${db.projects.length} projects, ${db.servers.length} servers`)
+  `${db.buildSetTemplates.length} build set templates, ${db.projects.length} projects, ${db.servers.length} servers, ` +
+  `${db.labelDefinitions.length} label definitions`)
