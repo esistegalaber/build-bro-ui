@@ -1,8 +1,7 @@
 import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core'
 import {DateFnsModule} from 'ngx-date-fns'
-import {definitionOf, IDeployment, ILabelDefinition, IServer} from '../../core'
+import {IDeployment, ILabelDefinition, IServer} from '../../core'
 import {BuildsAccordion} from '../builds/builds.accordion'
-import {LabelChip} from '../labels/label-chip'
 
 interface DeploymentRow {
   deployment: IDeployment
@@ -10,7 +9,7 @@ interface DeploymentRow {
 }
 
 /**
- * One row per deployment: server (and nickname), when (relative and exact), how many builds, and its labels.
+ * One row per deployment: server (and nickname), when (relative and exact) and how many builds.
  * A row expands to list its builds, so even a deployment of many builds stays one line until opened.
  */
 @Component({
@@ -35,14 +34,6 @@ interface DeploymentRow {
               <span class="hidden sm:inline">· {{ row.deployment.deployedAt | dfnsParseIso | dfnsFormat: 'PPp' }}</span>
             </span>
           </span>
-          @if (row.deployment.labels.length > 0) {
-            <span class="flex flex-wrap gap-1.5" data-cy-id="labels-of-deployment">
-              @for (label of row.deployment.labels; track label.id) {
-                <bb-label-chip [labelKey]="label.key" [value]="label.value"
-                               [definition]="definitionOf(label.key)"></bb-label-chip>
-              }
-            </span>
-          }
           <span class="badge badge-ghost" data-cy-id="builds-of-deployment">
             {{ row.deployment.builds.length }} {{ row.deployment.builds.length === 1 ? 'build' : 'builds' }}
           </span>
@@ -55,21 +46,17 @@ interface DeploymentRow {
       </div>
     }
   `,
-  imports: [DateFnsModule, BuildsAccordion, LabelChip],
+  imports: [DateFnsModule, BuildsAccordion],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DeploymentList {
   readonly deployments = input.required<IDeployment[]>()
   readonly servers = input<IServer[]>([])
-  /** Label definitions, to show labels by their type and style */
+  /** Label definitions, to show the builds' labels by their type and style */
   readonly labelDefinitions = input<ILabelDefinition[]>([])
 
   readonly rows = computed((): DeploymentRow[] => this.deployments().map((deployment) => ({
     deployment,
     nickName: this.servers().find((s) => s.name === deployment.serverName)?.nickName ?? null
   })))
-
-  definitionOf(key: string): ILabelDefinition | undefined {
-    return definitionOf(key, this.labelDefinitions())
-  }
 }
