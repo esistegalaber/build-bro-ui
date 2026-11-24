@@ -17,11 +17,11 @@ describe('Deployments Page', () => {
     cy.get('[data-cy-id^=deployment-]').should('have.length', 10)
     cy.get('[data-cy-id=paginator]').should('be.visible')
     cy.get('[data-cy-id=deployments-count]').should('contain.text', '11 deployments')
-    // the newest deployment: testserver with 3 builds and two labels
+    // the newest deployment: testserver with 3 builds; its labels aren't shown in the list
     cy.get('[data-cy-id=row-of-deployment]').first()
       .should('contain.text', 'testserver · Tester')
       .and('contain.text', '3 builds')
-      .find('[data-cy-id=labels-of-deployment]').should('contain.text', 'part-of-build-set = feature')
+      .and('not.contain.text', 'part-of-build-set')
   })
 
   it('Pages through the deployments', () => {

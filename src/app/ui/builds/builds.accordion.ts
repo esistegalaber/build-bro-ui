@@ -5,7 +5,7 @@ import {BuildSummaryPipe} from "./build-summary.pipe";
 import {LabelChip} from "../labels/label-chip";
 
 /**
- * A list of builds, one row each: project, branch, test status, short revision and build number.
+ * A list of builds, one row each: project, branch, short revision and build number.
  * A row expands to show all labels. Used on the builds page, in build sets, the edit page and deployments.
  */
 @Component({
@@ -26,10 +26,6 @@ import {LabelChip} from "../labels/label-chip";
               <span class="material-icons text-[16px]" aria-hidden="true">call_split</span>{{ build.branch }}
             </span>
           </span>
-          @if (summary.testStatus) {
-            <span class="badge badge-soft" [class.badge-success]="summary.testStatus === 'ok'"
-                  [class.badge-error]="summary.testStatus === 'broken'" data-cy-id="build-test-status">tests {{ summary.testStatus }}</span>
-          }
           @if (summary.revision) {
             <span class="hidden sm:inline font-mono text-sm text-base-content/70" title="Revision">{{ summary.revision }}</span>
           }

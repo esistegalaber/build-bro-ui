@@ -41,17 +41,11 @@ describe('BuildsAccordion', () => {
     expect(rows()[1].textContent).toContain('#10')
   })
 
-  it('marks the test status: green when ok, red when broken, nothing without the label', async () => {
-    const {rows} = await render([
-      buildWith(1, [['integration-test', 'ok']]),
-      buildWith(2, [['integration-test', 'broken']]),
-      buildWith(3, [])
-    ])
-    const badge = (row: HTMLElement) => row.querySelector('[data-cy-id=build-test-status]') as HTMLElement | null
-    expect(badge(rows()[0])?.classList).toContain('badge-success')
-    expect(badge(rows()[0])?.textContent?.trim()).toBe('tests ok')
-    expect(badge(rows()[1])?.classList).toContain('badge-error')
-    expect(badge(rows()[2])).toBeNull()
+  it('shows no test status badge in the row; the status is among the labels', async () => {
+    const {rows} = await render([buildWith(1, [['integration-test', 'ok']])])
+    expect(rows()[0].querySelector('.collapse-title .badge')).toBeNull()
+    expect(rows()[0].querySelector('.collapse-title')?.textContent).not.toContain('tests ok')
+    expect(rows()[0].querySelector('.collapse-content')?.textContent).toContain('integration-test')
   })
 
   it('lists the build id and all labels, sorted by key, in the expandable part', async () => {

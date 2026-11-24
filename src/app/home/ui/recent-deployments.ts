@@ -40,12 +40,12 @@ import {Loading} from '../../ui/loading'
                   {{ row.deployment.deployedAt | dfnsParseIso | dfnsFormatDistanceToNowPure }} ago
                 </div>
               </div>
-              <div class="flex flex-wrap gap-1.5">
-                @for (build of row.builds; track build.id) {
-                  <span class="badge badge-ghost font-mono">{{ build.project }} #{{ build.buildNumber }}</span>
+              <div class="min-w-0 text-sm text-base-content/70">
+                @for (build of row.builds; track build.id; let last = $last) {
+                  <span class="font-mono">{{ build.project }} #{{ build.buildNumber }}</span>{{ last && row.moreBuilds === 0 ? '' : ', ' }}
                 }
                 @if (row.moreBuilds > 0) {
-                  <span class="badge badge-outline" data-cy-id="home-deployment-more">+{{ row.moreBuilds }} more</span>
+                  <span data-cy-id="home-deployment-more">+{{ row.moreBuilds }} more</span>
                 }
               </div>
             </div>

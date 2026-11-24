@@ -20,13 +20,14 @@ describe('DeploymentList', () => {
     return {el, rows: () => Array.from(el.querySelectorAll('[data-cy-id=row-of-deployment]')) as HTMLElement[]}
   }
 
-  it('shows server, nickname, relative and exact time, labels and the number of builds', async () => {
+  it('shows server, nickname, relative and exact time and the number of builds, but not the labels', async () => {
     const {rows} = await render([deployment(1, 'testserver', 3, [['part-of-build-set', 'main']])])
     const text = rows()[0].querySelector('.collapse-title')!.textContent!.replace(/\s+/g, ' ')
     expect(text).toContain('testserver · Tester')
     expect(text).toContain('3 days ago')
     expect(text).toMatch(/\d{4}/)
-    expect(rows()[0].querySelector('[data-cy-id=labels-of-deployment]')?.textContent).toContain('part-of-build-set = main')
+    expect(text).not.toContain('part-of-build-set')
+    expect(rows()[0].querySelector('.collapse-title [data-cy-id=label-chip]')).toBeNull()
     expect(rows()[0].querySelector('[data-cy-id=builds-of-deployment]')?.textContent?.trim()).toBe('3 builds')
   })
 
@@ -40,20 +41,15 @@ describe('DeploymentList', () => {
     expect(rows()[1].querySelector('.collapse-title .font-semibold')?.textContent?.trim()).toBe('prod-1')
   })
 
-  it('has no labels part without labels, and an accessible expand checkbox', async () => {
-    const {el, rows} = await render([deployment(1, 'testserver', 1)])
-    expect(rows()[0].querySelector('[data-cy-id=labels-of-deployment]')).toBeNull()
+  it('has an accessible expand checkbox', async () => {
+    const {el} = await render([deployment(1, 'testserver', 1)])
     expect(el.querySelector('[data-cy-id=deployment-1]')?.getAttribute('aria-label')).toBe('Show the builds of the deployment to testserver')
   })
 
-  it('shows deployment labels by their definition, and hands the definitions on to the builds', async () => {
+  it('hands the label definitions on to the builds', async () => {
     const d = deployment(1, 'testserver', 1, [['Released', 'true'], ['part-of-build-set', 'main']])
     d.builds[0].labels = [{id: 1, key: 'released', value: 'false'}]
     const {rows} = await render([d], [aBooleanDefinition()])
-    const chips = Array.from(rows()[0].querySelectorAll('[data-cy-id=labels-of-deployment] [data-cy-id=label-chip]')) as HTMLElement[]
-    expect(chips[0].classList).toContain('badge-success')
-    expect(chips[0].querySelector('.material-icons')?.textContent).toBe('check_circle')
-    expect(chips[1].classList).toContain('badge-primary')
     const buildLabel = rows()[0].querySelector('.collapse-content dd [data-cy-id=label-chip]') as HTMLElement
     expect(buildLabel.querySelector('.material-icons')?.textContent).toBe('cancel')
   })

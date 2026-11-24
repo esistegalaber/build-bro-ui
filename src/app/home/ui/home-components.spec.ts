@@ -48,6 +48,8 @@ describe('RecentDeployments', () => {
     expect(row).toContain('2 days ago')
     expect(row).toContain('service-1 #1')
     expect(row).toContain('service-2 #2')
+    expect(row).toContain('service-1 #1, service-2 #2')
+    expect(byCy(el, 'home-deployment-1').querySelector('.badge')).toBeNull()
     expect(byCy(el, 'home-deployment-more')).toBeNull()
   })
 
@@ -55,6 +57,7 @@ describe('RecentDeployments', () => {
     const el = await render([deployment(1, 'staging', 20)])
     expect(byCy(el, 'home-deployment-1').querySelectorAll('.font-mono')).toHaveLength(3)
     expect(text(byCy(el, 'home-deployment-more'))).toBe('+17 more')
+    expect(text(byCy(el, 'home-deployment-1'))).toContain('service-3 #3, +17 more')
   })
 
   it('shows that it is loading', async () => {
