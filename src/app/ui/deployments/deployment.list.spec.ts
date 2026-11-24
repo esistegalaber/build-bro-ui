@@ -2,6 +2,7 @@ import {TestBed} from '@angular/core/testing'
 import {DeploymentList} from './deployment.list'
 import {IDeployment, ILabelDefinition} from '../../core'
 import {aBooleanDefinition, build, someServers} from '../../../testing/data'
+import {inTimeZone} from '../../../testing/timezone'
 
 describe('DeploymentList', () => {
   const deployment = (id: number, serverName: string, builds: number, labels: [string, string][] = []): IDeployment => ({
@@ -52,5 +53,18 @@ describe('DeploymentList', () => {
     const {rows} = await render([d], [aBooleanDefinition()])
     const buildLabel = rows()[0].querySelector('.collapse-content dd [data-cy-id=label-chip]') as HTMLElement
     expect(buildLabel.querySelector('.material-icons')?.textContent).toBe('cancel')
+  })
+
+  describe.each([
+    ['Europe/Berlin', 'Nov 22, 2026, 8:42 PM'],
+    ['America/New_York', 'Nov 22, 2026, 2:42 PM'],
+    ['Asia/Tokyo', 'Nov 23, 2026, 4:42 AM']
+  ])('in %s', (timeZone, shown) => {
+    inTimeZone(timeZone)
+
+    it('shows the time of the deployment, which the API sends in UTC, in the browser\'s timezone', async () => {
+      const {rows} = await render([{...deployment(1, 'testserver', 1), deployedAt: '2026-11-22T19:42:48Z'}])
+      expect(rows()[0].querySelector('.collapse-title')!.textContent!.replace(/\s+/g, ' ')).toContain(`· ${shown}`)
+    })
   })
 })
