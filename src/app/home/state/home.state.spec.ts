@@ -8,7 +8,7 @@ import {build} from '../../../testing/data'
 import {IDeployment} from '../../core'
 
 const deployment = (id: number): IDeployment => ({
-  id, deployedAt: '2026-11-19T08:42:34', serverName: 'testserver', builds: [build(10, 'backend', 'main', 10)], labels: []
+  id, deployedAt: '2026-11-19T08:42:34Z', serverName: 'testserver', builds: [build(10, 'backend', 'main', 10)], labels: []
 })
 
 describe('homeReducer', () => {

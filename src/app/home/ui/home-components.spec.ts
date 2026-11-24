@@ -4,6 +4,7 @@ import {StatCards} from './stat-cards'
 import {RecentDeployments} from './recent-deployments'
 import {HomeBuildSets} from './home-build-sets'
 import {build, someServers} from '../../../testing/data'
+import {inTimeZone} from '../../../testing/timezone'
 import {IDeployment} from '../../core'
 
 const byCy = (el: HTMLElement, id: string) => el.querySelector(`[data-cy-id="${id}"]`) as HTMLElement
@@ -51,6 +52,15 @@ describe('RecentDeployments', () => {
     expect(row).toContain('service-1 #1, service-2 #2')
     expect(byCy(el, 'home-deployment-1').querySelector('.badge')).toBeNull()
     expect(byCy(el, 'home-deployment-more')).toBeNull()
+  })
+
+  describe('in Europe/Berlin', () => {
+    inTimeZone('Europe/Berlin')
+
+    it('shows the exact time, which the API sends in UTC, in the browser\'s timezone', async () => {
+      const el = await render([{...deployment(1, 'testserver', 1), deployedAt: '2026-11-22T19:42:48Z'}])
+      expect(byCy(el, 'home-deployment-1').querySelector('[title]')?.getAttribute('title')).toBe('Nov 22, 2026, 8:42:48 PM')
+    })
   })
 
   it('summarizes the builds of a deployment with many of them', async () => {
