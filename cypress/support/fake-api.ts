@@ -121,7 +121,7 @@ function resolveBuildTemplates(db: ApiDb, name: string, buildTemplates: IBuildTe
       && (template.buildNumber === null || template.buildNumber === undefined || build.buildNumber === Number(template.buildNumber))
       && hasLabels(build, template.labels))
     if (candidates.length > 0) {
-      builds[template.project] = candidates.reduce((best, build) => build.buildNumber > best.buildNumber ? build : best)
+      builds[template.project] = candidates.reduce((best, build) => build.buildNumber > best.buildNumber ? build : best, candidates[0])
     }
   })
   return {name, builds}
