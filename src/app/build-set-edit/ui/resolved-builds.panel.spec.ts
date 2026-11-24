@@ -21,7 +21,7 @@ describe('ResolvedBuildsPanel', () => {
     await fixture.whenStable()
   }
 
-  it('shows the build each included project resolves to, with pins and test status', async () => {
+  it('shows the build each included project resolves to, with pins but no test status', async () => {
     await render(
       [template(1, 'backend', true, 'main', 9), template(2, 'frontend', true, 'main')],
       [
@@ -30,7 +30,7 @@ describe('ResolvedBuildsPanel', () => {
       ])
     expect(byCy('build-9').textContent?.trim()).toBe('#9')
     expect(byCy('resolved-backend').textContent).toContain('pinned')
-    expect(byCy('resolved-backend').textContent).toContain('tests ok')
+    expect(byCy('resolved-backend').textContent).not.toContain('tests ok')
     expect(byCy('build-40').textContent?.trim()).toBe('#10')
     expect(byCy('resolved-frontend').textContent).not.toContain('pinned')
   })

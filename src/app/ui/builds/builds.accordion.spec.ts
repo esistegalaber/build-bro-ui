@@ -1,6 +1,5 @@
 import {TestBed} from '@angular/core/testing'
 import {BuildsAccordion} from './builds.accordion'
-import {summarizeBuild} from './build-summary.pipe'
 import {IBuild, ILabelDefinition} from '../../core'
 import {someLabelDefinitions} from '../../../testing/data'
 
@@ -10,17 +9,6 @@ function buildWith(id: number, labels: [string, string][]): IBuild {
     labels: labels.map(([key, value], i) => ({id: id * 10 + i, key, value}))
   }
 }
-
-describe('summarizeBuild', () => {
-  it('takes the test status and a short revision from the labels', () => {
-    expect(summarizeBuild(buildWith(1, [['integration-test', 'ok'], ['revision', 'e6859b79b73630f6250f569a']])))
-      .toEqual({testStatus: 'ok', revision: 'e6859b79b736'})
-  })
-
-  it('has nothing to show for a build without those labels', () => {
-    expect(summarizeBuild(buildWith(1, [['release.name', 'Analog-Amoeba']]))).toEqual({testStatus: null, revision: null})
-  })
-})
 
 describe('BuildsAccordion', () => {
   async function render(builds: IBuild[], labelDefinitions: ILabelDefinition[] = []) {
@@ -41,11 +29,13 @@ describe('BuildsAccordion', () => {
     expect(rows()[1].textContent).toContain('#10')
   })
 
-  it('shows no test status badge in the row; the status is among the labels', async () => {
-    const {rows} = await render([buildWith(1, [['integration-test', 'ok']])])
+  it('shows neither test status nor revision in the row; both are among the labels', async () => {
+    const {rows} = await render([buildWith(1, [['integration-test', 'ok'], ['revision', 'e6859b79b73630f6250f569a']])])
+    const title = rows()[0].querySelector('.collapse-title')?.textContent
     expect(rows()[0].querySelector('.collapse-title .badge')).toBeNull()
-    expect(rows()[0].querySelector('.collapse-title')?.textContent).not.toContain('tests ok')
-    expect(rows()[0].querySelector('.collapse-content')?.textContent).toContain('integration-test')
+    expect(title).not.toContain('tests ok')
+    expect(title).not.toContain('e6859b79b736')
+    expect(rows()[0].querySelector('.collapse-content')?.textContent).toContain('e6859b79b73630f6250f569a')
   })
 
   it('lists the build id and all labels, sorted by key, in the expandable part', async () => {

@@ -1,18 +1,16 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core'
 import {definitionOf, IBuild, ILabelDefinition} from '../../core'
 import {SortedLabelsPipe} from "../../core/pipes/sort-label.pipe";
-import {BuildSummaryPipe} from "./build-summary.pipe";
 import {LabelChip} from "../labels/label-chip";
 
 /**
- * A list of builds, one row each: project, branch, short revision and build number.
+ * A list of builds, one row each: project, branch and build number.
  * A row expands to show all labels. Used on the builds page, in build sets, the edit page and deployments.
  */
 @Component({
   selector: 'bb-builds-accordion',
   template: `
     @for (build of builds; track build.id) {
-      @let summary = build | buildSummary;
       <div class="collapse collapse-arrow rounded-none border-b border-base-300 last:border-b-0" data-cy-id="build-row">
         <input type="checkbox" attr.data-cy-id="build-{{build.id}}"
                [attr.aria-label]="'Show the labels of ' + build.project + ' ' + build.branch + ' #' + build.buildNumber"/>
@@ -26,9 +24,6 @@ import {LabelChip} from "../labels/label-chip";
               <span class="material-icons text-[16px]" aria-hidden="true">call_split</span>{{ build.branch }}
             </span>
           </span>
-          @if (summary.revision) {
-            <span class="hidden sm:inline font-mono text-sm text-base-content/70" title="Revision">{{ summary.revision }}</span>
-          }
           <span class="min-w-12 text-right font-mono text-lg font-medium">#{{ build.buildNumber }}</span>
         </div>
         <div class="collapse-content">
@@ -48,7 +43,7 @@ import {LabelChip} from "../labels/label-chip";
       </div>
     }
   `,
-  imports: [SortedLabelsPipe, BuildSummaryPipe, LabelChip],
+  imports: [SortedLabelsPipe, LabelChip],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BuildsAccordion {

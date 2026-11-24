@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component, computed, input} from "@angular/core";
 import {EditableBuildTemplate, IBuild} from "../../core";
-import {BuildSummaryPipe} from "../../ui/builds/build-summary.pipe";
 
 interface ResolvedRow {
   project: string
@@ -34,11 +33,6 @@ import {EmptyState} from '../../ui/empty-state'
                 @if (row.pinned) {
                   <span class="badge badge-soft badge-warning badge-sm">pinned</span>
                 }
-                @let summary = build | buildSummary;
-                @if (summary.testStatus) {
-                  <span class="badge badge-soft badge-sm" [class.badge-success]="summary.testStatus === 'ok'"
-                        [class.badge-error]="summary.testStatus === 'broken'">tests {{ summary.testStatus }}</span>
-                }
               } @else if (row.branch) {
                 <span class="badge badge-soft badge-warning badge-sm" data-cy-id="resolved-missing">no matching build</span>
               } @else {
@@ -54,7 +48,7 @@ import {EmptyState} from '../../ui/empty-state'
       </div>
     </section>
   `,
-  imports: [BuildSummaryPipe, EmptyState],
+  imports: [EmptyState],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResolvedBuildsPanel {
