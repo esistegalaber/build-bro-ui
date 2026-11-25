@@ -8,7 +8,7 @@ Built with Angular 22, NgRx 22, TypeScript 6, Tailwind CSS 4 and daisyUI 5.
 
 ## Requirements
 
-- **Node 26** (the Angular 22 CLI also accepts ^22.22.3 and ^24.15; builds and tests are verified on 26)
+- **Node 26** (the Angular 22 CLI also accepts ^22.22.3 and ^24.15; builds and tests are verified on 26). `.nvmrc` pins it, so `nvm use` picks it.
 - **Docker**, to build the production image
 - To use the app: the Build Bruh API on port 8080
 
