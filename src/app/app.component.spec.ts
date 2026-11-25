@@ -24,8 +24,8 @@ describe('AppComponent', () => {
     const dispatched = vi.spyOn(store, 'dispatch')
     const fixture = TestBed.createComponent(AppComponent)
     fixture.detectChanges()
-    const byCy = (id: string) => fixture.nativeElement.querySelector(`[data-cy-id="${id}"]`) as HTMLElement
-    return {fixture, dispatched, byCy}
+    const byTestId = (id: string) => fixture.nativeElement.querySelector(`[data-testid="${id}"]`) as HTMLElement
+    return {fixture, dispatched, byTestId}
   }
 
   it('loads the stats, projects, servers and label definitions on start', () => {
@@ -37,34 +37,34 @@ describe('AppComponent', () => {
   })
 
   it('shows the side nav with the labels from the store', () => {
-    const {byCy} = render()
-    expect(byCy('side-nav-toggle').getAttribute('aria-expanded')).toBe('true')
-    expect(byCy('nav-builds')).toBeTruthy()
+    const {byTestId} = render()
+    expect(byTestId('side-nav-toggle').getAttribute('aria-expanded')).toBe('true')
+    expect(byTestId('nav-builds')).toBeTruthy()
   })
 
   it('toggles the side nav labels through the store', () => {
-    const {byCy, dispatched} = render()
-    byCy('side-nav-toggle').click()
+    const {byTestId, dispatched} = render()
+    byTestId('side-nav-toggle').click()
     expect(dispatched).toHaveBeenCalledWith(toggleSideNavState())
   })
 
   it('switches the theme', () => {
-    const {byCy} = render()
+    const {byTestId} = render()
     const setTheme = vi.spyOn(TestBed.inject(ThemeService), 'setTheme')
-    byCy('theme-lagoon').click()
+    byTestId('theme-lagoon').click()
     expect(setTheme).toHaveBeenCalledWith('lagoon')
   })
 
   it('shows an alert and clears it through the store', () => {
-    const {byCy, dispatched} = render({type: 'alert-info', heading: 'Saved', message: 'Successfully saved'})
-    expect(byCy('alert').textContent).toContain('Successfully saved')
-    byCy('alert-ok').click()
+    const {byTestId, dispatched} = render({type: 'alert-info', heading: 'Saved', message: 'Successfully saved'})
+    expect(byTestId('alert').textContent).toContain('Successfully saved')
+    byTestId('alert-ok').click()
     expect(dispatched).toHaveBeenCalledWith(clearAlert())
   })
 
   it('shows no alert when there is none', () => {
-    const {byCy} = render()
-    expect(byCy('alert')).toBeNull()
+    const {byTestId} = render()
+    expect(byTestId('alert')).toBeNull()
   })
 
   describe('on a phone', () => {
@@ -89,51 +89,51 @@ describe('AppComponent', () => {
       })
       const fixture = TestBed.createComponent(AppComponent)
       fixture.detectChanges()
-      const byCy = (id: string) => fixture.nativeElement.querySelector(`[data-cy-id="${id}"]`) as HTMLElement
+      const byTestId = (id: string) => fixture.nativeElement.querySelector(`[data-testid="${id}"]`) as HTMLElement
       const toggle = () => fixture.nativeElement.querySelector('#nav-drawer') as HTMLInputElement
-      return {fixture, byCy, toggle}
+      return {fixture, byTestId, toggle}
     }
 
     it('shows the labels in the slide-out menu even when collapsed on wide screens', () => {
-      const {fixture, byCy} = renderOnPhone()
+      const {fixture, byTestId} = renderOnPhone()
       expect(fixture.componentInstance.nav().text).toBe(true)
-      expect(byCy('nav-builds').textContent).toContain('Builds')
+      expect(byTestId('nav-builds').textContent).toContain('Builds')
       listeners.forEach((l) => l({matches: false}))
       expect(fixture.componentInstance.nav().text).toBe(false)
     })
 
     it('opens the menu with the focus inside and closes it after choosing a page', async () => {
-      const {fixture, byCy, toggle} = renderOnPhone()
-      expect(byCy('drawer-open').getAttribute('aria-expanded')).toBe('false')
-      byCy('drawer-open').click()
+      const {fixture, byTestId, toggle} = renderOnPhone()
+      expect(byTestId('drawer-open').getAttribute('aria-expanded')).toBe('false')
+      byTestId('drawer-open').click()
       await fixture.whenStable()
       expect(toggle().checked).toBe(true)
-      expect(byCy('drawer-open').getAttribute('aria-expanded')).toBe('true')
-      expect(document.activeElement).toBe(byCy('drawer-close'))
-      byCy('nav-builds').click()
+      expect(byTestId('drawer-open').getAttribute('aria-expanded')).toBe('true')
+      expect(document.activeElement).toBe(byTestId('drawer-close'))
+      byTestId('nav-builds').click()
       await fixture.whenStable()
       expect(toggle().checked).toBe(false)
     })
 
     it('closes the menu with its button and with Escape, and gives the focus back', async () => {
-      const {fixture, byCy, toggle} = renderOnPhone()
-      byCy('drawer-open').click()
+      const {fixture, byTestId, toggle} = renderOnPhone()
+      byTestId('drawer-open').click()
       await fixture.whenStable()
-      byCy('drawer-close').click()
+      byTestId('drawer-close').click()
       await fixture.whenStable()
       expect(toggle().checked).toBe(false)
-      expect(document.activeElement).toBe(byCy('drawer-open'))
+      expect(document.activeElement).toBe(byTestId('drawer-open'))
 
-      byCy('drawer-open').click()
+      byTestId('drawer-open').click()
       await fixture.whenStable()
-      byCy('nav-home').dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}))
+      byTestId('nav-home').dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}))
       await fixture.whenStable()
       expect(toggle().checked).toBe(false)
     })
 
     it('closes the menu when the screen gets wide', async () => {
-      const {fixture, byCy, toggle} = renderOnPhone()
-      byCy('drawer-open').click()
+      const {fixture, byTestId, toggle} = renderOnPhone()
+      byTestId('drawer-open').click()
       await fixture.whenStable()
       listeners.forEach((l) => l({matches: false}))
       await fixture.whenStable()

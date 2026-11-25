@@ -20,11 +20,11 @@ import {EmptyState} from '../../ui/empty-state'
           <p class="text-sm text-base-content/70">The build each included project resolves to right now.</p>
         </div>
         @for (row of rows(); track row.project) {
-          <div class="flex flex-col gap-1 border-t border-base-300 pt-2" attr.data-cy-id="resolved-{{row.project}}">
+          <div class="flex flex-col gap-1 border-t border-base-300 pt-2" attr.data-testid="resolved-{{row.project}}">
             <div class="flex items-baseline gap-2">
               <span class="min-w-0 grow truncate font-semibold">{{ row.project }}</span>
               @if (row.build; as build) {
-                <span class="font-mono font-medium" attr.data-cy-id="build-{{build.id}}">#{{ build.buildNumber }}</span>
+                <span class="font-mono font-medium" attr.data-testid="build-{{build.id}}">#{{ build.buildNumber }}</span>
               }
             </div>
             <div class="flex flex-wrap items-center gap-1.5 text-xs text-base-content/70">
@@ -34,14 +34,14 @@ import {EmptyState} from '../../ui/empty-state'
                   <span class="badge badge-soft badge-warning badge-sm">pinned</span>
                 }
               } @else if (row.branch) {
-                <span class="badge badge-soft badge-warning badge-sm" data-cy-id="resolved-missing">no matching build</span>
+                <span class="badge badge-soft badge-warning badge-sm" data-testid="resolved-missing">no matching build</span>
               } @else {
-                <span data-cy-id="resolved-no-branch">choose a branch</span>
+                <span data-testid="resolved-no-branch">choose a branch</span>
               }
             </div>
           </div>
         } @empty {
-          <bb-empty-state framed compact data-cy-id="resolved-none">
+          <bb-empty-state framed compact data-testid="resolved-none">
             <p>Switch on a project to see which build it resolves to.</p>
           </bb-empty-state>
         }

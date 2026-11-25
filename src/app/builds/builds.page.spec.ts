@@ -30,8 +30,8 @@ describe('BuildsPage', () => {
     const dispatched = vi.spyOn(TestBed.inject(MockStore), 'dispatch')
     const fixture = TestBed.createComponent(BuildsPage)
     await fixture.whenStable()
-    const byCy = (id: string) => fixture.nativeElement.querySelector(`[data-cy-id="${id}"]`) as HTMLElement
-    return {fixture, dispatched, byCy}
+    const byTestId = (id: string) => fixture.nativeElement.querySelector(`[data-testid="${id}"]`) as HTMLElement
+    return {fixture, dispatched, byTestId}
   }
 
   it('searches when it opens, and loads the label keys for the filter', async () => {
@@ -41,32 +41,32 @@ describe('BuildsPage', () => {
   })
 
   it('shows the number of builds, the rows and the paginator', async () => {
-    const {byCy} = await render([build(10, 'backend', 'main', 10), build(9, 'backend', 'main', 9)], 45)
-    expect(byCy('builds-count').textContent?.trim()).toBe('45 builds')
-    expect(byCy('build-10')).toBeTruthy()
-    expect(byCy('paginator-range').textContent?.trim()).toBe('Showing 1–10 of 45')
+    const {byTestId} = await render([build(10, 'backend', 'main', 10), build(9, 'backend', 'main', 9)], 45)
+    expect(byTestId('builds-count').textContent?.trim()).toBe('45 builds')
+    expect(byTestId('build-10')).toBeTruthy()
+    expect(byTestId('paginator-range').textContent?.trim()).toBe('Showing 1–10 of 45')
   })
 
   it('says "1 build" for a single result', async () => {
-    const {byCy} = await render([build(10, 'backend', 'main', 10)], 1)
-    expect(byCy('builds-count').textContent?.trim()).toBe('1 build')
+    const {byTestId} = await render([build(10, 'backend', 'main', 10)], 1)
+    expect(byTestId('builds-count').textContent?.trim()).toBe('1 build')
   })
 
   it('shows an empty state that resets the filters', async () => {
-    const {byCy, dispatched} = await render([], 0)
-    expect(byCy('builds-empty').textContent).toContain('No builds match these filters.')
-    expect(byCy('paginator')).toBeNull()
-    ;(byCy('builds-empty').querySelector('button') as HTMLButtonElement).click()
+    const {byTestId, dispatched} = await render([], 0)
+    expect(byTestId('builds-empty').textContent).toContain('No builds match these filters.')
+    expect(byTestId('paginator')).toBeNull()
+    ;(byTestId('builds-empty').querySelector('button') as HTMLButtonElement).click()
     expect(dispatched).toHaveBeenCalledWith(BuildActions.resetSearchParams())
   })
 
   it('turns form and paginator events into actions', async () => {
-    const {byCy, dispatched} = await render([build(10, 'backend', 'main', 10)], 45)
-    byCy('paginator-next').click()
+    const {byTestId, dispatched} = await render([build(10, 'backend', 'main', 10)], 45)
+    byTestId('paginator-next').click()
     expect(dispatched).toHaveBeenCalledWith(BuildActions.toSearchPage({page: 1}))
-    byCy('search-reset').click()
+    byTestId('search-reset').click()
     expect(dispatched).toHaveBeenCalledWith(BuildActions.resetSearchParams())
-    byCy('search-reload').click()
+    byTestId('search-reload').click()
     expect(dispatched).toHaveBeenCalledWith(BuildActions.updateSearchParams({search: INITIAL_BUILD_SEARCH.search}))
   })
 })

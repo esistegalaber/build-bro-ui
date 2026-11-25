@@ -14,7 +14,7 @@ describe('LabelDefinitionList', () => {
     fixture.componentInstance.deleteDefinition.subscribe((d) => deleted.push(d))
     await fixture.whenStable()
     const el = fixture.nativeElement as HTMLElement
-    const rows = () => Array.from(el.querySelectorAll('[data-cy-id=label-definition]')) as HTMLElement[]
+    const rows = () => Array.from(el.querySelectorAll('[data-testid=label-definition]')) as HTMLElement[]
     return {el, rows, edited, deleted}
   }
 
@@ -31,7 +31,7 @@ describe('LabelDefinitionList', () => {
 
   it('previews the values of enums and booleans with their styles, and the style of the others', async () => {
     const {rows} = await render([...someLabelDefinitions(), aBooleanDefinition()])
-    const chips = (row: HTMLElement) => Array.from(row.querySelectorAll('[data-cy-id=label-chip]')) as HTMLElement[]
+    const chips = (row: HTMLElement) => Array.from(row.querySelectorAll('[data-testid=label-chip]')) as HTMLElement[]
     expect(chips(rows()[0]).map((c) => c.textContent?.trim())).toEqual(['ok', 'broken'])
     expect(chips(rows()[0])[1].classList).toContain('badge-error')
     expect(chips(rows()[3])).toHaveLength(2)
@@ -41,14 +41,14 @@ describe('LabelDefinitionList', () => {
 
   it('asks to edit or delete a definition', async () => {
     const {rows, edited, deleted} = await render(someLabelDefinitions())
-    ;(rows()[1].querySelector('[data-cy-id=label-definition-edit]') as HTMLButtonElement).click()
-    ;(rows()[2].querySelector('[data-cy-id=label-definition-delete]') as HTMLButtonElement).click()
+    ;(rows()[1].querySelector('[data-testid=label-definition-edit]') as HTMLButtonElement).click()
+    ;(rows()[2].querySelector('[data-testid=label-definition-delete]') as HTMLButtonElement).click()
     expect(edited.map((d) => d.key)).toEqual(['jenkins-build'])
     expect(deleted.map((d) => d.key)).toEqual(['revision'])
   })
 
   it('explains that labels are free-form without definitions', async () => {
     const {el} = await render([])
-    expect(el.querySelector('[data-cy-id=label-definitions-none]')?.textContent).toContain('free-form')
+    expect(el.querySelector('[data-testid=label-definitions-none]')?.textContent).toContain('free-form')
   })
 })

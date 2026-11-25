@@ -27,18 +27,18 @@ interface NavItem {
         <!-- wide screens: collapse to icons; phones: close the slide-out menu -->
         <button type="button" class="btn btn-ghost btn-square btn-sm hidden md:inline-flex" [class.ml-auto]="sideNav.text"
                 (click)="toggleLabels.emit()" [attr.aria-label]="sideNav.text ? 'Collapse the menu' : 'Expand the menu'"
-                [attr.aria-expanded]="sideNav.text" data-cy-id="side-nav-toggle">
+                [attr.aria-expanded]="sideNav.text" data-testid="side-nav-toggle">
           <span class="material-icons" aria-hidden="true">{{ sideNav.text ? 'menu_open' : 'menu' }}</span>
         </button>
         <button #closeButton type="button" class="btn btn-ghost btn-square btn-sm ml-auto md:hidden"
-                (click)="closeMenu.emit()" aria-label="Close the menu" data-cy-id="drawer-close">
+                (click)="closeMenu.emit()" aria-label="Close the menu" data-testid="drawer-close">
           <span class="material-icons" aria-hidden="true">close</span>
         </button>
       </div>
 
       <nav aria-label="Main" class="flex flex-col gap-1">
         @for (item of items; track item.path) {
-          <a [routerLink]="item.path" routerLinkActive ariaCurrentWhenActive="page" [attr.data-cy-id]="item.cyId" (click)="navigated.emit()"
+          <a [routerLink]="item.path" routerLinkActive ariaCurrentWhenActive="page" [attr.data-testid]="item.cyId" (click)="navigated.emit()"
              [attr.title]="sideNav.text ? null : item.label"
              class="flex items-center gap-3 min-h-11 px-3 rounded-[10px] text-base-content/70 font-medium no-underline
                     hover:bg-base-200 hover:text-base-content
@@ -60,7 +60,7 @@ interface NavItem {
         <div role="group" aria-label="Theme" class="flex gap-1 p-1 rounded-[10px] bg-base-200" [class.flex-col]="!sideNav.text">
           @for (option of themes; track option.name) {
             <button type="button" [attr.aria-pressed]="theme === option.name" (click)="themeSelected.emit(option.name)"
-                    [attr.aria-label]="sideNav.text ? null : option.label" [attr.data-cy-id]="'theme-' + option.name"
+                    [attr.aria-label]="sideNav.text ? null : option.label" [attr.data-testid]="'theme-' + option.name"
                     class="flex-1 min-h-9 px-2 rounded-lg text-xs font-semibold text-base-content/70 cursor-pointer
                            flex items-center justify-center
                            aria-pressed:bg-base-100 aria-pressed:text-base-content aria-pressed:shadow-sm">

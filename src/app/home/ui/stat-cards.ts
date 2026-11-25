@@ -5,9 +5,9 @@ import {IBuildStats} from '../../core'
 @Component({
   selector: 'bb-stat-cards',
   template: `
-    <div class="grid grid-cols-[repeat(auto-fit,minmax(9rem,1fr))] gap-4" data-cy-id="stats-hero">
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(9rem,1fr))] gap-4" data-testid="stats-hero">
       @for (card of cards(); track card.key) {
-        <div class="card bg-base-100 border border-base-300 shadow-sm" attr.data-cy-id="stat-{{card.key}}">
+        <div class="card bg-base-100 border border-base-300 shadow-sm" attr.data-testid="stat-{{card.key}}">
           <div class="card-body gap-3 p-5">
             <span class="size-10 rounded-xl grid place-items-center" [class]="card.tone" aria-hidden="true">
               <span class="material-icons text-[20px]">{{ card.icon }}</span>

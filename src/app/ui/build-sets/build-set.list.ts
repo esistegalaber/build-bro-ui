@@ -13,7 +13,7 @@ import {BuildSetSummary} from "../../build-sets/state/build-sets.model";
             <button type="button" class="flex flex-col items-start gap-0.5 py-2 text-left"
                     [ngClass]="{'menu-active bg-primary/10 text-primary': summary.name === selectedName()}"
                     [attr.aria-current]="summary.name === selectedName() ? 'true' : null"
-                    (click)="buildSetSelected.emit(summary.name)" attr.data-cy-id="build-set-name-{{summary.name}}">
+                    (click)="buildSetSelected.emit(summary.name)" attr.data-testid="build-set-name-{{summary.name}}">
               <span class="font-semibold break-all">{{ summary.name }}</span>
               <span class="text-xs opacity-70">
                 @if (summary.projects === 0) {
@@ -25,7 +25,7 @@ import {BuildSetSummary} from "../../build-sets/state/build-sets.model";
             </button>
           </li>
         } @empty {
-          <li class="px-4 py-6 text-center text-sm text-base-content/70" data-cy-id="build-sets-none">No build sets yet.</li>
+          <li class="px-4 py-6 text-center text-sm text-base-content/70" data-testid="build-sets-none">No build sets yet.</li>
         }
       </ul>
     </nav>

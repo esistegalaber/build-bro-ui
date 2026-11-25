@@ -9,7 +9,7 @@ import {EmptyState} from '../../ui/empty-state'
   template: `
     @if (server(); as server) {
       <form class="card bg-base-100 border border-base-300 shadow-sm" [attr.aria-label]="'Edit ' + server.name"
-            [formRoot]="detailsForm" (keydown.escape)="cancel.emit()" data-cy-id="server-form">
+            [formRoot]="detailsForm" (keydown.escape)="cancel.emit()" data-testid="server-form">
         <div class="card-body gap-4 p-5">
           <div>
             <h2 class="text-lg font-bold wrap-anywhere">Edit {{ server.name }}</h2>
@@ -18,21 +18,21 @@ import {EmptyState} from '../../ui/empty-state'
           <label class="flex flex-col gap-1">
             <span class="text-sm font-medium">Nickname</span>
             <input #nickNameInput class="input w-full" placeholder="e.g. Staging"
-                   [formField]="detailsForm.nickName" data-cy-id="server-nickname"/>
+                   [formField]="detailsForm.nickName" data-testid="server-nickname"/>
           </label>
           <label class="flex flex-col gap-1">
             <span class="text-sm font-medium">Description</span>
             <textarea class="textarea w-full" rows="3" placeholder="What runs here?"
-                      [formField]="detailsForm.description" data-cy-id="server-description"></textarea>
+                      [formField]="detailsForm.description" data-testid="server-description"></textarea>
           </label>
           <div class="flex justify-end gap-2">
-            <button type="button" class="btn btn-ghost" (click)="cancel.emit()" data-cy-id="edit-server-cancel">Cancel</button>
-            <button type="submit" class="btn btn-primary" data-cy-id="server-save">Save</button>
+            <button type="button" class="btn btn-ghost" (click)="cancel.emit()" data-testid="edit-server-cancel">Cancel</button>
+            <button type="submit" class="btn btn-primary" data-testid="server-save">Save</button>
           </div>
         </div>
       </form>
     } @else {
-      <bb-empty-state icon="edit_note" framed data-cy-id="server-none">
+      <bb-empty-state icon="edit_note" framed data-testid="server-none">
         <p>Choose a server to give it a nickname or description.</p>
       </bb-empty-state>
     }

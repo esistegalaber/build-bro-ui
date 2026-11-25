@@ -11,8 +11,8 @@ import {LabelChip} from "../labels/label-chip";
   selector: 'bb-builds-accordion',
   template: `
     @for (build of builds; track build.id) {
-      <div class="collapse collapse-arrow rounded-none border-b border-base-300 last:border-b-0" data-cy-id="build-row">
-        <input type="checkbox" attr.data-cy-id="build-{{build.id}}"
+      <div class="collapse collapse-arrow rounded-none border-b border-base-300 last:border-b-0" data-testid="build-row">
+        <input type="checkbox" attr.data-testid="build-{{build.id}}"
                [attr.aria-label]="'Show the labels of ' + build.project + ' ' + build.branch + ' #' + build.buildNumber"/>
         <div class="collapse-title flex flex-wrap items-center gap-x-4 gap-y-2 py-3 pe-12">
           <span class="size-10 shrink-0 rounded-xl bg-base-200 text-base-content/70 grid place-items-center" aria-hidden="true">

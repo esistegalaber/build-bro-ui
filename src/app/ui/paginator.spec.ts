@@ -14,38 +14,38 @@ describe('Paginator', () => {
     await fixture.whenStable()
     const pages: number[] = []
     fixture.componentInstance.toPage.subscribe((page) => pages.push(page))
-    const byCy = (id: string) => fixture.nativeElement.querySelector(`[data-cy-id="${id}"]`) as HTMLButtonElement
-    return {byCy, pages}
+    const byTestId = (id: string) => fixture.nativeElement.querySelector(`[data-testid="${id}"]`) as HTMLButtonElement
+    return {byTestId, pages}
   }
 
   it('shows which results are on the page and the page number', async () => {
-    const {byCy} = await render(params(1))
-    expect(byCy('paginator-range').textContent?.trim()).toBe('Showing 11–20 of 45')
-    expect(byCy('paginator-current').textContent?.trim()).toBe('2 / 5')
+    const {byTestId} = await render(params(1))
+    expect(byTestId('paginator-range').textContent?.trim()).toBe('Showing 11–20 of 45')
+    expect(byTestId('paginator-current').textContent?.trim()).toBe('2 / 5')
   })
 
   it('ends the range at the last result on the last page, also with the page size as a string', async () => {
-    const {byCy} = await render(params(1, {pageSize: '25' as unknown as number, totalPages: 2, hasNext: false}))
-    expect(byCy('paginator-range').textContent?.trim()).toBe('Showing 26–45 of 45')
+    const {byTestId} = await render(params(1, {pageSize: '25' as unknown as number, totalPages: 2, hasNext: false}))
+    expect(byTestId('paginator-range').textContent?.trim()).toBe('Showing 26–45 of 45')
   })
 
   it('disables first and previous on the first page, next and last on the last', async () => {
     const first = await render(params(0))
-    expect(first.byCy('paginator-first').disabled).toBe(true)
-    expect(first.byCy('paginator-previous').disabled).toBe(true)
-    expect(first.byCy('paginator-next').disabled).toBe(false)
+    expect(first.byTestId('paginator-first').disabled).toBe(true)
+    expect(first.byTestId('paginator-previous').disabled).toBe(true)
+    expect(first.byTestId('paginator-next').disabled).toBe(false)
   })
 
   it('asks for the first, previous, next and last page', async () => {
-    const {byCy, pages} = await render(params(2))
+    const {byTestId, pages} = await render(params(2))
     for (const id of ['paginator-first', 'paginator-previous', 'paginator-next', 'paginator-last']) {
-      byCy(id).click()
+      byTestId(id).click()
     }
     expect(pages).toEqual([0, 1, 3, 4])
   })
 
   it('stays hidden without results', async () => {
-    const {byCy} = await render(params(0, {totalElements: 0, totalPages: 0}))
-    expect(byCy('paginator')).toBeNull()
+    const {byTestId} = await render(params(0, {totalElements: 0, totalPages: 0}))
+    expect(byTestId('paginator')).toBeNull()
   })
 })

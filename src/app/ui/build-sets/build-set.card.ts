@@ -9,7 +9,7 @@ import {EmptyState} from '../empty-state'
 @Component({
   selector: 'bb-build-set-card',
   template: `
-    <section class="card bg-base-100 border border-base-300 shadow-sm overflow-hidden" data-cy-id="build-set-card">
+    <section class="card bg-base-100 border border-base-300 shadow-sm overflow-hidden" data-testid="build-set-card">
       <div class="flex flex-wrap items-start justify-between gap-3 px-5 py-4 border-b border-base-300">
         <div class="min-w-0">
           <h2 class="text-lg font-bold break-all">Builds of {{ buildSet().name }}</h2>
@@ -24,13 +24,13 @@ import {EmptyState} from '../empty-state'
           }
         </div>
         <div class="flex flex-wrap gap-2">
-          <a class="btn btn-sm btn-primary" [routerLink]="['/edit-build-set', buildSet().name]" data-cy-id="build-set-edit">
+          <a class="btn btn-sm btn-primary" [routerLink]="['/edit-build-set', buildSet().name]" data-testid="build-set-edit">
             <span class="material-icons text-[18px]" aria-hidden="true">edit</span>Edit
           </a>
-          <a class="btn btn-sm btn-soft btn-primary" [routerLink]="['/edit-build-set', 'clone', buildSet().name]" data-cy-id="build-set-clone">
+          <a class="btn btn-sm btn-soft btn-primary" [routerLink]="['/edit-build-set', 'clone', buildSet().name]" data-testid="build-set-clone">
             <span class="material-icons text-[18px]" aria-hidden="true">content_copy</span>Clone
           </a>
-          <button type="button" class="btn btn-sm btn-ghost text-error" (click)="deleteBuildSet.emit(buildSet())" data-cy-id="build-set-delete">
+          <button type="button" class="btn btn-sm btn-ghost text-error" (click)="deleteBuildSet.emit(buildSet())" data-testid="build-set-delete">
             <span class="material-icons text-[18px]" aria-hidden="true">delete</span>Delete
           </button>
         </div>
@@ -38,7 +38,7 @@ import {EmptyState} from '../empty-state'
       @if (builds().length > 0) {
         <bb-builds-accordion [builds]="builds()" [labelDefinitions]="labelDefinitions()"></bb-builds-accordion>
       } @else {
-        <bb-empty-state icon="layers_clear" data-cy-id="build-set-empty">
+        <bb-empty-state icon="layers_clear" data-testid="build-set-empty">
           <p>This build set has no builds yet: it has no projects, or none of them has a matching build.</p>
           <a class="btn btn-sm" [routerLink]="['/edit-build-set', buildSet().name]">Add projects</a>
         </bb-empty-state>

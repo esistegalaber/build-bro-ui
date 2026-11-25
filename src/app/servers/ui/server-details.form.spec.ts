@@ -6,7 +6,7 @@ import {deepFreeze} from '../../../testing/freeze'
 
 describe('ServerDetailsForm', () => {
   let fixture: ComponentFixture<ServerDetailsForm>
-  const byCy = <T extends HTMLElement>(id: string) => fixture.nativeElement.querySelector(`[data-cy-id="${id}"]`) as T
+  const byTestId = <T extends HTMLElement>(id: string) => fixture.nativeElement.querySelector(`[data-testid="${id}"]`) as T
 
   async function render(server: IServer | null) {
     fixture = TestBed.createComponent(ServerDetailsForm)
@@ -16,7 +16,7 @@ describe('ServerDetailsForm', () => {
   }
 
   async function type(id: string, value: string) {
-    const field = byCy<HTMLInputElement>(id)
+    const field = byTestId<HTMLInputElement>(id)
     field.value = value
     field.dispatchEvent(new Event('input'))
     await fixture.whenStable()
@@ -24,16 +24,16 @@ describe('ServerDetailsForm', () => {
 
   it('asks to choose a server while none is selected', async () => {
     await render(null)
-    expect(byCy('server-none')).toBeTruthy()
-    expect(byCy('server-form')).toBeNull()
+    expect(byTestId('server-none')).toBeTruthy()
+    expect(byTestId('server-form')).toBeNull()
   })
 
   it('shows the values of the chosen server and focuses the nickname', async () => {
     await render(someServers()[0])
-    expect(byCy('server-form').textContent).toContain('Edit testserver')
-    expect(byCy<HTMLInputElement>('server-nickname').value).toBe('Tester')
-    expect(byCy<HTMLTextAreaElement>('server-description').value).toBe('Main Testing Server')
-    expect(document.activeElement).toBe(byCy('server-nickname'))
+    expect(byTestId('server-form').textContent).toContain('Edit testserver')
+    expect(byTestId<HTMLInputElement>('server-nickname').value).toBe('Tester')
+    expect(byTestId<HTMLTextAreaElement>('server-description').value).toBe('Main Testing Server')
+    expect(document.activeElement).toBe(byTestId('server-nickname'))
   })
 
   it('saves the edited copy and leaves the input alone', async () => {
@@ -43,7 +43,7 @@ describe('ServerDetailsForm', () => {
     fixture.componentInstance.updateServer.subscribe((s) => saved.push(s))
     await type('server-nickname', 'Renamed')
     await type('server-description', 'New text')
-    byCy('server-save').click()
+    byTestId('server-save').click()
     expect(saved).toEqual([{...server, nickName: 'Renamed', description: 'New text'}])
     expect(server.nickName).toBe('Tester')
   })
@@ -53,15 +53,15 @@ describe('ServerDetailsForm', () => {
     await type('server-nickname', 'Unsaved')
     fixture.componentRef.setInput('server', someServers()[1])
     await fixture.whenStable()
-    expect(byCy<HTMLInputElement>('server-nickname').value).toBe('Company Staging')
+    expect(byTestId<HTMLInputElement>('server-nickname').value).toBe('Company Staging')
   })
 
   it('cancels with the button and with Escape', async () => {
     await render(someServers()[0])
     let cancelled = 0
     fixture.componentInstance.cancel.subscribe(() => cancelled++)
-    byCy('edit-server-cancel').click()
-    byCy('server-nickname').dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}))
+    byTestId('edit-server-cancel').click()
+    byTestId('server-nickname').dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}))
     expect(cancelled).toBe(2)
   })
 })

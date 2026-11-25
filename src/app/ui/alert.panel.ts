@@ -13,16 +13,16 @@ const LOOKS: Record<string, { icon: string, classes: string }> = {
   template: `
     @if (alert().message.length > 0) {
       <div class="alert alert-soft alert-horizontal items-start border" [class]="look().classes"
-           [attr.role]="isError() ? 'alert' : 'status'" data-cy-id="alert">
+           [attr.role]="isError() ? 'alert' : 'status'" data-testid="alert">
         <span class="material-icons" aria-hidden="true">{{ look().icon }}</span>
         <div class="min-w-0">
           @if (alert().heading) {
-            <h2 class="font-bold" data-cy-id="alert-heading">{{ alert().heading }}</h2>
+            <h2 class="font-bold" data-testid="alert-heading">{{ alert().heading }}</h2>
           }
-          <p class="text-sm wrap-anywhere" data-cy-id="alert-message">{{ alert().message }}</p>
+          <p class="text-sm wrap-anywhere" data-testid="alert-message">{{ alert().message }}</p>
         </div>
         <button type="button" class="btn btn-sm btn-ghost btn-square" aria-label="Dismiss"
-                (click)="clearAlert.emit()" data-cy-id="alert-ok">
+                (click)="clearAlert.emit()" data-testid="alert-ok">
           <span class="material-icons text-[20px]" aria-hidden="true">close</span>
         </button>
       </div>

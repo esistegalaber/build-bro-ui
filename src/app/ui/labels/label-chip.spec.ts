@@ -7,7 +7,7 @@ import {aBooleanDefinition, someLabelDefinitions} from '../../../testing/data'
 @Component({
   template: `
     <bb-label-chip [labelKey]="labelKey()" [value]="value()" [definition]="definition()" [mode]="mode()">
-      <button type="button" data-cy-id="projected">x</button>
+      <button type="button" data-testid="projected">x</button>
     </bb-label-chip>`,
   imports: [LabelChip]
 })
@@ -26,7 +26,7 @@ describe('LabelChip', () => {
     Object.entries(inputs).forEach(([name, value]) => fixture.componentRef.setInput(name, value))
     await fixture.whenStable()
     const el = fixture.nativeElement as HTMLElement
-    const chip = el.querySelector('[data-cy-id=label-chip]') as HTMLElement
+    const chip = el.querySelector('[data-testid=label-chip]') as HTMLElement
     // the projected button's "x" follows the value directly
     return {el, chip, text: () => chip.textContent?.replace(/\s+/g, ' ').trim()}
   }
@@ -54,7 +54,7 @@ describe('LabelChip', () => {
 
   it('links a URL, opening a new tab without access to this one', async () => {
     const {chip} = await render({labelKey: 'jenkins-build', value: 'http://my-jenkins/1', definition: jenkinsBuild})
-    const link = chip.querySelector('[data-cy-id=label-link]') as HTMLAnchorElement
+    const link = chip.querySelector('[data-testid=label-link]') as HTMLAnchorElement
     expect(link.getAttribute('href')).toBe('http://my-jenkins/1')
     expect(link.target).toBe('_blank')
     expect(link.rel).toBe('noopener noreferrer')

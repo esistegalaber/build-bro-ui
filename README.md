@@ -9,14 +9,13 @@ Built with Angular 22, NgRx 22, TypeScript 6, Tailwind CSS 4 and daisyUI 5.
 ## Requirements
 
 - **Node 26** (the Angular 22 CLI also accepts ^22.22.3 and ^24.15; builds and tests are verified on 26)
-- **Chrome**, for the end-to-end tests
 - **Docker**, to build the production image
-- For the live tests: the Build Bruh API on port 8080, with `testdata.sql` loaded into its database
+- To use the app: the Build Bruh API on port 8080
 
 ## Getting started
 
 ```bash
-npm ci        # also downloads the Cypress binary (approved in package.json -> allowScripts)
+npm ci
 npm start     # dev server on http://localhost:4200, proxies /api to http://localhost:8080
 ```
 
@@ -38,19 +37,7 @@ npm test                                  # watch mode
 npm test -- --watch=false --coverage      # once, with a coverage report in coverage/
 ```
 
-**End-to-end tests** (Cypress) in `cypress/e2e/` cover every page. They need the app on :4200 (`npm start`) and can run in two modes:
-
-```bash
-npm run cypress:run        # against an in-memory fake API, no backend needed
-npm run cypress:run:live   # against the real API on :8080 (needs testdata.sql loaded)
-npm run cypress:open       # interactive Cypress
-```
-
-The fake API (`cypress/support/fake-api.ts`) serves a snapshot of the real API with `testdata.sql` loaded (`cypress/fixtures/api-db.json`). Every test starts with a fresh copy of the data. When `testdata.sql` changes, reload it into the database and regenerate the snapshot with `npm run cypress:snapshot-api`.
-
-The tests that change data clean up after themselves, so live mode can be run again on the same database.
-
-After upgrading Cypress, run `npm approve-scripts cypress` so that `npm ci` keeps downloading its binary.
+**End-to-end tests** live in [build-bro-acceptance](https://github.com/esistegalaber/build-bro-acceptance): Playwright drives this UI against the live API and database, the way a user would.
 
 ## Docker
 
@@ -66,4 +53,4 @@ nginx proxies `/api` to `http://${BUILDZ_API}:8080/api` (`BUILDZ_API` defaults t
 
 ## CI
 
-- **GitHub Actions** (`.github/workflows/build.yml`) runs on pushes to `main` and on pull requests. The unit tests (with coverage) and the build with the e2e tests (in Chrome, against the fake API) run as parallel jobs. A third job runs a SonarCloud scan as soon as the unit tests are done, including their coverage (project `esistegalaber_build-bro-ui`, configured in `sonar-project.properties`; needs the `SONAR_TOKEN` repository secret).
+- **GitHub Actions** (`.github/workflows/build.yml`) runs on pushes to `main` and on pull requests. The unit tests (with coverage) and the production build run as parallel jobs. A third job runs a SonarCloud scan as soon as the unit tests are done, including their coverage (project `esistegalaber_build-bro-ui`, configured in `sonar-project.properties`; needs the `SONAR_TOKEN` repository secret).

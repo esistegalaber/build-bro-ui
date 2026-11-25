@@ -17,7 +17,7 @@ describe('BuildSearchForm', () => {
   let fixture: ComponentFixture<BuildSearchForm>
   let updates: IBuildSearchParams[]
   let resets: number
-  const byCy = <T extends HTMLElement = HTMLElement>(id: string) => fixture.nativeElement.querySelector(`[data-cy-id="${id}"]`) as T
+  const byTestId = <T extends HTMLElement = HTMLElement>(id: string) => fixture.nativeElement.querySelector(`[data-testid="${id}"]`) as T
 
   const searchWith = (search: Partial<IBuildSearchParams> = {}) => deepFreeze({...structuredClone(INITIAL_BUILD_SEARCH.search), ...search})
 
@@ -39,14 +39,14 @@ describe('BuildSearchForm', () => {
   }
 
   async function type(id: string, value: string) {
-    const input = byCy<HTMLInputElement>(id)
+    const input = byTestId<HTMLInputElement>(id)
     input.value = value
     input.dispatchEvent(new Event('input'))
     await fixture.whenStable()
   }
 
   async function choose(id: string, value: string) {
-    const select = byCy<HTMLSelectElement>(id)
+    const select = byTestId<HTMLSelectElement>(id)
     select.value = value
     // like a browser: a select fires input, then change
     select.dispatchEvent(new Event('input'))
@@ -56,10 +56,10 @@ describe('BuildSearchForm', () => {
 
   it('offers the projects, and the branches of the chosen project', async () => {
     await render({project: 'backend'})
-    const options = (id: string) => Array.from(byCy(id).querySelectorAll('option')).map((o) => o.textContent?.trim())
+    const options = (id: string) => Array.from(byTestId(id).querySelectorAll('option')).map((o) => o.textContent?.trim())
     expect(options('project-select')).toEqual(['All projects', 'backend', 'frontend'])
     expect(options('branch-select')).toEqual(['All branches', 'main', 'next'])
-    expect(byCy<HTMLSelectElement>('project-select').value).toBe('backend')
+    expect(byTestId<HTMLSelectElement>('project-select').value).toBe('backend')
   })
 
   it('searches when a project is chosen, without changing the store\'s search', async () => {
@@ -71,7 +71,7 @@ describe('BuildSearchForm', () => {
 
   it('searches with the chosen page size as a number', async () => {
     await render()
-    expect(byCy<HTMLSelectElement>('page-size-select').value).toBe('10')
+    expect(byTestId<HTMLSelectElement>('page-size-select').value).toBe('10')
     await choose('page-size-select', '25')
     expect(updates).toEqual([expect.objectContaining({pageSize: 25})])
   })
@@ -82,21 +82,21 @@ describe('BuildSearchForm', () => {
     await storeAnswers()
     await storeAnswers()
     expect(updates).toHaveLength(1)
-    expect(byCy<HTMLSelectElement>('project-select').value).toBe('frontend')
+    expect(byTestId<HTMLSelectElement>('project-select').value).toBe('frontend')
   })
 
   it('shows a new search from the store, such as after a reset', async () => {
     await render({project: 'backend', minBuildNumber: 5})
     fixture.componentRef.setInput('theSearch', searchWith())
     await fixture.whenStable()
-    expect(byCy<HTMLSelectElement>('project-select').value).toBe('')
-    expect(byCy<HTMLInputElement>('min-build-number-input').value).toBe('')
+    expect(byTestId<HTMLSelectElement>('project-select').value).toBe('')
+    expect(byTestId<HTMLInputElement>('min-build-number-input').value).toBe('')
     expect(updates).toHaveLength(0)
   })
 
   it('adds a label filter only with both key and value, and then clears the inputs', async () => {
     await render()
-    const add = () => byCy<HTMLButtonElement>('label-add')
+    const add = () => byTestId<HTMLButtonElement>('label-add')
     expect(add().disabled).toBe(true)
     // a key without a definition takes any text
     await type('label-key-input', 'release.name')
@@ -106,29 +106,29 @@ describe('BuildSearchForm', () => {
     add().click()
     await fixture.whenStable()
     expect(updates.at(-1)?.labels).toEqual({'release.name': 'Analog-Amoeba'})
-    expect(byCy<HTMLInputElement>('label-key-input').value).toBe('')
-    expect(byCy<HTMLInputElement>('label-value-input').value).toBe('')
+    expect(byTestId<HTMLInputElement>('label-key-input').value).toBe('')
+    expect(byTestId<HTMLInputElement>('label-value-input').value).toBe('')
   })
 
   it('shows the label filters as chips, by their definition, and removes one', async () => {
     await render({labels: {'integration-test': 'ok', 'smoke': 'ok'}})
-    expect(byCy('search-label').textContent).toContain('Integration test = ok')
-    expect(byCy('label-chip').classList).toContain('badge-success')
-    byCy('search-label-remove').click()
+    expect(byTestId('search-label').textContent).toContain('Integration test = ok')
+    expect(byTestId('label-chip').classList).toContain('badge-success')
+    byTestId('search-label-remove').click()
     await fixture.whenStable()
     expect(updates.at(-1)?.labels).toEqual({'smoke': 'ok'})
   })
 
   it('reloads with the current search, once per click', async () => {
     await render({project: 'backend'})
-    byCy('search-reload').click()
+    byTestId('search-reload').click()
     await fixture.whenStable()
     expect(updates).toEqual([expect.objectContaining({project: 'backend'})])
   })
 
   it('asks for a reset without searching', async () => {
     await render()
-    byCy('search-reset').click()
+    byTestId('search-reset').click()
     await fixture.whenStable()
     expect(resets).toBe(1)
     expect(updates).toHaveLength(0)
@@ -141,7 +141,7 @@ describe('BuildSearchForm', () => {
 
     /** types without waiting, like a fast typist */
     function typeFast(id: string, ...values: string[]) {
-      const input = byCy<HTMLInputElement>(id)
+      const input = byTestId<HTMLInputElement>(id)
       for (const value of values) {
         input.value = value
         input.dispatchEvent(new Event('input'))
@@ -179,7 +179,7 @@ describe('BuildSearchForm', () => {
 
     it('does not search for keys that change nothing, such as Tab or the arrow keys', async () => {
       await render()
-      byCy('min-build-number-input').dispatchEvent(new KeyboardEvent('keyup', {key: 'Tab'}))
+      byTestId('min-build-number-input').dispatchEvent(new KeyboardEvent('keyup', {key: 'Tab'}))
       await pause(TYPING_PAUSE_MS)
       expect(updates).toHaveLength(0)
     })
@@ -187,7 +187,7 @@ describe('BuildSearchForm', () => {
     it('takes the typed number along on Reload, right away and only once', async () => {
       await render()
       typeFast('min-build-number-input', '5')
-      byCy('search-reload').click()
+      byTestId('search-reload').click()
       await fixture.whenStable()
       expect(updates).toEqual([expect.objectContaining({minBuildNumber: 5})])
       await pause(TYPING_PAUSE_MS)
@@ -197,7 +197,7 @@ describe('BuildSearchForm', () => {
     it('takes the typed number along when the field is left for a select', async () => {
       await render()
       typeFast('min-build-number-input', '5')
-      byCy('min-build-number-input').dispatchEvent(new Event('blur'))
+      byTestId('min-build-number-input').dispatchEvent(new Event('blur'))
       await choose('project-select', 'frontend')
       expect(updates.at(-1)).toMatchObject({minBuildNumber: 5, project: 'frontend'})
     })
@@ -205,7 +205,7 @@ describe('BuildSearchForm', () => {
     it('drops the waiting number when the store sends a new search, such as after a reset', async () => {
       await render()
       typeFast('min-build-number-input', '5')
-      byCy('search-reset').click()
+      byTestId('search-reset').click()
       fixture.componentRef.setInput('theSearch', searchWith())
       await pause(TYPING_PAUSE_MS)
       expect(resets).toBe(1)
@@ -223,23 +223,23 @@ describe('BuildSearchForm', () => {
 
   it('suggests the keys in use and the defined ones, once each', async () => {
     await render()
-    const options = Array.from(byCy('label-key-suggestions').querySelectorAll('option')).map((o) => o.value)
+    const options = Array.from(byTestId('label-key-suggestions').querySelectorAll('option')).map((o) => o.value)
     expect(options).toEqual(['integration-test', 'jenkins-build', 'part-of-build-set', 'release.name', 'revision'])
-    expect(byCy('label-key-input').getAttribute('list')).toBe('bb-label-keys')
+    expect(byTestId('label-key-input').getAttribute('list')).toBe('bb-label-keys')
   })
 
   it('offers the values of an enum key to choose from, with a hint', async () => {
     await render()
     await type('label-key-input', 'Integration-Test')
-    const values = Array.from(byCy<HTMLSelectElement>('label-value-input').options).map((o) => o.value)
+    const values = Array.from(byTestId<HTMLSelectElement>('label-value-input').options).map((o) => o.value)
     expect(values).toEqual(['', 'ok', 'broken'])
-    expect(byCy('label-value-hint').textContent).toBe('Integration test: one of ok, broken')
-    const select = byCy<HTMLSelectElement>('label-value-input')
+    expect(byTestId('label-value-hint').textContent).toBe('Integration test: one of ok, broken')
+    const select = byTestId<HTMLSelectElement>('label-value-input')
     select.value = 'broken'
     select.dispatchEvent(new Event('input'))
     select.dispatchEvent(new Event('change'))
     await fixture.whenStable()
-    byCy<HTMLButtonElement>('label-add').click()
+    byTestId<HTMLButtonElement>('label-add').click()
     await fixture.whenStable()
     expect(updates.at(-1)?.labels).toEqual({'Integration-Test': 'broken'})
   })
@@ -247,18 +247,18 @@ describe('BuildSearchForm', () => {
   it('marks a value that can\'t match a defined key, and doesn\'t add it', async () => {
     await render()
     await type('label-key-input', 'revision')
-    expect(byCy('label-value-hint').classList).not.toContain('text-error')
+    expect(byTestId('label-value-hint').classList).not.toContain('text-error')
     await type('label-value-input', 'abc')
-    expect(byCy('label-value-hint').textContent).toBe('Revision: a value matching [0-9a-f]{64}')
-    expect(byCy('label-value-hint').classList).toContain('text-error')
-    expect(byCy<HTMLButtonElement>('label-add').disabled).toBe(true)
+    expect(byTestId('label-value-hint').textContent).toBe('Revision: a value matching [0-9a-f]{64}')
+    expect(byTestId('label-value-hint').classList).toContain('text-error')
+    expect(byTestId<HTMLButtonElement>('label-add').disabled).toBe(true)
   })
 
   it('takes any value for a key without a definition, without a hint', async () => {
     await render()
     await type('label-key-input', 'part-of-build-set')
     await type('label-value-input', 'main')
-    expect(byCy('label-value-hint')).toBeNull()
-    expect(byCy<HTMLButtonElement>('label-add').disabled).toBe(false)
+    expect(byTestId('label-value-hint')).toBeNull()
+    expect(byTestId<HTMLButtonElement>('label-add').disabled).toBe(false)
   })
 })

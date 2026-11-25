@@ -14,38 +14,38 @@ describe('ServersPage', () => {
     const dispatched = vi.spyOn(TestBed.inject(MockStore), 'dispatch')
     const fixture = TestBed.createComponent(ServersPage)
     await fixture.whenStable()
-    const byCy = (id: string) => fixture.nativeElement.querySelector(`[data-cy-id="${id}"]`) as HTMLElement
+    const byTestId = (id: string) => fixture.nativeElement.querySelector(`[data-testid="${id}"]`) as HTMLElement
     const editStaging = async () => {
-      (fixture.nativeElement.querySelector('[data-cy-id="server-staging"] [data-cy-id="server-edit"]') as HTMLElement).click()
+      (fixture.nativeElement.querySelector('[data-testid="server-staging"] [data-testid="server-edit"]') as HTMLElement).click()
       await fixture.whenStable()
     }
-    return {fixture, dispatched, byCy, editStaging}
+    return {fixture, dispatched, byTestId, editStaging}
   }
 
   it('lists the servers and opens no form', async () => {
-    const {byCy} = await render()
-    expect(byCy('server-testserver')).toBeTruthy()
-    expect(byCy('server-staging')).toBeTruthy()
-    expect(byCy('server-none')).toBeTruthy()
+    const {byTestId} = await render()
+    expect(byTestId('server-testserver')).toBeTruthy()
+    expect(byTestId('server-staging')).toBeTruthy()
+    expect(byTestId('server-none')).toBeTruthy()
   })
 
   it('edits the chosen server and saves it', async () => {
-    const {fixture, dispatched, byCy, editStaging} = await render()
+    const {fixture, dispatched, byTestId, editStaging} = await render()
     await editStaging()
-    expect(byCy('server-staging').getAttribute('aria-current')).toBe('true')
-    expect(byCy('server-form').textContent).toContain('Edit staging')
-    byCy('server-save').click()
+    expect(byTestId('server-staging').getAttribute('aria-current')).toBe('true')
+    expect(byTestId('server-form').textContent).toContain('Edit staging')
+    byTestId('server-save').click()
     await fixture.whenStable()
     expect(dispatched).toHaveBeenCalledWith(CoreActions.updateServer({server: someServers()[1]}))
-    expect(byCy('server-form')).toBeNull()
+    expect(byTestId('server-form')).toBeNull()
   })
 
   it('closes the form on cancel without saving', async () => {
-    const {fixture, dispatched, byCy, editStaging} = await render()
+    const {fixture, dispatched, byTestId, editStaging} = await render()
     await editStaging()
-    byCy('edit-server-cancel').click()
+    byTestId('edit-server-cancel').click()
     await fixture.whenStable()
-    expect(byCy('server-form')).toBeNull()
+    expect(byTestId('server-form')).toBeNull()
     expect(dispatched).not.toHaveBeenCalled()
   })
 })

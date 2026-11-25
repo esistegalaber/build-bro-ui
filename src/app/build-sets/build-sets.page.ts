@@ -15,7 +15,7 @@ import {EmptyState} from '../ui/empty-state'
     @let selected = (selectedName$ | async);
     <div class="flex flex-col gap-6">
       <bb-page-header heading="Build sets" description="Named combinations of builds, for example everything that goes onto one server.">
-        <a class="btn btn-primary" routerLink="/edit-build-set" data-cy-id="build-set-add">
+        <a class="btn btn-primary" routerLink="/edit-build-set" data-testid="build-set-add">
           <span class="material-icons text-[18px]" aria-hidden="true">add</span>New build set
         </a>
       </bb-page-header>
@@ -30,7 +30,7 @@ import {EmptyState} from '../ui/empty-state'
                                [labelDefinitions]="(labelDefinitions$ | async) ?? []"
                                (deleteBuildSet)="askToDelete($event)"></bb-build-set-card>
           } @else {
-            <bb-empty-state icon="touch_app" framed data-cy-id="build-set-none">
+            <bb-empty-state icon="touch_app" framed data-testid="build-set-none">
               <p>Choose a build set to see the builds it resolves to.</p>
             </bb-empty-state>
           }
@@ -39,14 +39,14 @@ import {EmptyState} from '../ui/empty-state'
     </div>
 
     <div class="modal" [class.modal-open]="toDelete() !== null" role="dialog" aria-modal="true"
-         aria-labelledby="delete-dialog-title" (keydown.escape)="cancelDelete()" data-cy-id="delete-confirmation-dialog">
+         aria-labelledby="delete-dialog-title" (keydown.escape)="cancelDelete()" data-testid="delete-confirmation-dialog">
       @if (toDelete(); as buildSet) {
         <div class="modal-box">
           <h3 id="delete-dialog-title" class="text-lg font-bold">Delete {{ buildSet.name }}?</h3>
           <p class="py-4">The build set <strong>{{ buildSet.name }}</strong> is deleted for good. Its builds and deployments stay.</p>
           <div class="modal-action">
-            <button #cancelButton type="button" class="btn btn-ghost" (click)="cancelDelete()" data-cy-id="delete-cancel">Cancel</button>
-            <button type="button" class="btn btn-error" (click)="confirmDelete()" data-cy-id="delete-confirm">Delete</button>
+            <button #cancelButton type="button" class="btn btn-ghost" (click)="cancelDelete()" data-testid="delete-cancel">Cancel</button>
+            <button type="button" class="btn btn-error" (click)="confirmDelete()" data-testid="delete-confirm">Delete</button>
           </div>
         </div>
         <div class="modal-backdrop" (click)="cancelDelete()"></div>

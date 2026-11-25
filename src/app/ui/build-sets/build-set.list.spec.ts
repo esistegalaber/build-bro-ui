@@ -3,8 +3,8 @@ import {BuildSetList} from './build-set.list'
 
 describe('BuildSetList', () => {
   let fixture: ComponentFixture<BuildSetList>
-  const byCy = (id: string) => fixture.nativeElement.querySelector(`[data-cy-id="${id}"]`) as HTMLElement
-  const text = (id: string) => byCy(id).textContent?.replace(/\s+/g, ' ').trim()
+  const byTestId = (id: string) => fixture.nativeElement.querySelector(`[data-testid="${id}"]`) as HTMLElement
+  const text = (id: string) => byTestId(id).textContent?.replace(/\s+/g, ' ').trim()
 
   async function render(selectedName: string | null = null) {
     fixture = TestBed.createComponent(BuildSetList)
@@ -26,16 +26,16 @@ describe('BuildSetList', () => {
 
   it('marks the selected build set', async () => {
     await render('main')
-    expect(byCy('build-set-name-main').classList).toContain('menu-active')
-    expect(byCy('build-set-name-main').getAttribute('aria-current')).toBe('true')
-    expect(byCy('build-set-name-single').classList).not.toContain('menu-active')
+    expect(byTestId('build-set-name-main').classList).toContain('menu-active')
+    expect(byTestId('build-set-name-main').getAttribute('aria-current')).toBe('true')
+    expect(byTestId('build-set-name-single').classList).not.toContain('menu-active')
   })
 
   it('reports the chosen build set', async () => {
     await render()
     const chosen: string[] = []
     fixture.componentInstance.buildSetSelected.subscribe((name) => chosen.push(name))
-    byCy('build-set-name-single').click()
+    byTestId('build-set-name-single').click()
     expect(chosen).toEqual(['single'])
   })
 
@@ -43,6 +43,6 @@ describe('BuildSetList', () => {
     fixture = TestBed.createComponent(BuildSetList)
     fixture.componentRef.setInput('summaries', [])
     await fixture.whenStable()
-    expect(byCy('build-sets-none').textContent).toContain('No build sets yet.')
+    expect(byTestId('build-sets-none').textContent).toContain('No build sets yet.')
   })
 })

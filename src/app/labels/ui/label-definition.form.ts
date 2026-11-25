@@ -63,7 +63,7 @@ function linesOf(text: string): string[] {
   selector: 'bb-label-definition-form',
   template: `
     <form class="card bg-base-100 border border-base-300 shadow-sm" [formRoot]="definitionForm" (keydown.escape)="cancel.emit()"
-          [attr.aria-label]="isNew() ? 'New label definition' : 'Edit ' + fields().key" data-cy-id="label-definition-form">
+          [attr.aria-label]="isNew() ? 'New label definition' : 'Edit ' + fields().key" data-testid="label-definition-form">
       <div class="card-body gap-4 p-5">
         <div>
           <h2 class="text-lg font-bold wrap-anywhere">{{ isNew() ? 'New label definition' : 'Edit ' + fields().key }}</h2>
@@ -72,17 +72,17 @@ function linesOf(text: string): string[] {
         @if (isNew()) {
           <label class="flex flex-col gap-1">
             <span class="text-sm font-medium">Label key</span>
-            <input class="input w-full font-mono" placeholder="e.g. qa" [formField]="definitionForm.key" data-cy-id="label-key"/>
+            <input class="input w-full font-mono" placeholder="e.g. qa" [formField]="definitionForm.key" data-testid="label-key"/>
           </label>
         }
         <div class="flex flex-wrap gap-4">
           <label class="flex grow basis-40 flex-col gap-1">
             <span class="text-sm font-medium">Display name</span>
-            <input class="input w-full" placeholder="optional" [formField]="definitionForm.displayName" data-cy-id="label-display-name"/>
+            <input class="input w-full" placeholder="optional" [formField]="definitionForm.displayName" data-testid="label-display-name"/>
           </label>
           <label class="flex grow basis-40 flex-col gap-1">
             <span class="text-sm font-medium">Type</span>
-            <select class="select w-full" [formField]="definitionForm.type" data-cy-id="label-type">
+            <select class="select w-full" [formField]="definitionForm.type" data-testid="label-type">
               @for (type of types; track type.value) {
                 <option [value]="type.value">{{ type.name }}</option>
               }
@@ -91,33 +91,33 @@ function linesOf(text: string): string[] {
         </div>
         <label class="flex flex-col gap-1">
           <span class="text-sm font-medium">Description</span>
-          <input class="input w-full" placeholder="optional" [formField]="definitionForm.description" data-cy-id="label-description"/>
+          <input class="input w-full" placeholder="optional" [formField]="definitionForm.description" data-testid="label-description"/>
         </label>
         <fieldset class="flex flex-wrap gap-x-6 gap-y-2">
           <legend class="mb-1 text-sm font-medium">Meant for</legend>
           <label class="flex items-center gap-2">
-            <input type="checkbox" class="checkbox checkbox-sm" [formField]="definitionForm.appliesToBuild" data-cy-id="label-applies-build"/>builds
+            <input type="checkbox" class="checkbox checkbox-sm" [formField]="definitionForm.appliesToBuild" data-testid="label-applies-build"/>builds
           </label>
           <label class="flex items-center gap-2">
-            <input type="checkbox" class="checkbox checkbox-sm" [formField]="definitionForm.appliesToDeployment" data-cy-id="label-applies-deployment"/>deployments
+            <input type="checkbox" class="checkbox checkbox-sm" [formField]="definitionForm.appliesToDeployment" data-testid="label-applies-deployment"/>deployments
           </label>
         </fieldset>
         @if (fields().type === 'ENUM') {
           <label class="flex flex-col gap-1">
             <span class="text-sm font-medium">Allowed values, one per line</span>
             <textarea class="textarea w-full font-mono" rows="4" placeholder="passed&#10;pending&#10;failed"
-                      [formField]="definitionForm.allowedValues" data-cy-id="label-allowed-values"></textarea>
+                      [formField]="definitionForm.allowedValues" data-testid="label-allowed-values"></textarea>
           </label>
         }
         @if (fields().type === 'REGEX') {
           <label class="flex flex-col gap-1">
             <span class="text-sm font-medium">Pattern (the whole value must match)</span>
-            <input class="input w-full font-mono" placeholder="[0-9a-f]{7,40}" [formField]="definitionForm.pattern" data-cy-id="label-pattern"/>
+            <input class="input w-full font-mono" placeholder="[0-9a-f]{7,40}" [formField]="definitionForm.pattern" data-testid="label-pattern"/>
           </label>
         }
         <label class="flex flex-col gap-1">
           <span class="text-sm font-medium">Style</span>
-          <select class="select w-full" [formField]="definitionForm.style" data-cy-id="label-style">
+          <select class="select w-full" [formField]="definitionForm.style" data-testid="label-style">
             <option value="">neutral</option>
             @for (style of styles; track style) {
               <option [value]="style">{{ style.toLowerCase() }}</option>
@@ -125,14 +125,14 @@ function linesOf(text: string): string[] {
           </select>
         </label>
         @if (styledValues().length > 0) {
-          <fieldset class="flex flex-col gap-2" data-cy-id="label-value-styles">
+          <fieldset class="flex flex-col gap-2" data-testid="label-value-styles">
             <legend class="mb-1 text-sm font-medium">Style per value</legend>
             @for (value of styledValues(); track value) {
               <label class="flex items-center gap-3">
                 <span class="min-w-24 font-mono text-sm">{{ value }}</span>
                 <!-- the options mark the current style: a [value] on the select would come before its options exist -->
                 <select class="select select-sm grow" (change)="setValueStyle(value, $event)"
-                        [attr.data-cy-id]="'label-value-style-' + value">
+                        [attr.data-testid]="'label-value-style-' + value">
                   <option value="" [selected]="!valueStyles()[value]">as the label</option>
                   @for (style of styles; track style) {
                     <option [value]="style" [selected]="valueStyles()[value] === style">{{ style.toLowerCase() }}</option>
@@ -143,14 +143,14 @@ function linesOf(text: string): string[] {
           </fieldset>
         }
         <div class="flex flex-wrap justify-end gap-2">
-          <button type="button" class="btn btn-ghost" (click)="cancel.emit()" data-cy-id="label-cancel">Cancel</button>
+          <button type="button" class="btn btn-ghost" (click)="cancel.emit()" data-testid="label-cancel">Cancel</button>
           <button type="button" class="btn btn-soft btn-primary" [disabled]="!canSave()" (click)="preview()"
-                  data-cy-id="label-preview">Preview</button>
-          <button type="submit" class="btn btn-primary" [disabled]="!canSave()" data-cy-id="label-save">Save</button>
+                  data-testid="label-preview">Preview</button>
+          <button type="submit" class="btn btn-primary" [disabled]="!canSave()" data-testid="label-save">Save</button>
         </div>
 
         @if (shownReport(); as report) {
-          <div class="flex flex-col gap-2 border-t border-base-300 pt-4" data-cy-id="label-report">
+          <div class="flex flex-col gap-2 border-t border-base-300 pt-4" data-testid="label-report">
             <p class="text-sm font-medium">
               @if (report.saved) {
                 Saved.

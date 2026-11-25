@@ -18,7 +18,7 @@ describe('DeploymentList', () => {
     fixture.componentRef.setInput('labelDefinitions', labelDefinitions)
     await fixture.whenStable()
     const el = fixture.nativeElement as HTMLElement
-    return {el, rows: () => Array.from(el.querySelectorAll('[data-cy-id=row-of-deployment]')) as HTMLElement[]}
+    return {el, rows: () => Array.from(el.querySelectorAll('[data-testid=row-of-deployment]')) as HTMLElement[]}
   }
 
   it('shows server, nickname, relative and exact time and the number of builds, but not the labels', async () => {
@@ -28,30 +28,30 @@ describe('DeploymentList', () => {
     expect(text).toContain('3 days ago')
     expect(text).toMatch(/\d{4}/)
     expect(text).not.toContain('part-of-build-set')
-    expect(rows()[0].querySelector('.collapse-title [data-cy-id=label-chip]')).toBeNull()
-    expect(rows()[0].querySelector('[data-cy-id=builds-of-deployment]')?.textContent?.trim()).toBe('3 builds')
+    expect(rows()[0].querySelector('.collapse-title [data-testid=label-chip]')).toBeNull()
+    expect(rows()[0].querySelector('[data-testid=builds-of-deployment]')?.textContent?.trim()).toBe('3 builds')
   })
 
   it('keeps a deployment with many builds to one line, with the builds in the expandable part', async () => {
     const {rows} = await render([deployment(1, 'staging', 20), deployment(2, 'prod-1', 1)])
-    expect(rows()[0].querySelector('[data-cy-id=builds-of-deployment]')?.textContent?.trim()).toBe('20 builds')
-    expect(rows()[0].querySelector('.collapse-title [data-cy-id^=build-]')).toBeNull()
-    expect(rows()[0].querySelectorAll('.collapse-content [data-cy-id=build-row]')).toHaveLength(20)
-    expect(rows()[1].querySelector('[data-cy-id=builds-of-deployment]')?.textContent?.trim()).toBe('1 build')
+    expect(rows()[0].querySelector('[data-testid=builds-of-deployment]')?.textContent?.trim()).toBe('20 builds')
+    expect(rows()[0].querySelector('.collapse-title [data-testid^=build-]')).toBeNull()
+    expect(rows()[0].querySelectorAll('.collapse-content [data-testid=build-row]')).toHaveLength(20)
+    expect(rows()[1].querySelector('[data-testid=builds-of-deployment]')?.textContent?.trim()).toBe('1 build')
     // prod-1 isn't among the known servers, so it has no nickname
     expect(rows()[1].querySelector('.collapse-title .font-semibold')?.textContent?.trim()).toBe('prod-1')
   })
 
   it('has an accessible expand checkbox', async () => {
     const {el} = await render([deployment(1, 'testserver', 1)])
-    expect(el.querySelector('[data-cy-id=deployment-1]')?.getAttribute('aria-label')).toBe('Show the builds of the deployment to testserver')
+    expect(el.querySelector('[data-testid=deployment-1]')?.getAttribute('aria-label')).toBe('Show the builds of the deployment to testserver')
   })
 
   it('hands the label definitions on to the builds', async () => {
     const d = deployment(1, 'testserver', 1, [['Released', 'true'], ['part-of-build-set', 'main']])
     d.builds[0].labels = [{id: 1, key: 'released', value: 'false'}]
     const {rows} = await render([d], [aBooleanDefinition()])
-    const buildLabel = rows()[0].querySelector('.collapse-content dd [data-cy-id=label-chip]') as HTMLElement
+    const buildLabel = rows()[0].querySelector('.collapse-content dd [data-testid=label-chip]') as HTMLElement
     expect(buildLabel.querySelector('.material-icons')?.textContent).toBe('cancel')
   })
 
