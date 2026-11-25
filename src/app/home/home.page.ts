@@ -17,7 +17,7 @@ import {PageHeader} from '../ui/page-header'
   template: `
     <div class="flex flex-col gap-8">
       <bb-page-header heading="Welcome back" description="Here is what Build Bruh knows about your builds.">
-        <a class="btn btn-primary" routerLink="/builds" data-cy-id="browse-builds">
+        <a class="btn btn-primary" routerLink="/builds" data-testid="browse-builds">
           <span class="material-icons text-[18px]" aria-hidden="true">search</span>Browse builds
         </a>
       </bb-page-header>

@@ -15,19 +15,19 @@ import {EmptyState} from '../ui/empty-state'
       <bb-page-header heading="Projects" description="Turn off branches you no longer build, so they stay out of the way.">
         <label class="flex items-center gap-2 cursor-pointer">
           <input type="checkbox" class="toggle toggle-success" [checked]="inactiveIncluded()"
-                 (change)="toggleInactive($event)" data-cy-id="inactive-toggle"/>
+                 (change)="toggleInactive($event)" data-testid="inactive-toggle"/>
           <span class="font-medium">Show inactive</span>
         </label>
       </bb-page-header>
 
       <div class="flex flex-wrap items-center justify-between gap-3">
-        <h2 class="text-lg font-bold" data-cy-id="projects-count">
+        <h2 class="text-lg font-bold" data-testid="projects-count">
           {{ shown().length }} {{ shown().length === 1 ? 'project' : 'projects' }}
         </h2>
         <label class="input w-full sm:w-72">
           <span class="material-icons text-[18px] text-base-content/50" aria-hidden="true">search</span>
           <input type="search" placeholder="Search projects and branches" aria-label="Search projects and branches"
-                 [value]="search()" (input)="search.set($any($event.target).value)" data-cy-id="projects-search"/>
+                 [value]="search()" (input)="search.set($any($event.target).value)" data-testid="projects-search"/>
         </label>
       </div>
 
@@ -38,12 +38,12 @@ import {EmptyState} from '../ui/empty-state'
           }
         </div>
       } @else if (search()) {
-        <bb-empty-state icon="search_off" framed data-cy-id="projects-empty">
+        <bb-empty-state icon="search_off" framed data-testid="projects-empty">
           <p>No project or branch matches “{{ search() }}”.</p>
-          <button type="button" class="btn btn-sm btn-soft btn-primary" (click)="search.set('')" data-cy-id="projects-search-clear">Clear search</button>
+          <button type="button" class="btn btn-sm btn-soft btn-primary" (click)="search.set('')" data-testid="projects-search-clear">Clear search</button>
         </bb-empty-state>
       } @else {
-        <bb-empty-state icon="folder_off" framed data-cy-id="projects-none">
+        <bb-empty-state icon="folder_off" framed data-testid="projects-none">
           <p>No projects yet. They appear here with their first build.</p>
         </bb-empty-state>
       }

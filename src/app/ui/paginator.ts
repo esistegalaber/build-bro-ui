@@ -6,28 +6,28 @@ import {IPaginationParams} from '../core'
   selector: 'bb-paginator',
   template: `
     @if (paginationParams && paginationParams.totalElements > 0) {
-      <div class="flex flex-wrap items-center justify-between gap-3" data-cy-id="paginator">
-        <span class="text-sm text-base-content/70" data-cy-id="paginator-range">
+      <div class="flex flex-wrap items-center justify-between gap-3" data-testid="paginator">
+        <span class="text-sm text-base-content/70" data-testid="paginator-range">
           Showing {{ from }}–{{ to }} of {{ paginationParams.totalElements }}
         </span>
         <nav class="join" aria-label="Pages">
           <button type="button" class="join-item btn btn-sm btn-square" [disabled]="!paginationParams.hasPrevious"
-                  (click)="toPage.emit(0)" aria-label="First page" data-cy-id="paginator-first">
+                  (click)="toPage.emit(0)" aria-label="First page" data-testid="paginator-first">
             <span class="material-icons" aria-hidden="true">first_page</span>
           </button>
           <button type="button" class="join-item btn btn-sm btn-square" [disabled]="!paginationParams.hasPrevious"
-                  (click)="toPage.emit(paginationParams.currentPage - 1)" aria-label="Previous page" data-cy-id="paginator-previous">
+                  (click)="toPage.emit(paginationParams.currentPage - 1)" aria-label="Previous page" data-testid="paginator-previous">
             <span class="material-icons" aria-hidden="true">chevron_left</span>
           </button>
-          <span class="join-item btn btn-sm pointer-events-none font-mono" aria-current="page" data-cy-id="paginator-current">
+          <span class="join-item btn btn-sm pointer-events-none font-mono" aria-current="page" data-testid="paginator-current">
             {{ paginationParams.currentPage + 1 }} / {{ paginationParams.totalPages }}
           </span>
           <button type="button" class="join-item btn btn-sm btn-square" [disabled]="!paginationParams.hasNext"
-                  (click)="toPage.emit(paginationParams.currentPage + 1)" aria-label="Next page" data-cy-id="paginator-next">
+                  (click)="toPage.emit(paginationParams.currentPage + 1)" aria-label="Next page" data-testid="paginator-next">
             <span class="material-icons" aria-hidden="true">chevron_right</span>
           </button>
           <button type="button" class="join-item btn btn-sm btn-square" [disabled]="!paginationParams.hasNext"
-                  (click)="toPage.emit(paginationParams.totalPages - 1)" aria-label="Last page" data-cy-id="paginator-last">
+                  (click)="toPage.emit(paginationParams.totalPages - 1)" aria-label="Last page" data-testid="paginator-last">
             <span class="material-icons" aria-hidden="true">last_page</span>
           </button>
         </nav>

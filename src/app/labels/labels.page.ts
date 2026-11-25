@@ -21,7 +21,7 @@ type Editing = { kind: 'new' } | { kind: 'key', key: string } | null
     <div class="flex flex-col gap-6">
       <bb-page-header heading="Labels"
                       description="Describe label keys: their type, allowed values and how they look. Labels without a definition stay free-form.">
-        <button type="button" class="btn btn-sm btn-neutral" (click)="startNew()" data-cy-id="label-definition-new">
+        <button type="button" class="btn btn-sm btn-neutral" (click)="startNew()" data-testid="label-definition-new">
           <span class="material-icons text-[18px]" aria-hidden="true">add</span>New definition
         </button>
       </bb-page-header>
@@ -35,7 +35,7 @@ type Editing = { kind: 'new' } | { kind: 'key', key: string } | null
                                     (previewDefinition)="preview($event)" (saveDefinition)="save($event)"
                                     (cancel)="closeForm()"></bb-label-definition-form>
         } @else {
-          <bb-empty-state class="block min-w-0 grow basis-80" icon="edit_note" framed data-cy-id="label-definition-none">
+          <bb-empty-state class="block min-w-0 grow basis-80" icon="edit_note" framed data-testid="label-definition-none">
             <p>Choose a definition to edit it, or create a new one.</p>
           </bb-empty-state>
         }
@@ -49,11 +49,11 @@ type Editing = { kind: 'new' } | { kind: 'key', key: string } | null
               Strict validation rejects new labels that don't fit their definition. Labels without a definition are always accepted.
             </p>
           </div>
-          <div class="join" role="radiogroup" aria-label="Label validation" data-cy-id="label-validation">
+          <div class="join" role="radiogroup" aria-label="Label validation" data-testid="label-validation">
             @for (option of validationOptions; track option.value) {
               <button type="button" class="btn btn-sm join-item" role="radio" [attr.aria-checked]="validation() === option.value"
                       [class.btn-neutral]="validation() === option.value" [disabled]="validation() === null"
-                      (click)="chooseValidation(option.value)" [attr.data-cy-id]="'label-validation-' + option.value">
+                      (click)="chooseValidation(option.value)" [attr.data-testid]="'label-validation-' + option.value">
                 {{ option.name }}
               </button>
             }
@@ -62,7 +62,7 @@ type Editing = { kind: 'new' } | { kind: 'key', key: string } | null
       </section>
 
       <section class="card bg-base-100 border border-base-300 shadow-sm overflow-hidden" aria-labelledby="violations-heading"
-               data-cy-id="label-conformance">
+               data-testid="label-conformance">
         <div class="px-5 py-4 border-b border-base-300">
           <h2 id="violations-heading" class="text-lg font-bold">Labels that don't fit</h2>
           <p class="text-sm text-base-content/70">Stored labels whose key has a definition, but whose value or entity doesn't fit it.</p>
@@ -74,7 +74,7 @@ type Editing = { kind: 'new' } | { kind: 'key', key: string } | null
     </div>
 
     <div class="modal" [class.modal-open]="confirmStrict()" role="dialog" aria-modal="true"
-         aria-labelledby="strict-dialog-title" (keydown.escape)="confirmStrict.set(false)" data-cy-id="strict-confirmation-dialog">
+         aria-labelledby="strict-dialog-title" (keydown.escape)="confirmStrict.set(false)" data-testid="strict-confirmation-dialog">
       @if (confirmStrict()) {
         <div class="modal-box">
           <h3 id="strict-dialog-title" class="text-lg font-bold">Switch to strict validation?</h3>
@@ -87,8 +87,8 @@ type Editing = { kind: 'new' } | { kind: 'key', key: string } | null
             }
           </p>
           <div class="modal-action">
-            <button #strictCancelButton type="button" class="btn btn-ghost" (click)="confirmStrict.set(false)" data-cy-id="strict-cancel">Cancel</button>
-            <button type="button" class="btn btn-warning" (click)="saveValidation('STRICT')" data-cy-id="strict-confirm">Switch to strict</button>
+            <button #strictCancelButton type="button" class="btn btn-ghost" (click)="confirmStrict.set(false)" data-testid="strict-cancel">Cancel</button>
+            <button type="button" class="btn btn-warning" (click)="saveValidation('STRICT')" data-testid="strict-confirm">Switch to strict</button>
           </div>
         </div>
         <div class="modal-backdrop" (click)="confirmStrict.set(false)"></div>
@@ -96,14 +96,14 @@ type Editing = { kind: 'new' } | { kind: 'key', key: string } | null
     </div>
 
     <div class="modal" [class.modal-open]="toDelete() !== null" role="dialog" aria-modal="true"
-         aria-labelledby="delete-label-dialog-title" (keydown.escape)="toDelete.set(null)" data-cy-id="label-delete-dialog">
+         aria-labelledby="delete-label-dialog-title" (keydown.escape)="toDelete.set(null)" data-testid="label-delete-dialog">
       @if (toDelete(); as definition) {
         <div class="modal-box">
           <h3 id="delete-label-dialog-title" class="text-lg font-bold">Delete the definition of {{ definition.key }}?</h3>
           <p class="py-4">Only the definition is deleted. Labels with this key stay and become free-form again.</p>
           <div class="modal-action">
-            <button #deleteCancelButton type="button" class="btn btn-ghost" (click)="toDelete.set(null)" data-cy-id="label-delete-cancel">Cancel</button>
-            <button type="button" class="btn btn-error" (click)="confirmDelete()" data-cy-id="label-delete-confirm">Delete</button>
+            <button #deleteCancelButton type="button" class="btn btn-ghost" (click)="toDelete.set(null)" data-testid="label-delete-cancel">Cancel</button>
+            <button type="button" class="btn btn-error" (click)="confirmDelete()" data-testid="label-delete-confirm">Delete</button>
           </div>
         </div>
         <div class="modal-backdrop" (click)="toDelete.set(null)"></div>

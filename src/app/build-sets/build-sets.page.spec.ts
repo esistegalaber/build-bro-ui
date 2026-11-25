@@ -29,56 +29,56 @@ describe('BuildSetsPage', () => {
     const dispatched = vi.spyOn(TestBed.inject(MockStore), 'dispatch')
     const fixture = TestBed.createComponent(BuildSetsPage)
     await fixture.whenStable()
-    const byCy = (id: string) => fixture.nativeElement.querySelector(`[data-cy-id="${id}"]`) as HTMLElement
-    return {fixture, dispatched, byCy}
+    const byTestId = (id: string) => fixture.nativeElement.querySelector(`[data-testid="${id}"]`) as HTMLElement
+    return {fixture, dispatched, byTestId}
   }
 
   it('asks to choose a build set while none is selected', async () => {
-    const {byCy} = await render(null)
-    expect(byCy('build-set-none')).toBeTruthy()
-    expect(byCy('build-set-card')).toBeNull()
-    expect(byCy('build-set-add').getAttribute('href')).toBe('/edit-build-set')
+    const {byTestId} = await render(null)
+    expect(byTestId('build-set-none')).toBeTruthy()
+    expect(byTestId('build-set-card')).toBeNull()
+    expect(byTestId('build-set-add').getAttribute('href')).toBe('/edit-build-set')
   })
 
   it('loads the chosen build set', async () => {
-    const {byCy, dispatched} = await render(null)
-    byCy('build-set-name-main').click()
+    const {byTestId, dispatched} = await render(null)
+    byTestId('build-set-name-main').click()
     expect(dispatched).toHaveBeenCalledWith(BuildSetActions.loadBuildSetOf({templateName: 'main'}))
   })
 
   it('shows the selected build set', async () => {
-    const {byCy} = await render('main')
-    expect(byCy('build-set-card').textContent).toContain('Builds of main')
-    expect(byCy('build-9')).toBeTruthy()
+    const {byTestId} = await render('main')
+    expect(byTestId('build-set-card').textContent).toContain('Builds of main')
+    expect(byTestId('build-9')).toBeTruthy()
   })
 
   it('deletes only after the confirmation, which starts on Cancel', async () => {
-    const {fixture, byCy, dispatched} = await render('main')
-    const dialog = byCy('delete-confirmation-dialog')
+    const {fixture, byTestId, dispatched} = await render('main')
+    const dialog = byTestId('delete-confirmation-dialog')
     expect(dialog.classList).not.toContain('modal-open')
-    byCy('build-set-delete').click()
+    byTestId('build-set-delete').click()
     await fixture.whenStable()
     expect(dialog.classList).toContain('modal-open')
     expect(dialog.textContent).toContain('Delete main?')
-    expect(document.activeElement).toBe(byCy('delete-cancel'))
+    expect(document.activeElement).toBe(byTestId('delete-cancel'))
     expect(dispatched).not.toHaveBeenCalledWith(BuildSetActions.deleteBuildSetTemplate({name: 'main'}))
-    byCy('delete-confirm').click()
+    byTestId('delete-confirm').click()
     await fixture.whenStable()
     expect(dispatched).toHaveBeenCalledWith(BuildSetActions.deleteBuildSetTemplate({name: 'main'}))
     expect(dialog.classList).not.toContain('modal-open')
   })
 
   it.each([
-    ['Cancel', (byCy: (id: string) => HTMLElement) => byCy('delete-cancel').click()],
-    ['Escape', (byCy: (id: string) => HTMLElement) =>
-      byCy('delete-confirmation-dialog').dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'}))]
+    ['Cancel', (byTestId: (id: string) => HTMLElement) => byTestId('delete-cancel').click()],
+    ['Escape', (byTestId: (id: string) => HTMLElement) =>
+      byTestId('delete-confirmation-dialog').dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape'}))]
   ])('closes the confirmation with %s without deleting', async (_, close) => {
-    const {fixture, byCy, dispatched} = await render('main')
-    byCy('build-set-delete').click()
+    const {fixture, byTestId, dispatched} = await render('main')
+    byTestId('build-set-delete').click()
     await fixture.whenStable()
-    close(byCy)
+    close(byTestId)
     await fixture.whenStable()
-    expect(byCy('delete-confirmation-dialog').classList).not.toContain('modal-open')
+    expect(byTestId('delete-confirmation-dialog').classList).not.toContain('modal-open')
     expect(dispatched).not.toHaveBeenCalledWith(BuildSetActions.deleteBuildSetTemplate({name: 'main'}))
   })
 })

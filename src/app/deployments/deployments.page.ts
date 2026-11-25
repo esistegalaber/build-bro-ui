@@ -28,7 +28,7 @@ import {EmptyState} from '../ui/empty-state'
 
       <section class="card bg-base-100 border border-base-300 shadow-sm overflow-hidden" aria-label="Results">
         <div class="flex flex-wrap items-baseline justify-between gap-2 px-5 py-4 border-b border-base-300">
-          <h2 class="text-lg font-bold" data-cy-id="deployments-count">
+          <h2 class="text-lg font-bold" data-testid="deployments-count">
             {{ pagination.totalElements ?? 0 }} {{ pagination.totalElements === 1 ? 'deployment' : 'deployments' }}
           </h2>
           <span class="text-sm text-base-content/70">Newest first</span>
@@ -37,7 +37,7 @@ import {EmptyState} from '../ui/empty-state'
           <bb-deployment-list [deployments]="deployments" [servers]="(servers$ | async) ?? []"
                               [labelDefinitions]="(labelDefinitions$ | async) ?? []"></bb-deployment-list>
         } @else if (pagination.totalElements === 0) {
-          <bb-empty-state icon="rocket_launch" data-cy-id="deployments-empty">
+          <bb-empty-state icon="rocket_launch" data-testid="deployments-empty">
             <p>No deployments match these filters.</p>
             <button type="button" class="btn btn-sm" (click)="resetDeploymentsSearch()">Reset the filters</button>
           </bb-empty-state>

@@ -16,8 +16,8 @@ interface DeploymentRow {
   selector: 'bb-deployment-list',
   template: `
     @for (row of rows(); track row.deployment.id) {
-      <div class="collapse collapse-arrow rounded-none border-b border-base-300 last:border-b-0" data-cy-id="row-of-deployment">
-        <input type="checkbox" attr.data-cy-id="deployment-{{row.deployment.id}}"
+      <div class="collapse collapse-arrow rounded-none border-b border-base-300 last:border-b-0" data-testid="row-of-deployment">
+        <input type="checkbox" attr.data-testid="deployment-{{row.deployment.id}}"
                [attr.aria-label]="'Show the builds of the deployment to ' + row.deployment.serverName"/>
         <div class="collapse-title flex flex-wrap items-center gap-x-4 gap-y-2 py-3 pe-12">
           <span class="size-10 shrink-0 rounded-xl bg-base-200 text-base-content/70 grid place-items-center" aria-hidden="true">
@@ -34,7 +34,7 @@ interface DeploymentRow {
               <span class="hidden sm:inline">· {{ row.deployment.deployedAt | dfnsParseIso | dfnsFormat: 'PPp' }}</span>
             </span>
           </span>
-          <span class="badge badge-ghost" data-cy-id="builds-of-deployment">
+          <span class="badge badge-ghost" data-testid="builds-of-deployment">
             {{ row.deployment.builds.length }} {{ row.deployment.builds.length === 1 ? 'build' : 'builds' }}
           </span>
         </div>

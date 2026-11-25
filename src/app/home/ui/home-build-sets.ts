@@ -11,7 +11,7 @@ import {Loading} from '../../ui/loading'
       <div class="card-body gap-2 p-5">
         <div class="flex items-center justify-between gap-2">
           <h2 class="text-lg font-bold">Build sets</h2>
-          <a routerLink="/edit-build-set" class="btn btn-sm btn-soft btn-primary" data-cy-id="home-new-build-set">
+          <a routerLink="/edit-build-set" class="btn btn-sm btn-soft btn-primary" data-testid="home-new-build-set">
             <span class="material-icons text-[18px]" aria-hidden="true">add</span>New
           </a>
         </div>
@@ -19,7 +19,7 @@ import {Loading} from '../../ui/loading'
           <ul>
             @for (summary of buildSets; track summary.name) {
               <li class="border-t border-base-300">
-                <a [routerLink]="['/edit-build-set', summary.name]" attr.data-cy-id="home-build-set-{{summary.name}}"
+                <a [routerLink]="['/edit-build-set', summary.name]" attr.data-testid="home-build-set-{{summary.name}}"
                    class="-mx-2 flex items-center gap-3 rounded-box px-2 py-3 hover:bg-base-200">
                   <span class="size-9 shrink-0 rounded-xl bg-base-200 text-base-content/70 grid place-items-center" aria-hidden="true">
                     <span class="material-icons text-[18px]">layers</span>
@@ -38,7 +38,7 @@ import {Loading} from '../../ui/loading'
                 </a>
               </li>
             } @empty {
-              <li class="border-t border-base-300 py-6 text-center text-base-content/70" data-cy-id="home-build-sets-none">No build sets yet.</li>
+              <li class="border-t border-base-300 py-6 text-center text-base-content/70" data-testid="home-build-sets-none">No build sets yet.</li>
             }
           </ul>
         } @else {

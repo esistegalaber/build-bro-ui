@@ -26,7 +26,7 @@ export const PHONE_QUERY = '(width < 48rem)'
       <div class="drawer-content flex flex-col">
         <header class="md:hidden sticky top-0 z-10 flex items-center gap-2 bg-base-100 border-b border-base-300 px-4 py-2">
           <button #menuButton type="button" class="btn btn-ghost btn-square" (click)="openMenu()"
-                  aria-label="Open the menu" aria-controls="main-menu" [attr.aria-expanded]="menuOpen()" data-cy-id="drawer-open">
+                  aria-label="Open the menu" aria-controls="main-menu" [attr.aria-expanded]="menuOpen()" data-testid="drawer-open">
             <span class="material-icons" aria-hidden="true">menu</span>
           </button>
           <a routerLink="/home" class="flex items-center gap-2.5 text-base-content no-underline" aria-label="Build Bruh home">

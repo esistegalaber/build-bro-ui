@@ -34,8 +34,8 @@ describe('DeploymentsPage', () => {
     const dispatched = vi.spyOn(TestBed.inject(MockStore), 'dispatch')
     const fixture = TestBed.createComponent(DeploymentsPage)
     await fixture.whenStable()
-    const byCy = (id: string) => fixture.nativeElement.querySelector(`[data-cy-id="${id}"]`) as HTMLElement
-    return {dispatched, byCy}
+    const byTestId = (id: string) => fixture.nativeElement.querySelector(`[data-testid="${id}"]`) as HTMLElement
+    return {dispatched, byTestId}
   }
 
   it('searches when it opens', async () => {
@@ -44,31 +44,31 @@ describe('DeploymentsPage', () => {
   })
 
   it('shows the number of deployments, the rows and the paginator', async () => {
-    const {byCy} = await render([deployment], 11)
-    expect(byCy('deployments-count').textContent?.trim()).toBe('11 deployments')
-    expect(byCy('deployment-1')).toBeTruthy()
-    expect(byCy('paginator-range').textContent?.trim()).toBe('Showing 1–10 of 11')
+    const {byTestId} = await render([deployment], 11)
+    expect(byTestId('deployments-count').textContent?.trim()).toBe('11 deployments')
+    expect(byTestId('deployment-1')).toBeTruthy()
+    expect(byTestId('paginator-range').textContent?.trim()).toBe('Showing 1–10 of 11')
   })
 
   it('says "1 deployment" for a single result', async () => {
-    const {byCy} = await render([deployment], 1)
-    expect(byCy('deployments-count').textContent?.trim()).toBe('1 deployment')
+    const {byTestId} = await render([deployment], 1)
+    expect(byTestId('deployments-count').textContent?.trim()).toBe('1 deployment')
   })
 
   it('shows an empty state that resets the filters', async () => {
-    const {byCy, dispatched} = await render([], 0)
-    expect(byCy('deployments-empty').textContent).toContain('No deployments match these filters.')
-    ;(byCy('deployments-empty').querySelector('button') as HTMLButtonElement).click()
+    const {byTestId, dispatched} = await render([], 0)
+    expect(byTestId('deployments-empty').textContent).toContain('No deployments match these filters.')
+    ;(byTestId('deployments-empty').querySelector('button') as HTMLButtonElement).click()
     expect(dispatched).toHaveBeenCalledWith(DeploymentActions.resetDeploymentsSearch())
   })
 
   it('turns form and paginator events into actions', async () => {
-    const {byCy, dispatched} = await render([deployment], 11)
-    byCy('paginator-next').click()
+    const {byTestId, dispatched} = await render([deployment], 11)
+    byTestId('paginator-next').click()
     expect(dispatched).toHaveBeenCalledWith(DeploymentActions.toSearchPage({page: 1}))
-    byCy('search-reset').click()
+    byTestId('search-reset').click()
     expect(dispatched).toHaveBeenCalledWith(DeploymentActions.resetDeploymentsSearch())
-    byCy('search-reload').click()
+    byTestId('search-reload').click()
     expect(dispatched).toHaveBeenCalledWith(DeploymentActions.updateDeploymentsSearch({search: INITIAL_DEPLOYMENTS_STATE.search}))
   })
 })

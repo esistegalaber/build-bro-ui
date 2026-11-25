@@ -12,19 +12,19 @@ type Show = 'all' | 'included' | 'excluded'
       <div class="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
         <div class="flex items-baseline gap-2">
           <h2 class="text-lg font-bold">Projects</h2>
-          <span class="text-sm text-base-content/70" data-cy-id="projects-count">{{ includedCount() }} of {{ templates().length }} included</span>
+          <span class="text-sm text-base-content/70" data-testid="projects-count">{{ includedCount() }} of {{ templates().length }} included</span>
         </div>
         <div class="flex flex-wrap items-center gap-2">
           <label class="input input-sm w-52">
             <span class="material-icons text-[18px] opacity-60" aria-hidden="true">search</span>
-            <input type="search" placeholder="Search projects" aria-label="Search projects" data-cy-id="project-search"
+            <input type="search" placeholder="Search projects" aria-label="Search projects" data-testid="project-search"
                    [value]="query()" (input)="query.set($any($event.target).value)">
           </label>
           <div role="group" aria-label="Show" class="join">
             @for (option of showOptions; track option.value) {
               <button type="button" class="join-item btn btn-sm" [class.btn-active]="show() === option.value"
                       [attr.aria-pressed]="show() === option.value" (click)="show.set(option.value)"
-                      [attr.data-cy-id]="'show-' + option.value">{{ option.label }}</button>
+                      [attr.data-testid]="'show-' + option.value">{{ option.label }}</button>
             }
           </div>
         </div>
@@ -42,7 +42,7 @@ type Show = 'all' | 'included' | 'excluded'
                                 (projectRemoved)="projectRemoved.emit($event)"
                                 (templateUpdated)="templateUpdated.emit($event)"></bb-build-template-form>
       } @empty {
-        <p class="border-t border-base-300 px-5 py-8 text-center text-base-content/70" data-cy-id="projects-none">No project matches.</p>
+        <p class="border-t border-base-300 px-5 py-8 text-center text-base-content/70" data-testid="projects-none">No project matches.</p>
       }
     </section>
   `,

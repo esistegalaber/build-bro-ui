@@ -16,7 +16,7 @@ import {storeDraft, TYPING_PAUSE_MS} from '../../ui/forms/store-draft'
       <div class="card-body gap-4 p-5">
         <div class="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] items-end gap-3">
           <label class="flex flex-col gap-1 text-xs font-semibold text-base-content/70">Project
-            <select class="select select-sm w-full" data-cy-id="project-select" [formField]="searchForm.project">
+            <select class="select select-sm w-full" data-testid="project-select" [formField]="searchForm.project">
               <option value="">All projects</option>
               @for (project of available().projectNames; track project) {
                 <option [value]="project">{{ project }}</option>
@@ -24,7 +24,7 @@ import {storeDraft, TYPING_PAUSE_MS} from '../../ui/forms/store-draft'
             </select>
           </label>
           <label class="flex flex-col gap-1 text-xs font-semibold text-base-content/70">Branch
-            <select class="select select-sm w-full" data-cy-id="branch-select" [formField]="searchForm.branch">
+            <select class="select select-sm w-full" data-testid="branch-select" [formField]="searchForm.branch">
               <option value="">All branches</option>
               @for (branch of available().projectBranches[model().project]; track branch) {
                 <option [value]="branch">{{ branch }}</option>
@@ -33,15 +33,15 @@ import {storeDraft, TYPING_PAUSE_MS} from '../../ui/forms/store-draft'
           </label>
           <label class="flex flex-col gap-1 text-xs font-semibold text-base-content/70">Build number from
             <input type="number" placeholder="min" class="input input-sm w-full"
-                   data-cy-id="min-build-number-input" [formField]="searchForm.minBuildNumber"/>
+                   data-testid="min-build-number-input" [formField]="searchForm.minBuildNumber"/>
           </label>
           <label class="flex flex-col gap-1 text-xs font-semibold text-base-content/70">to
             <input type="number" placeholder="max" class="input input-sm w-full"
-                   data-cy-id="max-build-number-input" [formField]="searchForm.maxBuildNumber"/>
+                   data-testid="max-build-number-input" [formField]="searchForm.maxBuildNumber"/>
           </label>
           <label class="flex flex-col gap-1 text-xs font-semibold text-base-content/70">Per page
             <!-- a native select only binds to text fields, and the page size is a number -->
-            <select class="select select-sm w-full" data-cy-id="page-size-select" (change)="choosePageSize($event)">
+            <select class="select select-sm w-full" data-testid="page-size-select" (change)="choosePageSize($event)">
               @for (size of pageSizes; track size) {
                 <option [value]="size" [selected]="size === model().pageSize">{{ size }}</option>
               }
@@ -52,8 +52,8 @@ import {storeDraft, TYPING_PAUSE_MS} from '../../ui/forms/store-draft'
         <div class="flex flex-wrap items-end gap-3">
           <label class="flex grow basis-40 flex-col gap-1 text-xs font-semibold text-base-content/70">Label
             <input class="input input-sm w-full" type="text" placeholder="key, e.g. integration-test" list="bb-label-keys"
-                   autocomplete="off" data-cy-id="label-key-input" [formField]="labelForm.key">
-            <datalist id="bb-label-keys" data-cy-id="label-key-suggestions">
+                   autocomplete="off" data-testid="label-key-input" [formField]="labelForm.key">
+            <datalist id="bb-label-keys" data-testid="label-key-suggestions">
               @for (key of keySuggestions(); track key) {
                 <option [value]="key"></option>
               }
@@ -63,30 +63,30 @@ import {storeDraft, TYPING_PAUSE_MS} from '../../ui/forms/store-draft'
           <label class="flex grow basis-40 flex-col gap-1 text-xs font-semibold text-base-content/70">Value
             <!-- a defined key: the value input follows its type -->
             @if (typed?.type === 'ENUM' || typed?.type === 'BOOLEAN') {
-              <select class="select select-sm w-full" data-cy-id="label-value-input" [formField]="labelForm.value">
+              <select class="select select-sm w-full" data-testid="label-value-input" [formField]="labelForm.value">
                 <option value="">Choose a value</option>
                 @for (value of choices(); track value) {
                   <option [value]="value">{{ value }}</option>
                 }
               </select>
             } @else {
-              <input class="input input-sm w-full" type="text" placeholder="value" data-cy-id="label-value-input"
+              <input class="input input-sm w-full" type="text" placeholder="value" data-testid="label-value-input"
                      [attr.inputmode]="typed?.type === 'INTEGER' ? 'numeric' : null" [formField]="labelForm.value">
             }
           </label>
           <button type="button" class="btn btn-sm btn-soft btn-primary" [disabled]="!canAddLabel()" (click)="addSearchLabel()"
-                  data-cy-id="label-add">
+                  data-testid="label-add">
             <span class="material-icons text-[18px]" aria-hidden="true">add</span>Add label
           </button>
           @if (valueHint(); as hint) {
             <p class="basis-full text-xs" [class.text-error]="hint.wrong" [class.text-base-content/70]="!hint.wrong"
-               role="status" data-cy-id="label-value-hint">{{ hint.text }}</p>
+               role="status" data-testid="label-value-hint">{{ hint.text }}</p>
           }
           <div class="ms-auto flex gap-2">
-            <button type="button" class="btn btn-sm btn-ghost" (click)="reset()" data-cy-id="search-reset">
+            <button type="button" class="btn btn-sm btn-ghost" (click)="reset()" data-testid="search-reset">
               <span class="material-icons text-[18px]" aria-hidden="true">restart_alt</span>Reset
             </button>
-            <button type="submit" class="btn btn-sm btn-primary" data-cy-id="search-reload">
+            <button type="submit" class="btn btn-sm btn-primary" data-testid="search-reload">
               <span class="material-icons text-[18px]" aria-hidden="true">refresh</span>Reload
             </button>
           </div>
@@ -97,9 +97,9 @@ import {storeDraft, TYPING_PAUSE_MS} from '../../ui/forms/store-draft'
             <span class="text-xs font-semibold text-base-content/70">Label filters</span>
             @for (label of model().labels | keyvalue; track label.key) {
               <bb-label-chip [labelKey]="label.key" [value]="label.value" [definition]="definitionOf(label.key)"
-                             data-cy-id="search-label">
+                             data-testid="search-label">
                 <button type="button" class="btn btn-ghost btn-xs btn-circle" (click)="removeSearchLabel(label.key)"
-                        [attr.aria-label]="'Remove the label filter ' + label.key" data-cy-id="search-label-remove">
+                        [attr.aria-label]="'Remove the label filter ' + label.key" data-testid="search-label-remove">
                   <span class="material-icons text-[16px]" aria-hidden="true">close</span>
                 </button>
               </bb-label-chip>

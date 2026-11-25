@@ -22,11 +22,11 @@ import {Loading} from '../../ui/loading'
       <div class="card-body gap-2 p-5">
         <div class="flex items-center justify-between gap-2">
           <h2 class="text-lg font-bold">Recent deployments</h2>
-          <a routerLink="/deployments" class="link link-hover link-primary text-sm font-semibold" data-cy-id="home-all-deployments">View all</a>
+          <a routerLink="/deployments" class="link link-hover link-primary text-sm font-semibold" data-testid="home-all-deployments">View all</a>
         </div>
         @if (rows(); as rows) {
           @for (row of rows; track row.deployment.id) {
-            <div class="flex flex-wrap items-center gap-3 border-t border-base-300 py-3" attr.data-cy-id="home-deployment-{{row.deployment.id}}">
+            <div class="flex flex-wrap items-center gap-3 border-t border-base-300 py-3" attr.data-testid="home-deployment-{{row.deployment.id}}">
               <span class="size-9 shrink-0 rounded-xl bg-base-200 text-base-content/70 grid place-items-center" aria-hidden="true">
                 <span class="material-icons text-[18px]">dns</span>
               </span>
@@ -45,12 +45,12 @@ import {Loading} from '../../ui/loading'
                   <span class="font-mono">{{ build.project }} #{{ build.buildNumber }}</span>{{ last && row.moreBuilds === 0 ? '' : ', ' }}
                 }
                 @if (row.moreBuilds > 0) {
-                  <span data-cy-id="home-deployment-more">+{{ row.moreBuilds }} more</span>
+                  <span data-testid="home-deployment-more">+{{ row.moreBuilds }} more</span>
                 }
               </div>
             </div>
           } @empty {
-            <p class="border-t border-base-300 py-6 text-center text-base-content/70" data-cy-id="home-deployments-none">No deployments yet.</p>
+            <p class="border-t border-base-300 py-6 text-center text-base-content/70" data-testid="home-deployments-none">No deployments yet.</p>
           }
         } @else {
           <bb-loading class="border-t border-base-300"></bb-loading>

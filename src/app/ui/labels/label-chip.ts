@@ -13,14 +13,14 @@ import {ILabelDefinition, labelView, styleClass} from '../../core'
   selector: 'bb-label-chip',
   template: `
     @let v = view();
-    <span [class]="classes()" [attr.title]="v.title" data-cy-id="label-chip" [attr.data-label-style]="v.style">
+    <span [class]="classes()" [attr.title]="v.title" data-testid="label-chip" [attr.data-label-style]="v.style">
       @if (mode() === 'chip') {
         <span>{{ v.name }} = </span>
       }
       @switch (v.kind) {
         @case ('url') {
           <a class="link break-all" [href]="value().trim()" target="_blank" rel="noopener noreferrer"
-             data-cy-id="label-link">{{ value() }}</a>
+             data-testid="label-link">{{ value() }}</a>
         }
         @case ('boolean') {
           <span class="inline-flex items-center gap-0.5">

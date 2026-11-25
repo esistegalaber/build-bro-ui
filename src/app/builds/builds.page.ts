@@ -26,7 +26,7 @@ import {EmptyState} from '../ui/empty-state'
 
       <section class="card bg-base-100 border border-base-300 shadow-sm overflow-hidden" aria-label="Results">
         <div class="flex flex-wrap items-baseline justify-between gap-2 px-5 py-4 border-b border-base-300">
-          <h2 class="text-lg font-bold" data-cy-id="builds-count">
+          <h2 class="text-lg font-bold" data-testid="builds-count">
             {{ pagination.totalElements ?? 0 }} {{ pagination.totalElements === 1 ? 'build' : 'builds' }}
           </h2>
           <span class="text-sm text-base-content/70">Sorted by build number, newest first</span>
@@ -34,7 +34,7 @@ import {EmptyState} from '../ui/empty-state'
         @if (builds?.length) {
           <bb-builds-accordion [builds]="builds" [labelDefinitions]="(labelDefinitions$ | async) ?? []"></bb-builds-accordion>
         } @else if (pagination.totalElements === 0) {
-          <bb-empty-state icon="search_off" data-cy-id="builds-empty">
+          <bb-empty-state icon="search_off" data-testid="builds-empty">
             <p>No builds match these filters.</p>
             <button type="button" class="btn btn-sm" (click)="resetSearch()">Reset the filters</button>
           </bb-empty-state>

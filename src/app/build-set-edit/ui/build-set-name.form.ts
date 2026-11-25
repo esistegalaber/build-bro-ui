@@ -17,15 +17,15 @@ import {EditableBuildSetTemplate} from '../../core'
           <nav aria-label="Breadcrumb" class="text-sm text-base-content/70">
             <a routerLink="/build-sets" class="link link-hover">Build sets</a> / {{ savedName() ?? (cloned() ? 'clone' : 'new') }}
           </nav>
-          <h1 class="text-3xl font-extrabold tracking-tight break-words" data-cy-id="build-set-title">{{ name() || 'New build set' }}</h1>
+          <h1 class="text-3xl font-extrabold tracking-tight break-words" data-testid="build-set-title">{{ name() || 'New build set' }}</h1>
         </div>
         <div class="flex flex-wrap gap-2">
           @if (savedName(); as savedName) {
-            <a class="btn btn-soft btn-primary" [routerLink]="['/edit-build-set', 'clone', savedName]" data-cy-id="build-set-clone-action">
+            <a class="btn btn-soft btn-primary" [routerLink]="['/edit-build-set', 'clone', savedName]" data-testid="build-set-clone-action">
               <span class="material-icons text-[18px]" aria-hidden="true">content_copy</span>Clone
             </a>
           }
-          <button type="submit" class="btn btn-primary" [disabled]="nameForm().invalid()" data-cy-id="build-set-save">
+          <button type="submit" class="btn btn-primary" [disabled]="nameForm().invalid()" data-testid="build-set-save">
             <span class="material-icons text-[18px]" aria-hidden="true">check</span>Save build set
           </button>
         </div>
@@ -34,7 +34,7 @@ import {EditableBuildSetTemplate} from '../../core'
         <div class="card-body p-5">
           <label class="flex max-w-md flex-col gap-1 text-xs font-semibold text-base-content/70">Name
             <input type="text" placeholder="Name of your build set" class="input w-full"
-                   data-cy-id="build-set-name-input" [formField]="nameForm">
+                   data-testid="build-set-name-input" [formField]="nameForm">
           </label>
         </div>
       </div>

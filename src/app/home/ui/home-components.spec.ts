@@ -7,7 +7,7 @@ import {build, someServers} from '../../../testing/data'
 import {inTimeZone} from '../../../testing/timezone'
 import {IDeployment} from '../../core'
 
-const byCy = (el: HTMLElement, id: string) => el.querySelector(`[data-cy-id="${id}"]`) as HTMLElement
+const byTestId = (el: HTMLElement, id: string) => el.querySelector(`[data-testid="${id}"]`) as HTMLElement
 const text = (el: HTMLElement | null) => el?.textContent?.replace(/\s+/g, ' ').trim()
 
 describe('StatCards', () => {
@@ -17,8 +17,8 @@ describe('StatCards', () => {
     await fixture.whenStable()
     const el = fixture.nativeElement as HTMLElement
     const card = (key: string) => [
-      byCy(el, `stat-${key}`).querySelector('.font-display')?.textContent?.trim(),
-      byCy(el, `stat-${key}`).querySelector('.font-display + div')?.textContent?.trim()
+      byTestId(el, `stat-${key}`).querySelector('.font-display')?.textContent?.trim(),
+      byTestId(el, `stat-${key}`).querySelector('.font-display + div')?.textContent?.trim()
     ]
     expect(card('projects')).toEqual(['4', 'Projects'])
     expect(card('branches')).toEqual(['14', 'Branches'])
@@ -44,14 +44,14 @@ describe('RecentDeployments', () => {
 
   it('shows server, nickname, how long ago and the builds', async () => {
     const el = await render([deployment(1, 'testserver', 2)])
-    const row = text(byCy(el, 'home-deployment-1'))
+    const row = text(byTestId(el, 'home-deployment-1'))
     expect(row).toContain('testserver · Tester')
     expect(row).toContain('2 days ago')
     expect(row).toContain('service-1 #1')
     expect(row).toContain('service-2 #2')
     expect(row).toContain('service-1 #1, service-2 #2')
-    expect(byCy(el, 'home-deployment-1').querySelector('.badge')).toBeNull()
-    expect(byCy(el, 'home-deployment-more')).toBeNull()
+    expect(byTestId(el, 'home-deployment-1').querySelector('.badge')).toBeNull()
+    expect(byTestId(el, 'home-deployment-more')).toBeNull()
   })
 
   describe('in Europe/Berlin', () => {
@@ -59,15 +59,15 @@ describe('RecentDeployments', () => {
 
     it('shows the exact time, which the API sends in UTC, in the browser\'s timezone', async () => {
       const el = await render([{...deployment(1, 'testserver', 1), deployedAt: '2026-11-22T19:42:48Z'}])
-      expect(byCy(el, 'home-deployment-1').querySelector('[title]')?.getAttribute('title')).toBe('Nov 22, 2026, 8:42:48 PM')
+      expect(byTestId(el, 'home-deployment-1').querySelector('[title]')?.getAttribute('title')).toBe('Nov 22, 2026, 8:42:48 PM')
     })
   })
 
   it('summarizes the builds of a deployment with many of them', async () => {
     const el = await render([deployment(1, 'staging', 20)])
-    expect(byCy(el, 'home-deployment-1').querySelectorAll('.font-mono')).toHaveLength(3)
-    expect(text(byCy(el, 'home-deployment-more'))).toBe('+17 more')
-    expect(text(byCy(el, 'home-deployment-1'))).toContain('service-3 #3, +17 more')
+    expect(byTestId(el, 'home-deployment-1').querySelectorAll('.font-mono')).toHaveLength(3)
+    expect(text(byTestId(el, 'home-deployment-more'))).toBe('+17 more')
+    expect(text(byTestId(el, 'home-deployment-1'))).toContain('service-3 #3, +17 more')
   })
 
   it('shows that it is loading', async () => {
@@ -75,7 +75,7 @@ describe('RecentDeployments', () => {
   })
 
   it('shows an empty state', async () => {
-    expect(text(byCy(await render([]), 'home-deployments-none'))).toBe('No deployments yet.')
+    expect(text(byTestId(await render([]), 'home-deployments-none'))).toBe('No deployments yet.')
   })
 })
 
@@ -90,10 +90,10 @@ describe('HomeBuildSets', () => {
 
   it('lists the build sets with a summary and a link to each', async () => {
     const el = await render([{name: 'main', projects: 2, pinned: 1}, {name: 'Environment of StageServer', projects: 0, pinned: 0}])
-    expect(text(byCy(el, 'home-build-set-main'))).toContain('2 projects · 1 pinned')
-    expect(byCy(el, 'home-build-set-main').getAttribute('href')).toBe('/edit-build-set/main')
-    expect(text(byCy(el, 'home-build-set-Environment of StageServer'))).toContain('No projects yet')
-    expect(byCy(el, 'home-new-build-set').getAttribute('href')).toBe('/edit-build-set')
+    expect(text(byTestId(el, 'home-build-set-main'))).toContain('2 projects · 1 pinned')
+    expect(byTestId(el, 'home-build-set-main').getAttribute('href')).toBe('/edit-build-set/main')
+    expect(text(byTestId(el, 'home-build-set-Environment of StageServer'))).toContain('No projects yet')
+    expect(byTestId(el, 'home-new-build-set').getAttribute('href')).toBe('/edit-build-set')
   })
 
   it('shows that it is loading', async () => {
@@ -101,6 +101,6 @@ describe('HomeBuildSets', () => {
   })
 
   it('shows an empty state', async () => {
-    expect(text(byCy(await render([]), 'home-build-sets-none'))).toBe('No build sets yet.')
+    expect(text(byTestId(await render([]), 'home-build-sets-none'))).toBe('No build sets yet.')
   })
 })

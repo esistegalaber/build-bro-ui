@@ -10,7 +10,7 @@ import {storeDraft} from '../../ui/forms/store-draft'
     <form [formRoot]="searchForm" aria-label="Filters" class="card bg-base-100 border border-base-300 shadow-sm">
       <div class="card-body flex-row flex-wrap items-end gap-3 p-5">
         <label class="flex grow basis-48 flex-col gap-1 text-xs font-semibold text-base-content/70">Server
-          <select class="select select-sm w-full" data-cy-id="server-select" [formField]="searchForm.serverName">
+          <select class="select select-sm w-full" data-testid="server-select" [formField]="searchForm.serverName">
             <option value="">All servers</option>
             @for (server of servers(); track server.id) {
               <option [value]="server.name">{{ server.name }}{{ server.nickName ? ' · ' + server.nickName : '' }}</option>
@@ -19,17 +19,17 @@ import {storeDraft} from '../../ui/forms/store-draft'
         </label>
         <label class="flex w-32 flex-col gap-1 text-xs font-semibold text-base-content/70">Per page
           <!-- a native select only binds to text fields, and the page size is a number -->
-          <select class="select select-sm w-full" data-cy-id="page-size-select" (change)="choosePageSize($event)">
+          <select class="select select-sm w-full" data-testid="page-size-select" (change)="choosePageSize($event)">
             @for (size of pageSizes; track size) {
               <option [value]="size" [selected]="size === model().pageSize">{{ size }}</option>
             }
           </select>
         </label>
         <div class="ms-auto flex gap-2">
-          <button type="button" class="btn btn-sm btn-ghost" (click)="resetSearch.emit()" data-cy-id="search-reset">
+          <button type="button" class="btn btn-sm btn-ghost" (click)="resetSearch.emit()" data-testid="search-reset">
             <span class="material-icons text-[18px]" aria-hidden="true">restart_alt</span>Reset
           </button>
-          <button type="submit" class="btn btn-sm btn-primary" data-cy-id="search-reload">
+          <button type="submit" class="btn btn-sm btn-primary" data-testid="search-reload">
             <span class="material-icons text-[18px]" aria-hidden="true">refresh</span>Reload
           </button>
         </div>

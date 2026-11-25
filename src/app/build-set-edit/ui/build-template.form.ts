@@ -27,32 +27,32 @@ interface RowFields {
   template: `
     @let row = template();
     <div class="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-base-300 px-5 py-3"
-         [class.text-base-content/60]="!row.projectSelected" attr.data-cy-id="build-template-{{row.project.name}}">
+         [class.text-base-content/60]="!row.projectSelected" attr.data-testid="build-template-{{row.project.name}}">
       <input type="checkbox" class="toggle toggle-success toggle-sm" [checked]="row.projectSelected" (change)="projectSelection()"
-             [attr.aria-label]="'Include ' + row.project.name" data-cy-id="project-toggle"/>
+             [attr.aria-label]="'Include ' + row.project.name" data-testid="project-toggle"/>
       <div class="flex min-w-0 grow basis-28 flex-wrap items-center gap-2">
         <span [class.font-semibold]="row.projectSelected">{{ row.project.name }}</span>
         @if (row.projectSelected && row.buildNumber != null) {
-          <span class="badge badge-soft badge-warning badge-sm" data-cy-id="template-pinned">pinned</span>
+          <span class="badge badge-soft badge-warning badge-sm" data-testid="template-pinned">pinned</span>
         }
       </div>
       @if (row.projectSelected) {
-        <select class="select select-sm w-36 grow sm:grow-0" data-cy-id="template-branch-select"
+        <select class="select select-sm w-36 grow sm:grow-0" data-testid="template-branch-select"
                 [attr.aria-label]="'Branch of ' + row.project.name" [formField]="rowForm.branch">
           <option value="">Choose a branch</option>
           @for (branch of row.project.branches; track branch.id) {
             <option [value]="branch.name">{{ branch.name }}</option>
           }
         </select>
-        <input class="input input-sm w-24 font-mono" type="number" placeholder="latest" data-cy-id="template-build-number"
+        <input class="input input-sm w-24 font-mono" type="number" placeholder="latest" data-testid="template-build-number"
                [attr.aria-label]="'Build number of ' + row.project.name + ', empty for the latest'"
                [formField]="rowForm.buildNumber">
-        <input class="input input-sm w-36 grow sm:grow-0" type="text" placeholder="key=value" data-cy-id="template-labels"
+        <input class="input input-sm w-36 grow sm:grow-0" type="text" placeholder="key=value" data-testid="template-labels"
                [attr.aria-label]="'Label filter of ' + row.project.name + ', as key=value, key=value'"
                [formField]="rowForm.labels">
         @if (labelHints().length > 0) {
           <!-- the API rejects such a template when label validation is strict, and no build could match it anyway -->
-          <ul class="basis-full text-xs text-base-content/80 sm:ps-12" role="status" data-cy-id="template-label-hints">
+          <ul class="basis-full text-xs text-base-content/80 sm:ps-12" role="status" data-testid="template-label-hints">
             @for (hint of labelHints(); track hint) {
               <li class="flex items-center gap-1">
                 <span class="material-icons text-[14px] text-warning" aria-hidden="true">warning</span>{{ hint }}

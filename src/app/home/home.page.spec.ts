@@ -27,8 +27,8 @@ describe('HomePage', () => {
     const dispatched = vi.spyOn(TestBed.inject(MockStore), 'dispatch')
     const fixture = TestBed.createComponent(HomePage)
     await fixture.whenStable()
-    const byCy = (id: string) => fixture.nativeElement.querySelector(`[data-cy-id="${id}"]`) as HTMLElement
-    return {dispatched, byCy}
+    const byTestId = (id: string) => fixture.nativeElement.querySelector(`[data-testid="${id}"]`) as HTMLElement
+    return {dispatched, byTestId}
   }
 
   it('loads fresh stats, the recent deployments and the build sets when it opens', async () => {
@@ -38,10 +38,10 @@ describe('HomePage', () => {
   })
 
   it('shows the stats, the deployments, the build sets and a way to the builds', async () => {
-    const {byCy} = await render()
-    expect(byCy('stat-builds').textContent).toContain('90')
-    expect(byCy('home-deployments-none')).toBeTruthy()
-    expect(byCy('home-build-set-main')).toBeTruthy()
-    expect(byCy('browse-builds').getAttribute('href')).toBe('/builds')
+    const {byTestId} = await render()
+    expect(byTestId('stat-builds').textContent).toContain('90')
+    expect(byTestId('home-deployments-none')).toBeTruthy()
+    expect(byTestId('home-build-set-main')).toBeTruthy()
+    expect(byTestId('browse-builds').getAttribute('href')).toBe('/builds')
   })
 })

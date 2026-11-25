@@ -9,7 +9,7 @@ describe('BuildTemplateForm', () => {
   const backend = someProjects()[0]
   let fixture: ComponentFixture<BuildTemplateForm>
   let updated: EditableBuildTemplate[]
-  const byCy = <T extends HTMLElement = HTMLElement>(id: string) => fixture.nativeElement.querySelector(`[data-cy-id="${id}"]`) as T
+  const byTestId = <T extends HTMLElement = HTMLElement>(id: string) => fixture.nativeElement.querySelector(`[data-testid="${id}"]`) as T
   const rowWith = (template: Partial<EditableBuildTemplate>) => deepFreeze({
     project: backend, projectSelected: true, branch: backend.branches[0], buildNumber: null, labels: {}, ...structuredClone(template)
   } as EditableBuildTemplate)
@@ -33,23 +33,23 @@ describe('BuildTemplateForm', () => {
 
   it('shows an included project with its branch, build number and label filter', async () => {
     await render({buildNumber: 9, labels: {'integration-test': 'ok'}})
-    expect(byCy<HTMLInputElement>('project-toggle').checked).toBe(true)
-    expect(byCy<HTMLSelectElement>('template-branch-select').selectedOptions[0].textContent?.trim()).toBe('main')
-    expect(byCy<HTMLInputElement>('template-build-number').value).toBe('9')
-    expect(byCy<HTMLInputElement>('template-labels').value).toBe('integration-test=ok')
-    expect(byCy('template-pinned')).toBeTruthy()
+    expect(byTestId<HTMLInputElement>('project-toggle').checked).toBe(true)
+    expect(byTestId<HTMLSelectElement>('template-branch-select').selectedOptions[0].textContent?.trim()).toBe('main')
+    expect(byTestId<HTMLInputElement>('template-build-number').value).toBe('9')
+    expect(byTestId<HTMLInputElement>('template-labels').value).toBe('integration-test=ok')
+    expect(byTestId('template-pinned')).toBeTruthy()
   })
 
   it('shows an excluded project as one line without fields', async () => {
     await render({projectSelected: false, branch: null})
     expect(fixture.nativeElement.textContent).toContain('Not included')
-    expect(byCy('template-branch-select')).toBeNull()
-    expect(byCy('template-build-number')).toBeNull()
+    expect(byTestId('template-branch-select')).toBeNull()
+    expect(byTestId('template-build-number')).toBeNull()
   })
 
   it('offers the project branches and a "Choose a branch" entry', async () => {
     await render({branch: null})
-    const select = byCy<HTMLSelectElement>('template-branch-select')
+    const select = byTestId<HTMLSelectElement>('template-branch-select')
     expect(Array.from(select.options).map((o) => o.textContent?.trim())).toEqual(['Choose a branch', 'main', 'next', 'merged-feature'])
     expect(select.value).toBe('')
   })
@@ -60,19 +60,19 @@ describe('BuildTemplateForm', () => {
     await render({projectSelected: false, branch: null})
     fixture.componentInstance.projectAdded.subscribe((p) => added.push(p))
     fixture.componentInstance.projectRemoved.subscribe((p) => removed.push(p))
-    byCy('project-toggle').click()
+    byTestId('project-toggle').click()
     expect(added.map((p) => p.name)).toEqual(['backend'])
     fixture.componentRef.setInput('template', rowWith({projectSelected: true}))
     await fixture.whenStable()
-    byCy('project-toggle').click()
+    byTestId('project-toggle').click()
     expect(removed.map((p) => p.name)).toEqual(['backend'])
   })
 
   it('reports a new branch and label filter as new rows, without changing its input', async () => {
     await render({})
-    await change(byCy('template-branch-select'), 'next')
+    await change(byTestId('template-branch-select'), 'next')
     expect(updated.at(-1)?.branch?.name).toBe('next')
-    await change(byCy('template-labels'), 'integration-test = ok, release.name=Analog-Amoeba')
+    await change(byTestId('template-labels'), 'integration-test = ok, release.name=Analog-Amoeba')
     expect(updated.at(-1)).toMatchObject({branch: {name: 'next'}, labels: {'integration-test': 'ok', 'release.name': 'Analog-Amoeba'}})
     expect(updated).toHaveLength(2)
     expect(fixture.componentInstance.template().branch?.name).toBe('main')
@@ -82,7 +82,7 @@ describe('BuildTemplateForm', () => {
     vi.useFakeTimers({toFake: ['setTimeout', 'clearTimeout']})
     try {
       await render({})
-      const number = byCy<HTMLInputElement>('template-build-number')
+      const number = byTestId<HTMLInputElement>('template-build-number')
       for (const value of ['1', '12']) {
         number.value = value
         number.dispatchEvent(new Event('input'))
@@ -108,17 +108,17 @@ describe('BuildTemplateForm', () => {
     expect(fixture.nativeElement.textContent).toContain('Not included')
     fixture.componentRef.setInput('template', rowWith({branch: backend.branches[1], buildNumber: 3}))
     await fixture.whenStable()
-    expect(byCy<HTMLSelectElement>('template-branch-select').value).toBe('next')
-    expect(byCy<HTMLInputElement>('template-build-number').value).toBe('3')
+    expect(byTestId<HTMLSelectElement>('template-branch-select').value).toBe('next')
+    expect(byTestId<HTMLInputElement>('template-build-number').value).toBe('3')
     expect(updated).toHaveLength(0)
   })
 
   it('points out label filters that don\'t fit their definition', async () => {
     await render({labels: {'integration-test': 'passed', 'part-of-build-set': 'main'}})
-    expect(byCy('template-label-hints')).toBeNull()
+    expect(byTestId('template-label-hints')).toBeNull()
     fixture.componentRef.setInput('labelDefinitions', someLabelDefinitions())
     await fixture.whenStable()
-    expect(byCy('template-label-hints').textContent?.trim()).toContain('integration-test=passed: expected one of ok, broken')
-    expect(byCy('template-label-hints').querySelectorAll('li')).toHaveLength(1)
+    expect(byTestId('template-label-hints').textContent?.trim()).toContain('integration-test=passed: expected one of ok, broken')
+    expect(byTestId('template-label-hints').querySelectorAll('li')).toHaveLength(1)
   })
 })

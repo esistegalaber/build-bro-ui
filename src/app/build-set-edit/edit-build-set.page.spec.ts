@@ -33,37 +33,37 @@ describe('EditBuildSetPage', () => {
     const dispatched = vi.spyOn(TestBed.inject(MockStore), 'dispatch')
     const fixture = TestBed.createComponent(EditBuildSetPage)
     await fixture.whenStable()
-    const byCy = (id: string) => fixture.nativeElement.querySelector(`[data-cy-id="${id}"]`) as HTMLElement
-    return {fixture, dispatched, byCy}
+    const byTestId = (id: string) => fixture.nativeElement.querySelector(`[data-testid="${id}"]`) as HTMLElement
+    return {fixture, dispatched, byTestId}
   }
 
   it('shows the header, the project list and what the build set resolves to', async () => {
-    const {byCy} = await render({id: 1, name: 'main', buildTemplates: []})
-    expect(byCy('build-set-title').textContent?.trim()).toBe('main')
-    expect(byCy('build-set-clone-action')).toBeTruthy()
-    expect(byCy('projects-count').textContent?.trim()).toBe('1 of 2 included')
-    expect(byCy('build-9').textContent?.trim()).toBe('#9')
+    const {byTestId} = await render({id: 1, name: 'main', buildTemplates: []})
+    expect(byTestId('build-set-title').textContent?.trim()).toBe('main')
+    expect(byTestId('build-set-clone-action')).toBeTruthy()
+    expect(byTestId('projects-count').textContent?.trim()).toBe('1 of 2 included')
+    expect(byTestId('build-9').textContent?.trim()).toBe('#9')
   })
 
   it('marks an unsaved clone', async () => {
-    const {fixture, byCy} = await render({id: null, name: 'CLONE-OF-main', buildTemplates: []})
+    const {fixture, byTestId} = await render({id: null, name: 'CLONE-OF-main', buildTemplates: []})
     expect(fixture.nativeElement.querySelector('nav').textContent).toContain('clone')
-    expect(byCy('build-set-clone-action')).toBeNull()
+    expect(byTestId('build-set-clone-action')).toBeNull()
   })
 
   it('turns the list and header events into actions', async () => {
-    const {byCy, dispatched} = await render({id: 1, name: 'main', buildTemplates: []})
-    ;(byCy('build-template-frontend').querySelector('[data-cy-id=project-toggle]') as HTMLInputElement).click()
+    const {byTestId, dispatched} = await render({id: 1, name: 'main', buildTemplates: []})
+    ;(byTestId('build-template-frontend').querySelector('[data-testid=project-toggle]') as HTMLInputElement).click()
     expect(dispatched).toHaveBeenCalledWith(EditActions.projectAdded({project: frontend}))
-    ;(byCy('build-template-backend').querySelector('[data-cy-id=project-toggle]') as HTMLInputElement).click()
+    ;(byTestId('build-template-backend').querySelector('[data-testid=project-toggle]') as HTMLInputElement).click()
     expect(dispatched).toHaveBeenCalledWith(EditActions.projectRemoved({project: backend}))
-    byCy('build-set-save').click()
+    byTestId('build-set-save').click()
     expect(dispatched).toHaveBeenCalledWith(EditActions.saveWith({name: 'main'}))
   })
 
   it('reports a changed project', async () => {
-    const {fixture, byCy, dispatched} = await render({id: 1, name: 'main', buildTemplates: []})
-    const number = byCy('build-template-backend').querySelector('[data-cy-id=template-build-number]') as HTMLInputElement
+    const {fixture, byTestId, dispatched} = await render({id: 1, name: 'main', buildTemplates: []})
+    const number = byTestId('build-template-backend').querySelector('[data-testid=template-build-number]') as HTMLInputElement
     number.value = '8'
     number.dispatchEvent(new Event('input'))
     // leaving the field takes the number over without waiting for the typing pause
