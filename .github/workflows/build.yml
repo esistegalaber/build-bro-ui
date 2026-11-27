@@ -3,14 +3,23 @@ name: Build UI
 on:
   push:
     branches: [ "main" ]
+    # A GitHub release vX.Y.Z (on a main commit) publishes the image X.Y.Z, X.Y and latest (#86)
+    tags: [ "v*" ]
   pull_request:
     types: [ opened, synchronize, reopened ]
 
 permissions:
   contents: read
 
-# Three jobs: the unit tests and the build run in parallel; SonarCloud starts as soon as the
-# unit tests have produced the coverage report.
+# One run per ref at a time. On main, runs queue, so the main image always ends on the newest commit (a
+# pending run is replaced by a newer one, so a commit in between may get no image). On PRs, a new push
+# cancels the running one: its image would be replaced anyway.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Four jobs: the unit tests and the build run in parallel; SonarCloud starts as soon as the
+# unit tests have produced the coverage report; the Docker image job waits for both.
 # Actions are pinned to full commit SHAs (a tag can be moved to other code); the comment names the version.
 # The Angular 22 CLI needs Node ^22.22.3, ^24.15 or >=26; builds and tests are verified on 26.
 jobs:
@@ -69,9 +78,10 @@ jobs:
 
   sonarcloud:
     name: SonarCloud
-    # needs the coverage report of the unit tests, but still runs when they failed
+    # needs the coverage report of the unit tests, but still runs when they failed. Not on release tags:
+    # Sonar would show each one as a branch.
     needs: unit
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && !startsWith(github.ref, 'refs/tags/v') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -89,15 +99,39 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  # Builds, scans and smoke-tests the Docker image (#81). Never pushes it: publishing is a separate ticket.
-  # Runs after build, so no image is built when the app doesn't build.
+  # Builds, scans and smoke-tests the Docker image (#81), then publishes exactly that image to GHCR (#86).
+  # Runs after the unit tests and the build, so nothing is built or published when either fails; the push
+  # is the last step, so only an image that passed Trivy and the smoke test is published.
   docker:
     name: Docker image
-    needs: build
+    needs: [ unit, build ]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      # Dependabot and fork PRs get a read-only token: their image is built and checked, but not published
+      CAN_PUBLISH: ${{ github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]') }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      # Tags: pr-<N> on PRs; main and sha-<7> on main; X.Y.Z, X.Y and latest (flavor latest=auto: release
+      # tags that aren't pre-releases) on vX.Y.Z tags. Plus the OCI labels version, revision and created.
+      - name: Image tags and labels
+        id: meta
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=pr
+            type=raw,value=main,enable={{is_default_branch}}
+            type=sha,prefix=sha-,enable={{is_default_branch}}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+          # metadata-action takes the description from the GitHub repo's (empty), which would overwrite the
+          # Dockerfile's label; keep this text in step with it
+          labels: |
+            org.opencontainers.image.description=Build Bruh UI: the Angular app, served by nginx, with /api passed on to the API
       # amd64 only; the Dockerfile is architecture-neutral, so it also builds natively on arm64
       - name: Build image
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
@@ -105,6 +139,7 @@ jobs:
           context: .
           platforms: linux/amd64
           tags: build-bro-ui:ci
+          labels: ${{ steps.meta.outputs.labels }}
           load: true
           push: false
           cache-from: type=gha
@@ -163,3 +198,26 @@ jobs:
       - name: Container logs
         if: failure()
         run: docker logs ui || true
+      # Publishes the image that was just tested (retagged, not rebuilt)
+      - name: Log in to GHCR
+        if: env.CAN_PUBLISH == 'true'
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish to GHCR
+        if: env.CAN_PUBLISH == 'true'
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          for tag in $TAGS; do
+            docker tag build-bro-ui:ci "$tag"
+            docker push "$tag"
+          done
+          {
+            echo "### Published"
+            for tag in $TAGS; do echo "- \`$tag\`"; done
+            echo
+            echo "Digest: \`$(docker inspect --format '{{index .RepoDigests 0}}' build-bro-ui:ci)\`"
+          } >> "$GITHUB_STEP_SUMMARY"
