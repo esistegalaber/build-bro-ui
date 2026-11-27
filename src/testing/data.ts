@@ -28,7 +28,7 @@ export function someServers(): IServer[] {
   ]
 }
 
-/** The label definitions of testdata.sql: an enum with value styles, a URL with a style, a regex without one. */
+/** Three label definitions: an enum with value styles, a URL with a style, a regex without one. */
 export function someLabelDefinitions(): ILabelDefinition[] {
   return [
     {
