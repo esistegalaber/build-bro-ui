@@ -11,13 +11,18 @@ RUN --mount=type=cache,target=/root/.npm \
 COPY . .
 RUN npm run build
 
-# Runtime stage: nginx as user 101 on port 8080, pid and temp files in /tmp. Pinned by digest; Dependabot updates it.
-FROM nginxinc/nginx-unprivileged:1.31-alpine@sha256:b5047b9b76845eac124358373c6852377c52e4b05834a47647e955dd91cb8f1e
+# Runtime stage: nginx as user 101 on port 8080, pid and temp files in /tmp. Pinned by digest; Dependabot updates it
+# (the Alpine packages come from apk upgrade at build time).
+FROM nginxinc/nginx-unprivileged:1.31-alpine-slim@sha256:a8cb0f33d51fa107c96fd2bd3a71aaf564ec131e9d2bdf8700944f0ed8b170d7
 LABEL org.opencontainers.image.source="https://github.com/esistegalaber/build-bro-ui" \
       org.opencontainers.image.description="Build Bruh UI: the Angular app, served by nginx, with /api passed on to the API" \
       org.opencontainers.image.licenses="Apache-2.0"
-# The base image's default server would listen next to ours; without it, the entrypoint's IPv6 script has nothing to edit
-RUN rm /etc/nginx/conf.d/default.conf
+# alpine-slim: the same entrypoint (templates, local resolvers) with a third of the packages (no curl, libxml2, ...).
+# apk upgrade picks up Alpine's security fixes at build time instead of waiting for the next upstream rebuild.
+# The base image's default server would listen next to ours; without it, the entrypoint's IPv6 script has nothing to edit.
+USER root
+RUN apk upgrade --no-cache \
+ && rm /etc/nginx/conf.d/default.conf
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/snippets/ /etc/nginx/snippets/
 COPY docker/conf.d/default.conf.template /etc/nginx/templates/conf.d/default.conf.template
