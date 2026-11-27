@@ -41,16 +41,19 @@ npm test -- --watch=false --coverage      # once, with a coverage report in cove
 
 ## Docker
 
-The `Dockerfile` packages the production build into an nginx image, so build the app first:
+The image builds the app itself, so a clean checkout is enough; no `npm run build` first:
 
 ```bash
-npm run build
 docker build -t build-bro-ui .
-docker run -p 4200:80 -e BUILDZ_API=<api host> build-bro-ui
+docker run -d --read-only --tmpfs /tmp -p 4200:8080 -e BUILDZ_API=<api host> build-bro-ui
 ```
 
-nginx proxies `/api` to `http://${BUILDZ_API}:8080/api` (`BUILDZ_API` defaults to `api`) and serves `index.html` for all other routes.
+- **`BUILDZ_API`** (default `api`) is the API's host name; nginx passes `/api/...` on to `http://${BUILDZ_API}:8080/api/...` and serves the app for every other route.
+- **Starts without the API:** the host is looked up per request, so the UI starts even when the API isn't there yet. `/api/...` answers `502` until it is reachable, then works without a restart.
+- **Kubernetes:** nginx ignores DNS search domains, so give the full name: `BUILDZ_API=api.<namespace>.svc.cluster.local`.
+- **Runs as non-root** (user `101`) on port `8080`, and works with a read-only root filesystem when `/tmp` is writable (`--tmpfs /tmp`).
+- **Headers:** a strict Content-Security-Policy (no inline scripts; inline styles are allowed for Angular's component styles), `nosniff`, `Referrer-Policy`, `X-Frame-Options` and `Permissions-Policy`. Text is gzipped; hashed files are cached for a year, `index.html` is always revalidated.
 
 ## CI
 
-- **GitHub Actions** (`.github/workflows/build.yml`) runs on pushes to `main` and on pull requests. The unit tests (with coverage) and the production build run as parallel jobs. A third job runs a SonarCloud scan as soon as the unit tests are done, including their coverage (project `esistegalaber_build-bro-ui`, configured in `sonar-project.properties`; needs the `SONAR_TOKEN` repository secret).
+- **GitHub Actions** (`.github/workflows/build.yml`) runs on pushes to `main` and on pull requests. The unit tests (with coverage) and the production build run as parallel jobs. A third job runs a SonarCloud scan as soon as the unit tests are done, including their coverage (project `esistegalaber_build-bro-ui`, configured in `sonar-project.properties`; needs the `SONAR_TOKEN` repository secret). After the build, the `docker` job builds the image (without pushing it), scans it with Trivy and smoke-tests it against a stub API.

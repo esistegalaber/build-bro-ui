@@ -88,3 +88,78 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@59202af334b4ba7b5db01b701b8e79f8b3bef0f4 # v8.5.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  # Builds, scans and smoke-tests the Docker image (#81). Never pushes it: publishing is a separate ticket.
+  # Runs after build, so no image is built when the app doesn't build.
+  docker:
+    name: Docker image
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      # amd64 only; the Dockerfile is architecture-neutral, so it also builds natively on arm64
+      - name: Build image
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: .
+          platforms: linux/amd64
+          tags: build-bro-ui:ci
+          load: true
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Scan image with Trivy
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: build-bro-ui:ci
+          # The action's default Trivy (v0.70.0) failed to install; Dependabot doesn't update this, so bump it by hand
+          version: v0.76.2
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+      - name: Check that the image doesn't run as root
+        run: |
+          user=$(docker inspect --format '{{.Config.User}}' build-bro-ui:ci)
+          echo "Image user: '$user'"
+          case "$user" in ""|0|0:*|root|root:*) echo "::error::The image runs as root"; exit 1;; esac
+      # The UI starts read-only before its API exists (/api answers 502), then a stub API comes up and /api
+      # works without restarting the UI. The stub echoes the URL it got, so the pass-through is checked too.
+      - name: Smoke test
+        run: |
+          set -u
+          fail() { echo "::error::$1"; exit 1; }
+          expect() { [ "$2" = "$3" ] || fail "$1: expected '$3', got '$2'"; echo "ok: $1"; }
+          docker network create smoke
+          docker run -d --name ui --network smoke --read-only --tmpfs /tmp -p 4200:8080 \
+            -e BUILDZ_API=api-stub build-bro-ui:ci
+          ui=http://localhost:4200
+          for _ in $(seq 1 30); do curl -fs -o /dev/null "$ui/" && break; sleep 1; done
+
+          expect "/" "$(curl -s -o /dev/null -w '%{http_code}' "$ui/")" 200
+          expect "deep link /builds" "$(curl -s -o /dev/null -w '%{http_code}' "$ui/builds")" 200
+          curl -s "$ui/builds" | grep -q '<bz-root>' || fail "deep link doesn't return the app"
+          expect "/api without the API" "$(curl -s -o /dev/null -w '%{http_code}' "$ui/api/v1/stats")" 502
+
+          headers=$(curl -sI "$ui/")
+          echo "$headers"
+          echo "$headers" | grep -qi "^content-security-policy: .*script-src 'self';" || fail "no strict CSP"
+          echo "$headers" | grep -qi '^x-content-type-options: nosniff' || fail "no nosniff header"
+          echo "$headers" | grep -qi '^cache-control: no-cache' || fail "index.html isn't revalidated"
+          echo "$headers" | grep -qiE '^server: nginx/' && fail "the Server header shows the nginx version"
+          curl -s "$ui/" | grep -q '<script>' && fail "index.html has an inline script (the CSP blocks it)"
+          js=$(curl -s "$ui/" | grep -o 'main-[A-Za-z0-9_-]*\.js' | head -1)
+          js_headers=$(curl -s -o /dev/null -D - -H 'Accept-Encoding: gzip' "$ui/$js")
+          echo "$js_headers" | grep -qi 'cache-control: .*immutable' || fail "$js isn't cached long-term"
+          echo "$js_headers" | grep -qi 'content-encoding: gzip' || fail "$js isn't gzipped"
+
+          docker run -d --name api-stub --network smoke node:26-alpine node -e \
+            "require('http').createServer((q,s)=>{s.setHeader('content-type','application/json');s.end(JSON.stringify({url:q.url}))}).listen(8080)"
+          for _ in $(seq 1 30); do
+            body=$(curl -fs "$ui/api/v1/stats?probe=1") && break
+            sleep 1
+          done
+          expect "/api once the API is up" "${body:-}" '{"url":"/api/v1/stats?probe=1"}'
+      - name: Container logs
+        if: failure()
+        run: docker logs ui || true
