@@ -1,0 +1,43 @@
+# Rendered at container start (envsubst replaces ${BUILDZ_API} and ${NGINX_LOCAL_RESOLVERS}; nginx's own
+# $variables stay, as no environment variables of those names exist).
+server {
+    listen       8080;
+    listen  [::]:8080;
+
+    root /usr/share/nginx/build-bro-ui;
+
+    # The resolvers from the container's /etc/resolv.conf (NGINX_ENTRYPOINT_LOCAL_RESOLVERS): Docker's
+    # 127.0.0.11, or the cluster DNS in Kubernetes. nginx ignores search domains, so in Kubernetes
+    # BUILDZ_API must be the full name (api.<namespace>.svc.cluster.local).
+    resolver ${NGINX_LOCAL_RESOLVERS} valid=10s;
+
+    include /etc/nginx/snippets/security-headers.conf;
+
+    # The API host is resolved per request (proxy_pass with a variable), so nginx starts without the API and
+    # answers 502 until it is reachable. Without a URI part, the original /api/... URI is passed on unchanged.
+    # ^~ keeps the regex location for hashed files below from matching API URLs.
+    location ^~ /api/ {
+        set $api_upstream http://${BUILDZ_API}:8080;
+        proxy_pass $api_upstream;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Hashed build output (outputHashing: all) never changes under its name: cache it for a year
+    location ~ "-[A-Za-z0-9_-]{8}\.(?:js|css|woff2?|ttf|svg|png|jpe?g|gif|webp|ico)$" {
+        include /etc/nginx/snippets/security-headers.conf;
+        add_header Cache-Control "public, max-age=31536000, immutable" always;
+        try_files $uri =404;
+    }
+
+    # index.html names the current hashed files: always revalidate it. Deep links end up here too.
+    location = /index.html {
+        include /etc/nginx/snippets/security-headers.conf;
+        add_header Cache-Control "no-cache" always;
+    }
+
+    # SPA routing: everything that isn't a file is the app
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
