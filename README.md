@@ -41,7 +41,17 @@ npm test -- --watch=false --coverage      # once, with a coverage report in cove
 
 ## Docker
 
-The image builds the app itself, so a clean checkout is enough; no `npm run build` first:
+Published images are on GHCR, public, no login needed:
+
+```bash
+docker pull ghcr.io/esistegalaber/build-bro-ui:latest   # the newest release (also X.Y.Z and X.Y)
+docker pull ghcr.io/esistegalaber/build-bro-ui:main     # the newest commit on main (also sha-<7>)
+```
+
+PRs publish `pr-<N>` (the PR number), deleted when the PR closes. Only images whose CI passed (unit tests, build,
+Trivy scan, smoke test) are published. The images are amd64 only.
+
+To build it yourself: the image builds the app itself, so a clean checkout is enough; no `npm run build` first:
 
 ```bash
 docker build -t build-bro-ui .
@@ -56,4 +66,10 @@ docker run -d --read-only --tmpfs /tmp -p 4200:8080 -e BUILDZ_API=<api host> bui
 
 ## CI
 
-- **GitHub Actions** (`.github/workflows/build.yml`) runs on pushes to `main` and on pull requests. The unit tests (with coverage) and the production build run as parallel jobs. A third job runs a SonarCloud scan as soon as the unit tests are done, including their coverage (project `esistegalaber_build-bro-ui`, configured in `sonar-project.properties`; needs the `SONAR_TOKEN` repository secret). After the build, the `docker` job builds the image (without pushing it), scans it with Trivy and smoke-tests it against a stub API.
+- **GitHub Actions** (`.github/workflows/build.yml`) runs on pushes to `main` and on pull requests. The unit tests (with coverage) and the production build run as parallel jobs. A third job runs a SonarCloud scan as soon as the unit tests are done, including their coverage (project `esistegalaber_build-bro-ui`, configured in `sonar-project.properties`; needs the `SONAR_TOKEN` repository secret). After the unit tests and the build, the `docker` job builds the image, scans it with Trivy, smoke-tests it against a stub API and then publishes it to GHCR (see Docker). It also runs on release tags `vX.Y.Z`, without SonarCloud. `ghcr-cleanup.yml` deletes PR images when the PR closes and prunes old images weekly.
+
+## Releases
+
+Create a GitHub release with a new tag `vX.Y.Z` on a commit of `main`. CI tests, builds and checks that commit and
+publishes the image as `X.Y.Z`, `X.Y` and `latest` (pre-releases such as `v1.0.0-rc1` don't get `latest`). The
+version comes from the tag only: `package.json` stays at `1.0.0-SNAPSHOT` and is never bumped.
